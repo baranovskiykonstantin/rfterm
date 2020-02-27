@@ -1,0 +1,24 @@
+/*
+ ============================================================================
+ Name		: RFterm.hrh
+ Author	  : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This file contains declarations for constants of RFterm.
+ The file can be included in C++ or resource file.
+ ============================================================================
+ */
+#ifndef __RFTERM_HRH__
+#define __RFTERM_HRH__
+
+#define _UID3 0xae7f53fa
+
+// RFterm enumerate command codes
+enum TRFtermIds
+	{
+	ECommand1 = 0x6001, // start value must not be 0
+	ECommand2,
+	EHelp,
+	EAbout
+	};
+
+#endif // __RFTERM_HRH__

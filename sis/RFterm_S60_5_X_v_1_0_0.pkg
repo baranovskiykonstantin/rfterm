@@ -1,0 +1,37 @@
+; Installation file for RFterm application
+;
+; This is an auto-generated PKG file by Carbide.
+; This file uses variables specific to Carbide builds that will not work
+; on command-line builds. If you want to use this generated PKG file from the
+; command-line tools you will need to modify the variables with the appropriate
+; values: $(EPOCROOT), $(PLATFORM), $(TARGET)
+;
+;Language - standard language definitions
+&EN
+
+; standard SIS file header
+#{"RFterm"},(0xae7f53fa),1,0,0
+
+;Localised Vendor name
+%{"Vendor-EN"}
+
+;Unique Vendor name
+:"Vendor"
+
+;Supports Series 60 v 5.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+
+;Files to install
+;You should change the source paths to match that of your environment
+;<source> <destination>
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\RFterm_0xae7f53fa.exe"		-"!:\sys\bin\RFterm_0xae7f53fa.exe"
+"$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.rsc"		-"!:\resource\apps\RFterm_0xae7f53fa.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\rfterm_0xae7f53fa_reg.rsc"	-"!:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.rsc"
+"$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.mif" -"!:\resource\apps\RFterm_0xae7f53fa.mif"
+"..\help\rfterm_0xae7f53fa.hlp"							 -"!:\resource\help\RFterm_0xae7f53fa.hlp"
+
+; Add any installation notes if applicable
+;"RFterm.txt"		-"!:\private\ae7f53fa\RFterm.txt"
+
+;required for application to be covered by backup/restore facility 
+"..\sis\backup_registration.xml"		-"!:\private\ae7f53fa\backup_registration.xml"
