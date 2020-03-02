@@ -96,6 +96,25 @@ CRFtermAppUi::~CRFtermAppUi()
 
 	}
 
+// ------------------------------------------------------------------------------
+// CChatAppUi::DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane)
+//  This function is called by the EIKON framework just before it displays
+//  a menu pane. Its default implementation is empty, and by overriding it,
+//  the application can set the state of menu items dynamically according
+//  to the state of application data.
+// ------------------------------------------------------------------------------
+//
+void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
+	{
+	if (aResourceId == R_MENU)
+		{
+		if (iAppView->iRFtermOutput->IsEmpty())
+			{
+			aMenuPane->SetItemDimmed(EClear, ETrue);
+			}
+		}
+	}
+
 // -----------------------------------------------------------------------------
 // CRFtermAppUi::HandleCommandL()
 // Takes care of command handling.
@@ -110,11 +129,10 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			Exit();
 			break;
 
-		case ECommand1:
+		case EConnect:
 			{
-
 			// Load a string from the resource file and display it
-			HBufC* textResource = StringLoader::LoadLC(R_COMMAND1_TEXT);
+			HBufC* textResource = StringLoader::LoadLC(R_MSG_CONNECTED_TEXT);
 			CAknInformationNote* informationNote;
 
 			informationNote = new (ELeave) CAknInformationNote;
@@ -127,7 +145,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			CleanupStack::PopAndDestroy(textResource);
 			}
 			break;
-		case ECommand2:
+		case EDisconnect:
 			{
 			RFile rFile;
 
@@ -154,16 +172,29 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			CleanupStack::PopAndDestroy(3); // filedata, inputFileStream, rFile
 			}
 			break;
+		case ESend:
+			{
+			iAppView->iRFtermOutput->AppendLineL(_L("ESend"));
+			break;
+			}
+		case EClear:
+			{
+			iAppView->iRFtermOutput->Clear();
+			break;
+			}
+		case ESettings:
+			{
+			iAppView->iRFtermOutput->AppendLineL(_L("ESettings"));
+			break;
+			}
 		case EHelp:
 			{
-
 			CArrayFix < TCoeHelpContext > *buf = CCoeAppUi::AppHelpContextL();
 			HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
 			}
 			break;
 		case EAbout:
 			{
-
 			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
 			dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
 			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
@@ -193,16 +224,6 @@ void CRFtermAppUi::HandleStatusPaneSizeChange()
 
 CArrayFix<TCoeHelpContext>* CRFtermAppUi::HelpContextL() const
 	{
-#warning "Please see comment about help and UID3..."
-	// Note: Help will not work if the application uid3 is not in the
-	// protected range.  The default uid3 range for projects created
-	// from this template (0xE0000000 - 0xEFFFFFFF) are not in the protected range so that they
-	// can be self signed and installed on the device during testing.
-	// Once you get your official uid3 from Symbian Ltd. and find/replace
-	// all occurrences of uid3 in your project, the context help will
-	// work. Alternatively, a patch now exists for the versions of 
-	// HTML help compiler in SDKs and can be found here along with an FAQ:
-	// http://www3.symbian.com/faq.nsf/AllByDate/E9DF3257FD565A658025733900805EA2?OpenDocument
 #ifdef _HELP_AVAILABLE_
 	CArrayFixFlat<TCoeHelpContext>* array = new(ELeave)CArrayFixFlat<TCoeHelpContext>(1);
 	CleanupStack::PushL(array);

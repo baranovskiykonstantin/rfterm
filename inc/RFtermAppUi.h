@@ -69,6 +69,10 @@ private:
 	 *  size is changed.
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
+	
+private:  // From MEikMenuObserver
+        
+	void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
 
 private:
 	// Data

@@ -15,8 +15,11 @@
 // RFterm enumerate command codes
 enum TRFtermIds
 	{
-	ECommand1 = 0x6001, // start value must not be 0
-	ECommand2,
+	EConnect = 0x6001, // start value must not be 0
+	EDisconnect,
+	ESend,
+	EClear,
+	ESettings,
 	EHelp,
 	EAbout
 	};
