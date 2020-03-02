@@ -11,7 +11,7 @@ MACRO _HELP_AVAILABLE_
 
 TARGET			RFterm_0xae7f53fa.exe
 TARGETTYPE		exe
-UID		  0x100039CE 0xae7f53fa
+UID				0x100039CE 0xae7f53fa
 
 SOURCEPATH		..\src
 SOURCE			RFterm.cpp
@@ -19,6 +19,7 @@ SOURCE			RFtermApplication.cpp
 SOURCE			RFtermAppView.cpp
 SOURCE			RFtermAppUi.cpp
 SOURCE			RFtermDocument.cpp
+SOURCE			RFtermOutput.cpp
 
 SOURCEPATH		..\data
 
@@ -30,31 +31,36 @@ END //RESOURCE
 
 START RESOURCE	RFterm_reg.rss
 TARGET RFterm_0xae7f53fa_reg
-TARGETPATH 	  \private\10003a3f\apps
+TARGETPATH \private\10003a3f\apps
 END //RESOURCE
 
-USERINCLUDE	   ..\inc
-USERINCLUDE    ..\help
+USERINCLUDE		..\inc
+USERINCLUDE		..\help
 
-SYSTEMINCLUDE	 /epoc32/include
+SYSTEMINCLUDE	/epoc32/include
 
-LIBRARY		   euser.lib
-LIBRARY		   apparc.lib
-LIBRARY		   cone.lib
-LIBRARY		   eikcore.lib
-LIBRARY		   avkon.lib
-LIBRARY		   commonengine.lib
-LIBRARY		   efsrv.lib 
-LIBRARY		   estor.lib
-LIBRARY        aknnotify.lib
-LIBRARY        hlplch.lib
- 
+LIBRARY			aknnotify.lib
+LIBRARY			apparc.lib
+LIBRARY			avkon.lib
+LIBRARY			commonengine.lib
+LIBRARY			cone.lib
+LIBRARY			efsrv.lib 
+LIBRARY			eikcoctl.lib
+LIBRARY			eikcore.lib
+LIBRARY			eikctl.lib
+LIBRARY			estor.lib
+LIBRARY			etext.lib
+LIBRARY			euser.lib
+LIBRARY			form.lib
+LIBRARY			gdi.lib
+LIBRARY			hlplch.lib
+LIBRARY			uiklaf.lib
 
 LANG SC
 
-VENDORID	  	  0
-SECUREID		  0xae7f53fa
-CAPABILITY	  	  ReadUserData
+VENDORID		0
+SECUREID		0xae7f53fa
+CAPABILITY		ReadUserData
 
 DEBUGGABLE_UDEBONLY
 // End of File

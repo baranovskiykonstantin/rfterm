@@ -27,8 +27,8 @@
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
 
-_LIT( KFileName, "C:\\private\\ae7f53fa\\RFterm.txt" );
-_LIT( KText, "Hello World!");
+_LIT(KFileName, "C:\\private\\ae7f53fa\\RFterm.txt");
+_LIT(KText, "Hello World!");
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -45,6 +45,7 @@ void CRFtermAppUi::ConstructL()
 
 	// Create view object
 	iAppView = CRFtermAppView::NewL(ClientRect());
+	AddToStackL(iAppView);
 
 	// Create a file to write the text to
 	TInt err = CCoeEnv::Static()->FsSession().MkDirAll(KFileName);
@@ -88,6 +89,7 @@ CRFtermAppUi::~CRFtermAppUi()
 	{
 	if (iAppView)
 		{
+		RemoveFromStack(iAppView);
 		delete iAppView;
 		iAppView = NULL;
 		}
@@ -174,7 +176,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			}
 			break;
 		default:
-			Panic( ERFtermUi);
+			Panic(ERFtermUi);
 			break;
 		}
 	}

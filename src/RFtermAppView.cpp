@@ -9,7 +9,9 @@
 
 // INCLUDE FILES
 #include <coemain.h>
+#include <aknappui.h>
 #include "RFtermAppView.h"
+#include "RFterm.pan"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -47,9 +49,13 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	{
 	// Create a window for this application view
 	CreateWindowL();
+	
+	iRFtermOutput = CRFtermOutput::NewL(this);
 
 	// Set the windows size
 	SetRect(aRect);
+
+	iRFtermOutput->SetFocus(ETrue);
 
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
@@ -72,7 +78,40 @@ CRFtermAppView::CRFtermAppView()
 //
 CRFtermAppView::~CRFtermAppView()
 	{
-	// No implementation required
+	delete iRFtermOutput;
+	iRFtermOutput = NULL;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::CountComponentControls()
+// Returns the specified component control.
+// ----------------------------------------------------------------------------
+//
+TInt CRFtermAppView::CountComponentControls() const
+	{
+	return 1; // Only have one Component
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::ComponentControl()
+// Gets the specified component of a compound control.
+// ----------------------------------------------------------------------------
+//
+CCoeControl* CRFtermAppView::ComponentControl(TInt aIndex) const
+	{
+	__ASSERT_ALWAYS(aIndex == 0, Panic(ERFtermInvalidControlIndex));
+	return iRFtermOutput;    //  Return the component
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::OfferKeyEventL()
+// Offer the key event to the list box.
+// ----------------------------------------------------------------------------
+//
+TKeyResponse CRFtermAppView
+::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType)
+	{
+	return iRFtermOutput->OfferKeyEventL(aKeyEvent, aType);
 	}
 
 // -----------------------------------------------------------------------------
@@ -89,6 +128,7 @@ void CRFtermAppView::Draw(const TRect& /*aRect*/) const
 	TRect drawRect(Rect());
 
 	// Clears the screen
+	gc.SetBrushColor(KRgbBlack);
 	gc.Clear(drawRect);
 
 	}
@@ -100,6 +140,15 @@ void CRFtermAppView::Draw(const TRect& /*aRect*/) const
 //
 void CRFtermAppView::SizeChanged()
 	{
+	if (iRFtermOutput) 
+		{ 
+		TRect clientRect = iAvkonAppUi->ClientRect(); 
+		TRect outputRect(clientRect.Size());
+		TInt scrollbarWidth = iRFtermOutput->ScrollBarFrame()->
+				VerticalScrollBar()->ScrollBarBreadth();
+		outputRect.SetWidth(outputRect.Width() - scrollbarWidth);
+		iRFtermOutput-> SetRect(outputRect); 
+		} 
 	DrawNow();
 	}
 

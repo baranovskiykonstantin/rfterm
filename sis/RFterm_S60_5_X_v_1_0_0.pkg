@@ -29,6 +29,7 @@
 "$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\rfterm_0xae7f53fa_reg.rsc"	-"!:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.rsc"
 "$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.mif" -"!:\resource\apps\RFterm_0xae7f53fa.mif"
 "..\help\rfterm_0xae7f53fa.hlp"							 -"!:\resource\help\RFterm_0xae7f53fa.hlp"
+"$(EPOCROOT)epoc32\winscw\c\private\ae7f53fa\cour.ttf" -"!:\private\ae7f53fa\cour.ttf"
 
 ; Add any installation notes if applicable
 ;"RFterm.txt"		-"!:\private\ae7f53fa\RFterm.txt"

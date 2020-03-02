@@ -12,6 +12,7 @@
 
 // INCLUDES
 #include <coecntrl.h>
+#include "RFtermOutput.h"
 
 // CLASS DECLARATION
 class CRFtermAppView : public CCoeControl
@@ -69,6 +70,35 @@ public:
 	 */
 	virtual void HandlePointerEventL(const TPointerEvent& aPointerEvent);
 
+	
+public:  // from CCoeControl
+
+	/**
+	* OfferKeyEventL()
+	* Offer the key event to the list box
+	* @param aKeyEvent the key that caused the event
+	* @param aType the type of event that occured
+	* @return indicates whether or not the key event
+	* was used by this control
+	*/  
+	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, 
+									   TEventCode aType);
+
+	/**
+	* CountComponentControls()
+	* Return the number of component controls
+	* @return the number of component controls
+	*/
+	TInt CountComponentControls() const;
+
+	/**
+	* ComponentControl()
+	* Return a component control
+	* @param aIndex the index of the control to return
+	* @return the specified component control
+	*/
+	CCoeControl* ComponentControl(TInt aIndex) const;
+
 private:
 	// Constructors
 
@@ -86,6 +116,10 @@ private:
 	 * C++ default constructor.
 	 */
 	CRFtermAppView();
+	
+public:
+	
+	CRFtermOutput* iRFtermOutput;
 
 	};
 

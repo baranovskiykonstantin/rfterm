@@ -13,7 +13,9 @@
 /** RFterm application panic codes */
 enum TRFtermPanics
 	{
-	ERFtermUi = 1
+	ERFtermUi = 1,
+	ERFtermInvalidControlIndex,
+	ERFtermCannotLoadFont,
 	// add further panics here
 	};
 
