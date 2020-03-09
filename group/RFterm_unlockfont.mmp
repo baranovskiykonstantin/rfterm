@@ -1,0 +1,25 @@
+/*
+============================================================================
+ Name        : RFterm_unlockfont.mmp
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This program will release the file lock on the font file.
+============================================================================
+*/
+
+TARGET			RFterm_unlockfont_0xa8c7ffca.exe
+TARGETTYPE		exe
+UID				0x100039CE 0xa8c7ffca
+VENDORID		0
+
+SOURCEPATH		..\src
+SOURCE			RFterm_unlockfont.cpp
+
+USERINCLUDE		..\inc
+
+SYSTEMINCLUDE	/epoc32/include
+
+LIBRARY			euser.lib
+LIBRARY			fbscli.lib
+
+// End of File

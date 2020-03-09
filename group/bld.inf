@@ -1,7 +1,7 @@
 /*
 ============================================================================
- Name		: bld.inf
- Author	  : Konstantin Baranovskiy
+ Name        : bld.inf
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : This file provides the information required for building the
 				whole of a RFterm.
@@ -43,3 +43,4 @@ PRJ_MMPFILES
 PRJ_MMPFILES
 
 RFterm.mmp
+RFterm_unlockfont.mmp
