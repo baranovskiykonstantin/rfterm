@@ -24,17 +24,15 @@
 ;Files to install
 ;You should change the source paths to match that of your environment
 ;<source> <destination>
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\RFterm_unlockfont_0xa8c7ffca.exe"		-"c:\sys\bin\RFterm_unlockfont_0xa8c7ffca.exe", FILERUN, RUNREMOVE
-
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\RFterm_0xae7f53fa.exe"		-"c:\sys\bin\RFterm_0xae7f53fa.exe"
-"$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.rsc"		-"c:\resource\apps\RFterm_0xae7f53fa.rsc"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\rfterm_0xae7f53fa_reg.rsc"	-"c:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.rsc"
-"$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.mif" -"c:\resource\apps\RFterm_0xae7f53fa.mif"
-"..\help\rfterm_0xae7f53fa.hlp"							 -"c:\resource\help\RFterm_0xae7f53fa.hlp"
-"$(EPOCROOT)epoc32\winscw\c\system\fonts\RFterm_0xae7f53fa_font.ttf" -"c:\system\fonts\RFterm_0xae7f53fa_font.ttf"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\RFterm_0xae7f53fa.exe"					-"c:\sys\bin\RFterm_0xae7f53fa.exe"
+"$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.rsc"							-"c:\resource\apps\RFterm_0xae7f53fa.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\rfterm_0xae7f53fa_reg.rsc"				-"c:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.rsc"
+"$(EPOCROOT)epoc32\data\z\resource\apps\rfterm_0xae7f53fa.mif"							-"c:\resource\apps\RFterm_0xae7f53fa.mif"
+"..\help\rfterm_0xae7f53fa.hlp"															-"c:\resource\help\RFterm_0xae7f53fa.hlp"
+"$(EPOCROOT)epoc32\winscw\c\system\fonts\RFterm_0xae7f53fa_font.ttf"					-"c:\system\fonts\RFterm_0xae7f53fa_font.ttf"
 
 ; Add any installation notes if applicable
-;"RFterm.txt"		-"c:\private\ae7f53fa\RFterm.txt"
+;"RFterm.txt"																			-"c:\private\ae7f53fa\RFterm.txt"
 
 ;required for application to be covered by backup/restore facility 
-"..\sis\backup_registration.xml"		-"c:\private\ae7f53fa\backup_registration.xml"
+"..\sis\backup_registration.xml"														-"c:\private\ae7f53fa\backup_registration.xml"
