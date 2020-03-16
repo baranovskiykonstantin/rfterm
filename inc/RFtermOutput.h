@@ -1,11 +1,14 @@
 /*
- * RFtermOutput.h
- *
- *  Created on: 28 Feb 2020
+ ============================================================================
+ Name        : RFtermOutput.h
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : RFterm's output control.
+ ============================================================================
  */
 
-#ifndef RFTERMOUTPUT_H_
-#define RFTERMOUTPUT_H_
+#ifndef RFTERMOUTPUT_H
+#define RFTERMOUTPUT_H
 
 #include <eikedwin.h>
 
@@ -17,16 +20,18 @@ public:
 	virtual ~CRFtermOutput();
 	TBool IsEmpty();
 	void Clear();
-	void AppendLineL(const TDesC& aLine);
-	void AppendTextL(const TDesC& aText);
+	void AppendTextL(const TDesC& aText, const TDesC& aPrefix);
+	void AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefix);
 
 private:
 	void ConstructL(const CCoeControl *aParent);
 	CRFtermOutput();
 	void AppendL(const TDesC& aBuf);
+	void ScrollToEnd();
 	
 private:
 	TInt iRFtermFontID;
+	TPtrC iCurrentPrefix;
 	};
 
-#endif /* RFTERMOUTPUT_H_ */
+#endif /* RFTERMOUTPUT_H */

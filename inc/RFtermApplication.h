@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermApplication.h
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermApplication.h
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Declares main application class.
  ============================================================================
@@ -12,14 +12,7 @@
 
 // INCLUDES
 #include <aknapp.h>
-#include "RFterm.hrh"
-
-// UID for the application;
-// this should correspond to the uid defined in the mmp file
-const TUid KUidRFtermApp =
-	{
-	_UID3
-	};
+#include "RFtermConstants.h"
 
 // CLASS DECLARATION
 

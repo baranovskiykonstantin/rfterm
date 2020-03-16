@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermAppView.cpp
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermAppView.cpp
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Application view implementation
  ============================================================================
@@ -11,6 +11,8 @@
 #include <coemain.h>
 #include <aknappui.h>
 #include "RFtermAppView.h"
+#include "RFtermConstants.h"
+#include "RFtermSendQueryDialog.h"
 #include "RFterm.pan"
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -147,7 +149,7 @@ void CRFtermAppView::SizeChanged()
 		TInt scrollbarWidth = iRFtermOutput->ScrollBarFrame()->
 				VerticalScrollBar()->ScrollBarBreadth();
 		outputRect.SetWidth(outputRect.Width() - scrollbarWidth);
-		iRFtermOutput-> SetRect(outputRect); 
+		iRFtermOutput->SetRect(outputRect); 
 		} 
 	DrawNow();
 	}
@@ -161,9 +163,83 @@ void CRFtermAppView::SizeChanged()
 //
 void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	{
+	TInt KMaxDelta = 10;
+
+	if (TPointerEvent::EButton1Down == aPointerEvent.iType)
+		{
+		if (iRFtermOutput->SelectionLength())
+			{
+			// Do not show send query if text selection is present.
+			iPrevPointerPos.SetXY(-KMaxDelta, -KMaxDelta);
+			
+			}
+		else
+			{
+			iPrevPointerPos = aPointerEvent.iPosition;
+			}
+		}
+	else if (TPointerEvent::EButton1Up == aPointerEvent.iType)
+		{
+		TPoint posDelta = iPrevPointerPos - aPointerEvent.iPosition;
+		if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
+			{
+			// Tap on output to send
+			iAvkonAppUi->HandleCommandL(ESend);
+			}
+		}
 
 	// Call base class HandlePointerEventL()
 	CCoeControl::HandlePointerEventL(aPointerEvent);
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::ShowDataQueryL()
+// Display of Data Query.
+// ----------------------------------------------------------------------------
+//
+TBool CRFtermAppView::ShowDataQueryL(
+	const TInt aQueryResourceId,
+	const TInt aTextResourceId,
+	const TInt aPromptResoureId,
+	const TInt aMaxLength,
+	TDes& aText)
+	{
+	
+	iDisplayDialog = ETrue;
+
+	TBuf<KRFtermTextBufLength> textData;
+	
+	if (aTextResourceId)
+		{
+		iCoeEnv->ReadResourceL(textData, aTextResourceId);
+		}
+	
+	CRFtermSendQueryDialog* dlg = CRFtermSendQueryDialog::NewL(textData);
+	CleanupStack::PushL(dlg);
+
+	if (aPromptResoureId)
+		{
+		TBuf<KRFtermTextBufLength> prompt;
+		iCoeEnv->ReadResourceL(prompt, aTextResourceId);
+		dlg->SetPromptL(prompt);
+		}
+
+	if (aMaxLength)
+		{
+		dlg->SetMaxLength(aMaxLength);
+		}
+		
+	CleanupStack::Pop(dlg);
+	TBool answer(dlg->ExecuteLD(aQueryResourceId));
+	
+	iDisplayDialog = EFalse;
+
+	// get message
+	aText = textData;
+	
+	DrawNow();
+
+	return answer;
 	}
 
 // End of File

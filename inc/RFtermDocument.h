@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermDocument.h
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermDocument.h
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Declares document class for application.
  ============================================================================

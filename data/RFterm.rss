@@ -1,7 +1,7 @@
 /*
 ============================================================================
- Name		: RFterm.rss
- Author	  : Konstantin Baranovskiy
+ Name        : RFterm.rss
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : This file contains all the resources for the RFterm.
 ============================================================================
@@ -84,16 +84,6 @@ RESOURCE MENU_PANE r_menu
 		// added the new Options menu command here
 		MENU_ITEM
 				{
-				command = EConnect;
-				txt = qtn_connect;
-				},
-		MENU_ITEM
-				{
-				command = EDisconnect;
-				txt = qtn_disconnect;
-				},
-		MENU_ITEM
-				{
 				command = ESend;
 				txt = qtn_send;
 				},
@@ -104,8 +94,23 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
-				command = ESettings;
-				txt = qtn_settings;
+				command = EConnect;
+				txt = qtn_connect;
+				},
+		MENU_ITEM
+				{
+				command = EDisconnect;
+				txt = qtn_disconnect;
+				},
+		MENU_ITEM
+				{
+				command = EStart;
+				txt = qtn_start;
+				},
+		MENU_ITEM
+				{
+				command = EStop;
+				txt = qtn_stop;
 				},
 		MENU_ITEM
 				{
@@ -169,6 +174,33 @@ RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }
 RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
 RESOURCE TBUF r_msg_connected_text { buf=qtn_msg_connected; }
 
+RESOURCE TBUF r_rfterm_service_name { buf=qtn_rfterm_service_name; }
+RESOURCE TBUF r_rfterm_service_description { buf=qtn_rfterm_service_description; }
+
+RESOURCE TBUF r_str_data_query_label { buf=qtn_str_data_query_label; }
+
+RESOURCE TBUF r_str_disconnected { buf=qtn_str_disconnected; }
+RESOURCE TBUF r_str_disconnect_complete { buf=qtn_str_disconnect_complete; }
+RESOURCE TBUF r_str_connected { buf=qtn_str_connected; }
+RESOURCE TBUF r_str_found_service { buf=qtn_str_found_service; }
+RESOURCE TBUF r_str_client_busy { buf=qtn_str_client_busy; }
+RESOURCE TBUF r_str_releasing_conn { buf=qtn_str_releasing_conn; }
+RESOURCE TBUF r_str_connecting { buf=qtn_str_connecting; }
+RESOURCE TBUF r_str_get_port { buf=qtn_str_get_port; }
+RESOURCE TBUF r_str_accept_next_conn { buf=qtn_str_accept_next_conn; }
+//RESOURCE TBUF r_str_ { buf=qtn_str_; }
+
+RESOURCE TBUF r_err_no_device_selected { buf=qtn_err_no_device_selected; }
+RESOURCE TBUF r_err_connection_error { buf=qtn_err_connection_error; }
+RESOURCE TBUF r_err_lost_connection { buf=qtn_err_lost_connection; }
+RESOURCE TBUF r_err_message_failed { buf=qtn_err_message_failed; }
+RESOURCE TBUF r_err_failed_to_disconnect { buf=qtn_err_failed_to_disconnect; }
+RESOURCE TBUF r_err_no_conn { buf=qtn_err_no_conn; }
+RESOURCE TBUF r_err_nrrc_no_records { buf=qtn_err_nrrc_no_records; }
+RESOURCE TBUF r_err_cant_get_attribute { buf=qtn_err_cant_get_attribute; }
+RESOURCE TBUF r_err_attr_req_com { buf=qtn_err_attr_req_com; }
+RESOURCE TBUF r_err_no_bt { buf=qtn_err_no_bt; }
+//RESOURCE TBUF r_err_ { buf=qtn_err_; }
 
 // ---------------------------------------------------------------------------- 
 //
@@ -186,6 +218,49 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 
 		number_of_icons = 1;
 		icon_file = "\\resource\\apps\\RFterm_0xae7f53fa.mif";
+		};
+	}
+
+//----------------------------------------------------
+//
+//    r_chat_data_query
+//    Recource of Data query
+//
+//----------------------------------------------------
+//
+
+RESOURCE DIALOG r_dialog_data_query
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EGeneralQuery;
+			control = AVKON_DATA_QUERY
+				{
+				layout = EDataLayout;
+				label = qtn_str_data_query_label;
+				control = EDWIN
+					{
+					flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable | EEikEdwinOnlyASCIIChars;
+					avkon_flags = EAknEditorFlagLatinInputModesOnly;
+					allowed_case_modes = EAknEditorUpperCase | EAknEditorLowerCase;
+					default_case = EAknEditorLowerCase;
+					width = 5;
+					maxlength = 128;
+					// added to limit expanding in forms.
+					// If you want full screen use 6 here
+					max_view_height_in_lines = 1;
+					// if you have the line above, you must have this.
+					// It's calculable from LAF
+					base_line_delta = 21;
+					};
+				};
+			}
 		};
 	}
 

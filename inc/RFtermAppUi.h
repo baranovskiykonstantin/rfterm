@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermAppUi.h
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermAppUi.h
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Declares UI class for application.
  ============================================================================
@@ -15,6 +15,7 @@
 
 // FORWARD DECLARATIONS
 class CRFtermAppView;
+class CRFtermBt;
 
 // CLASS DECLARATION
 /**
@@ -70,8 +71,14 @@ private:
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
 	
+	/**
+	*  ShowBTNotAvailableNoteL.
+	*  Show note if BT is not available
+	*/
+	void ShowBTNotAvailableNoteL();
+
 private:  // From MEikMenuObserver
-        
+
 	void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
 
 private:
@@ -83,6 +90,17 @@ private:
 	 */
 	CRFtermAppView* iAppView;
 
+	/** 
+	* iClient
+	* the BT engine 
+	* Owned by CRFtermAppUi
+	*/
+	CRFtermBt* iBtClient;
+
+	/**
+	* iBtAvailable, ETrue if an SDP session can be opened, EFalse otherwise.
+	*/
+	TBool iBtAvailable;
 	};
 
 #endif // __RFTERMAPPUI_h__

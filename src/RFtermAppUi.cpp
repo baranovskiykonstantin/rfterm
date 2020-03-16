@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermAppUi.cpp
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermAppUi.cpp
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : CRFtermAppUi implementation
  ============================================================================
@@ -23,9 +23,12 @@
 #endif
 #include "RFterm.hrh"
 #include "RFterm.pan"
+#include "RFterm_0xae7f53fa.rsg"
 #include "RFtermApplication.h"
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
+#include "RFtermBt.h"
+#include "RFtermConstants.h"
 
 _LIT(KFileName, "C:\\private\\ae7f53fa\\RFterm.txt");
 _LIT(KText, "Hello World!");
@@ -47,6 +50,24 @@ void CRFtermAppUi::ConstructL()
 	iAppView = CRFtermAppView::NewL(ClientRect());
 	AddToStackL(iAppView);
 
+	iBtClient = CRFtermBt::NewL(iAppView->iRFtermOutput);
+
+	// check whether BT is available or not
+
+	RSdp sdpSession;
+
+	if (sdpSession.Connect() == KErrNone)
+		{
+		sdpSession.Close();
+		
+		iBtAvailable = ETrue;
+		}
+	else
+		{
+		iBtAvailable = EFalse;
+		}
+
+/*
 	// Create a file to write the text to
 	TInt err = CCoeEnv::Static()->FsSession().MkDirAll(KFileName);
 	if ((KErrNone != err) && (KErrAlreadyExists != err))
@@ -68,6 +89,7 @@ void CRFtermAppUi::ConstructL()
 	outputFileStream << KText;
 
 	CleanupStack::PopAndDestroy(2); // outputFileStream, file
+*/
 
 	}
 // -----------------------------------------------------------------------------
@@ -87,6 +109,9 @@ CRFtermAppUi::CRFtermAppUi()
 //
 CRFtermAppUi::~CRFtermAppUi()
 	{
+	delete iBtClient;
+	iBtClient = NULL;
+
 	if (iAppView)
 		{
 		RemoveFromStack(iAppView);
@@ -97,7 +122,7 @@ CRFtermAppUi::~CRFtermAppUi()
 	}
 
 // ------------------------------------------------------------------------------
-// CChatAppUi::DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane)
+// CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane)
 //  This function is called by the EIKON framework just before it displays
 //  a menu pane. Its default implementation is empty, and by overriding it,
 //  the application can set the state of menu items dynamically according
@@ -108,9 +133,31 @@ void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 	{
 	if (aResourceId == R_MENU)
 		{
+		if (!iBtClient->IsReadyToSendMessage())
+			{
+			aMenuPane->SetItemDimmed(ESend, ETrue);
+			}
 		if (iAppView->iRFtermOutput->IsEmpty())
 			{
 			aMenuPane->SetItemDimmed(EClear, ETrue);
+			}
+		if (iBtClient->IsConnected() || iBtClient->IsConnecting())
+			{
+			aMenuPane->SetItemDimmed(EConnect, ETrue);
+			aMenuPane->SetItemDimmed(EStart, ETrue);
+			if (iBtClient->Server())
+				{
+				aMenuPane->SetItemDimmed(EDisconnect, ETrue);
+				}
+			else
+				{
+				aMenuPane->SetItemDimmed(EStop, ETrue);
+				}
+			}
+		else
+			{
+			aMenuPane->SetItemDimmed(EDisconnect, ETrue);
+			aMenuPane->SetItemDimmed(EStop, ETrue);
 			}
 		}
 	}
@@ -126,10 +173,35 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 		{
 		case EEikCmdExit:
 		case EAknSoftkeyExit:
+			{
+			if (iBtClient->IsConnected() || iBtClient->IsConnecting())
+				{
+				if (iBtClient->Server())
+					{
+					iBtClient->StopL();
+					}
+				else
+					{
+					iBtClient->DisconnectL();
+					}
+				}
+
 			Exit();
 			break;
+			}
 
 		case EConnect:
+			{
+//			iAppView->iRFtermOutput->AppendLineL(_L("EConnect"), KPrefixNote);
+			if (!iBtAvailable)
+				{
+				ShowBTNotAvailableNoteL();
+				}
+			else
+				{
+				iBtClient->ConnectL();
+				}
+/*
 			{
 			// Load a string from the resource file and display it
 			HBufC* textResource = StringLoader::LoadLC(R_MSG_CONNECTED_TEXT);
@@ -144,9 +216,18 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			// Pop HBuf from CleanUpStack and Destroy it.
 			CleanupStack::PopAndDestroy(textResource);
 			}
+*/
 			break;
+			}
+
 		case EDisconnect:
 			{
+//			iAppView->iRFtermOutput->AppendLineL(_L("EDisconnect"), KPrefixNote);
+			if (iBtClient->IsConnected())
+				{
+				iBtClient->DisconnectL(); 
+				}
+/*
 			RFile rFile;
 
 			//Open file where the stream text is
@@ -171,28 +252,70 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			// Pop loaded resources from the cleanup stack
 			CleanupStack::PopAndDestroy(3); // filedata, inputFileStream, rFile
 			}
-			break;
-		case ESend:
-			{
-			iAppView->iRFtermOutput->AppendLineL(_L("ESend"));
+*/
 			break;
 			}
+			
+		case EStart:
+			{
+//			iAppView->iRFtermOutput->AppendLineL(_L("EStart"), KPrefixNote);
+			if (!iBtAvailable)
+				{
+				ShowBTNotAvailableNoteL();
+				}
+			else
+				{
+				iBtClient->StartL();
+				}
+			break;
+			}
+			
+		case EStop:
+			{
+//			iAppView->iRFtermOutput->AppendLineL(_L("EStop"), KPrefixNote);
+			if (!iBtAvailable)
+				{
+				ShowBTNotAvailableNoteL();
+				}
+			else
+				{
+				iBtClient->StopL();
+				}
+			break;
+			}
+
+		case ESend:
+			{
+//			iAppView->iRFtermOutput->AppendLineL(_L("ESend"), KPrefixNote);
+			if(iBtClient->IsConnected())
+				{
+				TBuf<KRFtermTextBufLength> text;
+				if (iAppView->ShowDataQueryL(
+						R_DIALOG_DATA_QUERY,
+						0,
+						0,
+						KRFtermTextBufLength,
+						text))
+					{
+					iBtClient->SendMessageL(text);
+					}
+				}
+			break;
+			}
+
 		case EClear:
 			{
 			iAppView->iRFtermOutput->Clear();
 			break;
 			}
-		case ESettings:
-			{
-			iAppView->iRFtermOutput->AppendLineL(_L("ESettings"));
-			break;
-			}
+
 		case EHelp:
 			{
 			CArrayFix < TCoeHelpContext > *buf = CCoeAppUi::AppHelpContextL();
 			HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
-			}
 			break;
+			}
+
 		case EAbout:
 			{
 			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
@@ -204,11 +327,14 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			dlg->SetMessageTextL(*msg);
 			CleanupStack::PopAndDestroy(); //msg
 			dlg->RunLD();
-			}
 			break;
+			}
+
 		default:
+			{
 			Panic(ERFtermUi);
 			break;
+			}
 		}
 	}
 // -----------------------------------------------------------------------------
@@ -233,6 +359,27 @@ CArrayFix<TCoeHelpContext>* CRFtermAppUi::HelpContextL() const
 #else
 	return NULL;
 #endif
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppUi::ShowBTNotAvailableNoteL()
+// Show note if BT is not available 
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppUi::ShowBTNotAvailableNoteL()
+	{
+	// Load a string from the resource file and display it
+	HBufC* textResource = StringLoader::LoadLC(R_ERR_NO_BT);
+	CAknErrorNote* errorNote;
+
+	errorNote = new (ELeave) CAknErrorNote;
+
+	// Show the information Note with
+	// textResource loaded with StringLoader.
+	errorNote->ExecuteLD(*textResource);
+
+	// Pop HBuf from CleanUpStack and Destroy it.
+	CleanupStack::PopAndDestroy(textResource);
 	}
 
 // End of File

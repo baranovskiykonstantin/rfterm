@@ -1,7 +1,7 @@
 /*
 ============================================================================
- Name		: RFterm.mmp
- Author	  : Konstantin Baranovskiy
+ Name        : RFterm.mmp
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : This is the project specification file for RFterm.
 ============================================================================
@@ -20,6 +20,13 @@ SOURCE			RFtermAppView.cpp
 SOURCE			RFtermAppUi.cpp
 SOURCE			RFtermDocument.cpp
 SOURCE			RFtermOutput.cpp
+SOURCE			RFtermBt.cpp
+SOURCE			RFtermBtServiceAdvertiser.cpp
+SOURCE			RFtermBtServiceSearcher.cpp
+SOURCE			RFtermSdpAttributeParser.cpp
+SOURCE			RFtermServiceAdvertiser.cpp
+SOURCE			RFtermServiceSearcher.cpp
+SOURCE			RFtermSendQueryDialog.cpp
 
 SOURCEPATH		..\data
 
@@ -42,25 +49,35 @@ SYSTEMINCLUDE	/epoc32/include
 LIBRARY			aknnotify.lib
 LIBRARY			apparc.lib
 LIBRARY			avkon.lib
+LIBRARY			bafl.lib
+LIBRARY			bluetooth.lib 
+LIBRARY			btextnotifiers.lib
 LIBRARY			commonengine.lib
 LIBRARY			cone.lib
 LIBRARY			efsrv.lib 
 LIBRARY			eikcoctl.lib
 LIBRARY			eikcore.lib
 LIBRARY			eikctl.lib
+LIBRARY			eikdlg.lib
+LIBRARY			esock.lib
 LIBRARY			estor.lib
 LIBRARY			etext.lib
 LIBRARY			euser.lib
 LIBRARY			form.lib
 LIBRARY			gdi.lib
 LIBRARY			hlplch.lib
+LIBRARY			sdpagent.lib
+LIBRARY			sdpdatabase.lib
 LIBRARY			uiklaf.lib
 
 LANG SC
 
 VENDORID		0
 SECUREID		0xae7f53fa
-CAPABILITY		ReadUserData
+CAPABILITY		ReadUserData LocalServices
+
+EPOCSTACKSIZE	0x5000
 
 DEBUGGABLE_UDEBONLY
+
 // End of File

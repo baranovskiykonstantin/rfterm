@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFterm.cpp
- Author	  : Konstantin Baranovskiy
+ Name        : RFterm.cpp
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Main application class
  ============================================================================

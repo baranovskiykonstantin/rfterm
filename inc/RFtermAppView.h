@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermAppView.h
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermAppView.h
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Declares view class for application.
  ============================================================================
@@ -12,6 +12,8 @@
 
 // INCLUDES
 #include <coecntrl.h>
+//#include <AknQueryDialog.h>
+
 #include "RFtermOutput.h"
 
 // CLASS DECLARATION
@@ -71,7 +73,7 @@ public:
 	virtual void HandlePointerEventL(const TPointerEvent& aPointerEvent);
 
 	
-public:  // from CCoeControl
+public: // from CCoeControl
 
 	/**
 	* OfferKeyEventL()
@@ -98,6 +100,23 @@ public:  // from CCoeControl
 	* @return the specified component control
 	*/
 	CCoeControl* ComponentControl(TInt aIndex) const;
+	
+public: // New functions
+	/**
+	* ShowDataQueryL()
+	* Show data query.
+	* @param aQueryResourceId the id of the query
+	* @param aTextResourceId for inial value
+	* @param aPromptResoureId for prompt
+	* @param aMaxLength sets up the length of the character
+	* @param aText text of the query
+	*/
+	TBool ShowDataQueryL(
+		const TInt aQueryResourceId,
+		const TInt aTextResourceId,
+		const TInt aPromptResoureId,
+		const TInt aMaxLength,
+		TDes& aText);
 
 private:
 	// Constructors
@@ -117,9 +136,25 @@ private:
 	 */
 	CRFtermAppView();
 	
+private:
+	
+	/**
+	 * iPrevPointerPos
+	 */
+	TPoint iPrevPointerPos;
+	
 public:
 	
+	/**
+	* iRFtermOutput
+	*/
 	CRFtermOutput* iRFtermOutput;
+
+	/**
+	* iDisplayDialog
+	* boolean for Display Dialog
+	*/
+	TBool iDisplayDialog;
 
 	};
 

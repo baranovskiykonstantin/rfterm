@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFterm.hrh
- Author	  : Konstantin Baranovskiy
+ Name        : RFterm.hrh
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : This file contains declarations for constants of RFterm.
  The file can be included in C++ or resource file.
@@ -17,9 +17,10 @@ enum TRFtermIds
 	{
 	EConnect = 0x6001, // start value must not be 0
 	EDisconnect,
+	EStart,
+	EStop,
 	ESend,
 	EClear,
-	ESettings,
 	EHelp,
 	EAbout
 	};

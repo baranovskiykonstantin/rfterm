@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name		: RFtermDocument.cpp
- Author	  : Konstantin Baranovskiy
+ Name        : RFtermDocument.cpp
+ Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : CRFtermDocument implementation
  ============================================================================

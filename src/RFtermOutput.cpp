@@ -1,17 +1,19 @@
 /*
- * RFtermOutput.cpp
- *
- *  Created on: 28 Feb 2020
+ ============================================================================
+ Name        : RFtermOutput.cpp
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : RFterm's output control.
+ ============================================================================
  */
 
 #include <eikenv.h>
 #include <txtfrmat.h>
 #include <gdi.h>
+#include <fbs.h>
 #include "RFterm.pan"
 #include "RFtermOutput.h"
-
-_LIT(KRFtermFontPath, "\\private\\ae7f53fa\\cour.ttf");
-_LIT(KRFtermFontName, "Courier New");
+#include "RFtermConstants.h"
 
 CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent)
 	{
@@ -31,7 +33,7 @@ CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent)
 void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	{
 	CEikEdwin::ConstructL(
-		ENoAutoSelection | ENoWrap | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor,
+		ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor,
 		0,
 		0,
 		0
@@ -58,11 +60,10 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	SetParaFormatLayer(pParaFormatLayer);
 	CleanupStack::Pop(pParaFormatLayer);
 
-
 	TInt fontLoadingError; 
 	fontLoadingError = CEikonEnv::Static()->ScreenDevice()->AddFile(
 		KRFtermFontPath, iRFtermFontID
-	); 
+	);
 	if (KErrNone != fontLoadingError)
 		{
 		Panic(ERFtermCannotLoadFont);
@@ -77,7 +78,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	charFormatMask.SetAttrib(EAttColor);
 //	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	charFormatMask.SetAttrib(EAttFontTypeface);
-	charFormat.iFontSpec.iHeight = 100;
+	charFormat.iFontSpec.iHeight = 116;
 	charFormatMask.SetAttrib(EAttFontHeight);
 	pCharFormatLayer->SetL(charFormat, charFormatMask);
 	SetCharFormatLayer(pCharFormatLayer);
@@ -87,8 +88,8 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	}
 
 CRFtermOutput::CRFtermOutput()
+	: iCurrentPrefix(KNullDesC)
 	{
-
 	}
 
 CRFtermOutput::~CRFtermOutput()
@@ -107,9 +108,21 @@ TBool CRFtermOutput::IsEmpty()
 
 void CRFtermOutput::Clear()
 	{
-	TInt textLength = iText->DocumentLength();
-	iText->DeleteL(0, textLength);
-	iTextView->HandleGlobalChangeL();
+	SetTextL(&KNullDesC);
+	HandleTextChangedL();
+	}
+
+void CRFtermOutput::ScrollToEnd()
+	{
+	TInt isScrolled;
+	do
+		{
+		isScrolled = iTextView->ScrollDisplayL(
+				TCursorPosition::EFLineDown);
+		}
+	while (isScrolled);
+	TInt lastPos = iText->DocumentLength();
+	SetSelectionL(lastPos, lastPos);
 	}
 
 void CRFtermOutput::AppendL(const TDesC& aBuf)
@@ -117,35 +130,77 @@ void CRFtermOutput::AppendL(const TDesC& aBuf)
 	TInt lastPos = iText->DocumentLength();
 	iText->InsertL(lastPos, aBuf);
 	iTextView->HandleGlobalChangeL();
+	ScrollToEnd();
 	}
 
-void CRFtermOutput::AppendLineL(const TDesC& aLine)
+void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 	{
-	AppendL(aLine);
-	AppendL(_L("\x2029")); //CEditableText::EParagraphDelimiter
-	}
-
-void CRFtermOutput::AppendTextL(const TDesC& aText)
-	{
-	_LIT(KLineForward, "\n");
-	HBufC* tempTextLine = HBufC::NewLC(aText.Length());
-	tempTextLine->Des().Copy(aText);
-	TInt lfPos = tempTextLine->Find(KLineForward);
-	if (KErrNotFound != lfPos)
+	if (iCurrentPrefix != aPrefix)
+		{
+		AppendL(KParagraphDelimeter);
+		AppendL(aPrefix);
+		}
+	
+	HBufC* tempText = HBufC::NewLC(aText.Length());
+	tempText->Des().Copy(aText);
+	
+	// Remove carriare return (CR).
+	TInt crPos = tempText->Find(KCR);
+	if (KErrNotFound != crPos)
 		{
 		do
 			{
-			AppendLineL(tempTextLine->Left(lfPos));
-			tempTextLine->Des().Copy(
-				tempTextLine->Mid(lfPos + KLineForward().Length())
-			);
-			lfPos = tempTextLine->Find(KLineForward);
+			tempText->Des().Replace(crPos, KCR().Length(), KNullDesC);
+			crPos = tempText->Find(KCR);
 			}
-		while (KErrNotFound != lfPos);
+		while (KErrNotFound != crPos);
 		}
-	if (tempTextLine->Length())
+	
+	// Replace line forward (LF) with paragraph delimeter.
+	TInt lfPos = tempText->Find(KLF);
+	if (KErrNotFound != lfPos)
 		{
-		AppendL(*tempTextLine);
+		if (lfPos > 0)
+			{
+			AppendL(tempText->Left(lfPos));
+			}
+		else
+			{
+			AppendL(KParagraphDelimeter);
+			AppendL(aPrefix);
+			}
+		tempText->Des().Copy(
+			tempText->Mid(lfPos + KLF().Length()));
+
+		lfPos = tempText->Find(KLF);
+		while (KErrNotFound != lfPos)
+			{
+			AppendL(KParagraphDelimeter);
+			AppendL(aPrefix);
+			AppendL(tempText->Left(lfPos));
+			tempText->Des().Copy(
+				tempText->Mid(lfPos + KLF().Length()));
+			lfPos = tempText->Find(KLF);
+			}
+		if (tempText->Length())
+			{
+			AppendL(KParagraphDelimeter);
+			AppendL(aPrefix);
+			AppendL(*tempText);
+			}
 		}
-	CleanupStack::PopAndDestroy(tempTextLine);
+	else
+		{
+		AppendL(*tempText);
+		}
+
+	CleanupStack::PopAndDestroy(tempText);
+	iCurrentPrefix.Set(aPrefix);
+	}
+
+void CRFtermOutput::AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefix)
+	{
+	iCurrentPrefix.Set(KNullDesC);
+	AppendTextL(aText, aPrefix);
+	iCurrentPrefix.Set(aPrefix);
 	}
