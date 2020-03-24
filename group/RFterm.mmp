@@ -69,6 +69,7 @@ LIBRARY			hlplch.lib
 LIBRARY			sdpagent.lib
 LIBRARY			sdpdatabase.lib
 LIBRARY			uiklaf.lib
+LIBRARY			ws32.lib
 
 LANG SC
 

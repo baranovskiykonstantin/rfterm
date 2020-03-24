@@ -51,11 +51,19 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	{
 	// Create a window for this application view
 	CreateWindowL();
-	
-	iRFtermOutput = CRFtermOutput::NewL(this);
 
 	// Set the windows size
 	SetRect(aRect);
+	
+	iRFtermOutput = CRFtermOutput::NewL(this, aRect);
+
+	// It's needed for iRFtermOutput->UpdateCursor (SetTextCursor)
+	iRFtermOutput->TextView()->SetDisplayContextL(
+			static_cast<CBitmapDevice*> (CEikonEnv::Static()->ScreenDevice()),
+			&Window(),
+			&iEikonEnv->RootWin(),
+			&iEikonEnv->WsSession()
+	);
 
 	iRFtermOutput->SetFocus(ETrue);
 
@@ -132,7 +140,6 @@ void CRFtermAppView::Draw(const TRect& /*aRect*/) const
 	// Clears the screen
 	gc.SetBrushColor(KRgbBlack);
 	gc.Clear(drawRect);
-
 	}
 
 // -----------------------------------------------------------------------------
@@ -143,14 +150,18 @@ void CRFtermAppView::Draw(const TRect& /*aRect*/) const
 void CRFtermAppView::SizeChanged()
 	{
 	if (iRFtermOutput) 
-		{ 
+		{
+		// The next line is important!
+		// Without it the custom text cursor gets disappeared on size changing.
+		iEikonEnv->RootWin().CancelTextCursor();
+
 		TRect clientRect = iAvkonAppUi->ClientRect(); 
 		TRect outputRect(clientRect.Size());
-		TInt scrollbarWidth = iRFtermOutput->ScrollBarFrame()->
-				VerticalScrollBar()->ScrollBarBreadth();
-		outputRect.SetWidth(outputRect.Width() - scrollbarWidth);
 		iRFtermOutput->SetRect(outputRect); 
-		} 
+		iRFtermOutput->UpdateVScrollBarL(ETrue);
+		iRFtermOutput->UpdateCursorL();
+		}
+
 	DrawNow();
 	}
 
@@ -163,13 +174,13 @@ void CRFtermAppView::SizeChanged()
 //
 void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	{
-	TInt KMaxDelta = 10;
+	TInt KMaxDelta = 15;
 
 	if (TPointerEvent::EButton1Down == aPointerEvent.iType)
 		{
 		if (iRFtermOutput->SelectionLength())
 			{
-			// Do not show send query if text selection is present.
+			// Do not show the send query if a text selection is present.
 			iPrevPointerPos.SetXY(-KMaxDelta, -KMaxDelta);
 			
 			}
@@ -183,7 +194,7 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		TPoint posDelta = iPrevPointerPos - aPointerEvent.iPosition;
 		if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
 			{
-			// Tap on output to send
+			// Tap output to send
 			iAvkonAppUi->HandleCommandL(ESend);
 			}
 		}

@@ -51,6 +51,15 @@ private:
 	// Functions from base classes
 
 	/**
+	* From CEikAppUi, handles key events.
+	* @param aKeyEvent Event to handled.
+	* @param aType Type of the key event. 
+	* @return Response code (EKeyWasConsumed, EKeyWasNotConsumed). 
+	*/
+	virtual TKeyResponse HandleKeyEventL(
+		const TKeyEvent& aKeyEvent,TEventCode aType );
+
+	/**
 	 * From CEikAppUi, HandleCommandL.
 	 * Takes care of command handling.
 	 * @param aCommand Command to be handled.

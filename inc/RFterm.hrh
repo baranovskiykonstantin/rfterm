@@ -21,6 +21,7 @@ enum TRFtermIds
 	EStop,
 	ESend,
 	EClear,
+	ESettings,
 	EHelp,
 	EAbout
 	};

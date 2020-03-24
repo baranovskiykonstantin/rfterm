@@ -45,7 +45,7 @@ void CRFtermAppUi::ConstructL()
 	{
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
-
+	
 	// Create view object
 	iAppView = CRFtermAppView::NewL(ClientRect());
 	AddToStackL(iAppView);
@@ -119,6 +119,28 @@ CRFtermAppUi::~CRFtermAppUi()
 		iAppView = NULL;
 		}
 
+	}
+
+// ----------------------------------------------------
+// CRFtermAppUi::HandleKeyEventL(
+//     const TKeyEvent& aKeyEvent,TEventCode aType)
+// takes care of key event handling
+// ----------------------------------------------------
+//
+TKeyResponse CRFtermAppUi::HandleKeyEventL(
+	const TKeyEvent& aKeyEvent,TEventCode aType)
+	{
+	if (aType == EEventKeyDown)
+		{
+		switch (aKeyEvent.iScanCode)
+			{
+			case EStdKeyEnter:
+				HandleCommandL(ESend);
+				break;
+			}
+		}
+	
+	return EKeyWasNotConsumed;
 	}
 
 // ------------------------------------------------------------------------------
@@ -305,7 +327,29 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case EClear:
 			{
-			iAppView->iRFtermOutput->Clear();
+			iAppView->iRFtermOutput->ClearL();
+			break;
+			}
+
+		case ESettings:
+			{
+	
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("***"), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Last string."), KPrefixIn);
 			break;
 			}
 

@@ -114,6 +114,11 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
+				command = ESettings;
+				txt = qtn_settings;
+				},
+		MENU_ITEM
+				{
 				command = EHelp;
 				txt = qtn_help;
 				},

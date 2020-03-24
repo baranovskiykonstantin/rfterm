@@ -15,22 +15,22 @@
 #include "RFtermOutput.h"
 #include "RFtermConstants.h"
 
-CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent)
+CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent, const TRect& aRect)
 	{
-	CRFtermOutput* self = CRFtermOutput::NewLC(aParent);
+	CRFtermOutput* self = CRFtermOutput::NewLC(aParent, aRect);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent)
+CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent, const TRect& aRect)
 	{
 	CRFtermOutput* self = new (ELeave) CRFtermOutput;
 	CleanupStack::PushL(self);
-	self->ConstructL(aParent);
+	self->ConstructL(aParent, aRect);
 	return self;
 	}
 
-void CRFtermOutput::ConstructL(const CCoeControl *aParent)
+void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 	{
 	CEikEdwin::ConstructL(
 		ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor,
@@ -39,11 +39,14 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 		0
 	);
 	SetContainerWindowL(*aParent);
+	// A rect placed at (0,0)
+	TRect rect(aRect.Size());
+	SetRect(rect);
 
 	CreateScrollBarFrameL();
 	ScrollBarFrame()->SetScrollBarVisibilityL(
 		CEikScrollBarFrame::EOff,
-		CEikScrollBarFrame::EOn
+		CEikScrollBarFrame::EAuto
 	);
 
 	SetBackgroundColorL(KRgbBlack);
@@ -62,8 +65,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 
 	TInt fontLoadingError; 
 	fontLoadingError = CEikonEnv::Static()->ScreenDevice()->AddFile(
-		KRFtermFontPath, iRFtermFontID
-	);
+		KRFtermFontPath, iRFtermFontID);
 	if (KErrNone != fontLoadingError)
 		{
 		Panic(ERFtermCannotLoadFont);
@@ -78,17 +80,27 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	charFormatMask.SetAttrib(EAttColor);
 //	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	charFormatMask.SetAttrib(EAttFontTypeface);
-	charFormat.iFontSpec.iHeight = 116;
+	charFormat.iFontSpec.iHeight = 120;
 	charFormatMask.SetAttrib(EAttFontHeight);
 	pCharFormatLayer->SetL(charFormat, charFormatMask);
 	SetCharFormatLayer(pCharFormatLayer);
 	CleanupStack::Pop(pCharFormatLayer);
 
 	SetAknEditorAllowedInputModes(EAknEditorNullInputMode);
+
+	iOutputCursor.iType = TTextCursor::ETypeRectangle;
+	iOutputCursor.iHeight = 1;
+	iOutputCursor.iAscent = -1;
+	iOutputCursor.iWidth = 10;
+	iOutputCursor.iFlags = 0;
+	iOutputCursor.iColor = KRgbWhite;
+
+	ClearL();
 	}
 
 CRFtermOutput::CRFtermOutput()
-	: iCurrentPrefix(KNullDesC)
+	: iCurrentPrefix(KPrefixIn)
+	, iIsVScrollBarShown(EFalse)
 	{
 	}
 
@@ -99,20 +111,81 @@ CRFtermOutput::~CRFtermOutput()
 
 TBool CRFtermOutput::IsEmpty()
 	{
-	if (iText->DocumentLength())
+	if (iText->DocumentLength() > iCurrentPrefix.Length())
 		{
 		return EFalse;
 		}
 	return ETrue;
 	}
 
-void CRFtermOutput::Clear()
+void CRFtermOutput::ClearL()
 	{
-	SetTextL(&KNullDesC);
+	SetTextL(&iCurrentPrefix);
 	HandleTextChangedL();
+	UpdateVScrollBarL();
+	UpdateCursorL();
 	}
 
-void CRFtermOutput::ScrollToEnd()
+void CRFtermOutput::UpdateVScrollBarL(TBool aIsSizeChanged)
+	{
+	TRect viewRect = iTextView->ViewRect();
+	TSize textSize;
+	iLayout->GetMinimumSizeL(viewRect.Width(), textSize);
+	if (textSize.iHeight > viewRect.Height())
+		{
+		if (!iIsVScrollBarShown or (iIsVScrollBarShown and aIsSizeChanged))
+			{
+			TRect outputRect = Rect();
+			TInt scrollbarWidth = ScrollBarFrame()->VerticalScrollBar()->ScrollBarBreadth();
+			outputRect.SetWidth(outputRect.Width() - scrollbarWidth);
+			SetRect(outputRect);
+			iIsVScrollBarShown = ETrue;
+			UpdateScrollBarsL();
+			}
+		}
+	else if (textSize.iHeight <= viewRect.Height() and iIsVScrollBarShown)
+		{
+		TRect outputRect = Rect();
+		TInt scrollbarWidth = ScrollBarFrame()->VerticalScrollBar()->ScrollBarBreadth();
+		outputRect.SetWidth(outputRect.Width() + scrollbarWidth);
+		SetRect(outputRect);
+		iIsVScrollBarShown = EFalse;
+		}
+	}
+
+void CRFtermOutput::UpdateCursorL(TBool aProcessLastLine)
+	{
+	TInt lastPos = iText->DocumentLength();
+	TPoint outputCursorPos;
+	iLayout->DocPosToXyPosL(lastPos, outputCursorPos);
+	
+	if (aProcessLastLine)
+		{
+		TRect firstLineRect;
+		iLayout->GetLineRect(0, firstLineRect);
+		TInt helfLineHeight = firstLineRect.Height() / 2;
+		
+		TRect outputRect = Rect();
+		
+		TInt bottomCursorOffset = outputRect.iBr.iY - outputCursorPos.iY;
+		
+		// Avoid partial visibility of the last text line at the bottom of the output.
+		if (bottomCursorOffset > -helfLineHeight && bottomCursorOffset < helfLineHeight)
+			{
+			iTextView->ScrollDisplayL(
+					TCursorPosition::EFLineDown,
+					CTextLayout::EFAllowScrollingBlankSpace);
+			iLayout->DocPosToXyPosL(lastPos, outputCursorPos);
+			}
+		}
+	
+	iEikonEnv->RootWin().SetTextCursor(
+			Window(),
+			outputCursorPos,
+			iOutputCursor);
+	}
+
+void CRFtermOutput::ScrollToEndL()
 	{
 	TInt isScrolled;
 	do
@@ -122,7 +195,10 @@ void CRFtermOutput::ScrollToEnd()
 		}
 	while (isScrolled);
 	TInt lastPos = iText->DocumentLength();
+//	SetCursorPosL(lastPos, EFalse);
 	SetSelectionL(lastPos, lastPos);
+	UpdateVScrollBarL();
+	UpdateCursorL(ETrue);
 	}
 
 void CRFtermOutput::AppendL(const TDesC& aBuf)
@@ -130,7 +206,7 @@ void CRFtermOutput::AppendL(const TDesC& aBuf)
 	TInt lastPos = iText->DocumentLength();
 	iText->InsertL(lastPos, aBuf);
 	iTextView->HandleGlobalChangeL();
-	ScrollToEnd();
+	ScrollToEndL();
 	}
 
 void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
@@ -202,5 +278,44 @@ void CRFtermOutput::AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefi
 	{
 	iCurrentPrefix.Set(KNullDesC);
 	AppendTextL(aText, aPrefix);
-	iCurrentPrefix.Set(aPrefix);
+	}
+
+void CRFtermOutput::HandleScrollEventL(CEikScrollBar * aScrollBar, TEikScrollEvent aEventType)
+	{
+	CEikEdwin::HandleScrollEventL(aScrollBar, aEventType);
+	if (aEventType == EEikScrollThumbReleaseVert)
+		{
+		UpdateCursorL(ETrue);
+		
+		}
+	else
+		{
+		UpdateCursorL(EFalse);
+		}
+	}
+
+void CRFtermOutput::HandlePointerEventL(const TPointerEvent &aPointerEvent)
+	{
+	CEikEdwin::HandlePointerEventL(aPointerEvent);
+	if (Selection().Length())
+		{
+		UpdateCursorL();
+		}
+	}
+
+TKeyResponse CRFtermOutput::OfferKeyEventL(
+	const TKeyEvent& aKeyEvent, TEventCode aType)
+	{
+	TKeyResponse response = CEikEdwin::OfferKeyEventL(aKeyEvent, aType);
+	if (aType == EEventKey)
+		{
+		switch (aKeyEvent.iScanCode)
+			{
+			case EStdKeyUpArrow:
+			case EStdKeyDownArrow:
+				UpdateCursorL();
+				break;
+			}
+		}
+	return response;
 	}

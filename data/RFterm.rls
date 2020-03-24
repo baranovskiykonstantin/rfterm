@@ -24,6 +24,8 @@
 #define qtn_send "Send"
 #define qtn_clear "Clear"
 
+#define qtn_settings "Settings"
+
 #define qtn_help "Help"
 #define qtn_about "About"
 
