@@ -193,6 +193,7 @@ RESOURCE TBUF r_str_releasing_conn { buf=qtn_str_releasing_conn; }
 RESOURCE TBUF r_str_connecting { buf=qtn_str_connecting; }
 RESOURCE TBUF r_str_get_port { buf=qtn_str_get_port; }
 RESOURCE TBUF r_str_accept_next_conn { buf=qtn_str_accept_next_conn; }
+RESOURCE TBUF r_str_bell { buf=qtn_str_bell; }
 //RESOURCE TBUF r_str_ { buf=qtn_str_; }
 
 RESOURCE TBUF r_err_no_device_selected { buf=qtn_err_no_device_selected; }

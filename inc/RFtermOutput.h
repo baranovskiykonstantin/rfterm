@@ -37,6 +37,14 @@ private:
 	void ConstructL(const CCoeControl *aParent, const TRect& aRect);
 	CRFtermOutput();
 	void AppendL(const TDesC& aBuf);
+	/*
+	 * Find control character (one of KCtrlChars).
+	 * aText - the text for searching;
+	 * aCtrlChar - the special character that has been found;
+	 * aPos - the index of aCtrlChar in aText;
+	 * Returns ETrue if found and EFalse otherwise.
+	 */
+	TBool TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& aPos);
 	void ScrollToEndL();
 	void HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType);
 	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
@@ -46,6 +54,8 @@ private:
 	TPtrC iCurrentPrefix;
 	TTextCursor iOutputCursor;
 	TBool iIsVScrollBarShown;
+	TInt iLastLineStartPos;
+	TInt iLastLineCursorPos;
 	};
 
 #endif /* RFTERMOUTPUT_H */

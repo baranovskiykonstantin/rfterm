@@ -57,6 +57,7 @@
 #define qtn_str_connecting "Connecting to service"
 #define qtn_str_get_port "Get port = "
 #define qtn_str_accept_next_conn "Accept next connection"
+#define qtn_str_bell "RFterm: BELL"
 //#define qtn_str_
 
 #define qtn_err_no_device_selected "No device selected"

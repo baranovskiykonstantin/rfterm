@@ -11,6 +11,10 @@
 #include <txtfrmat.h>
 #include <gdi.h>
 #include <fbs.h>
+#include <stringloader.h>
+#include <aknglobalnote.h> 
+#include <avkon.hrh>
+#include <RFterm_0xae7f53fa.rsg>
 #include "RFterm.pan"
 #include "RFtermOutput.h"
 #include "RFtermConstants.h"
@@ -101,6 +105,8 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 CRFtermOutput::CRFtermOutput()
 	: iCurrentPrefix(KPrefixIn)
 	, iIsVScrollBarShown(EFalse)
+	, iLastLineStartPos(0)
+	, iLastLineCursorPos(0)
 	{
 	}
 
@@ -121,6 +127,8 @@ TBool CRFtermOutput::IsEmpty()
 void CRFtermOutput::ClearL()
 	{
 	SetTextL(&iCurrentPrefix);
+	iLastLineStartPos = iText->DocumentLength();
+	iLastLineCursorPos = iLastLineStartPos;
 	HandleTextChangedL();
 	UpdateVScrollBarL();
 	UpdateCursorL();
@@ -155,9 +163,8 @@ void CRFtermOutput::UpdateVScrollBarL(TBool aIsSizeChanged)
 
 void CRFtermOutput::UpdateCursorL(TBool aProcessLastLine)
 	{
-	TInt lastPos = iText->DocumentLength();
 	TPoint outputCursorPos;
-	iLayout->DocPosToXyPosL(lastPos, outputCursorPos);
+	iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
 	
 	if (aProcessLastLine)
 		{
@@ -175,7 +182,7 @@ void CRFtermOutput::UpdateCursorL(TBool aProcessLastLine)
 			iTextView->ScrollDisplayL(
 					TCursorPosition::EFLineDown,
 					CTextLayout::EFAllowScrollingBlankSpace);
-			iLayout->DocPosToXyPosL(lastPos, outputCursorPos);
+			iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
 			}
 		}
 	
@@ -194,78 +201,155 @@ void CRFtermOutput::ScrollToEndL()
 				TCursorPosition::EFLineDown);
 		}
 	while (isScrolled);
-	TInt lastPos = iText->DocumentLength();
-//	SetCursorPosL(lastPos, EFalse);
-	SetSelectionL(lastPos, lastPos);
+	iLastLineCursorPos = iText->DocumentLength();
+	SetCursorPosL(iLastLineCursorPos, EFalse);
+//	SetSelectionL(iLastLineCursorPos, lastPos);
 	UpdateVScrollBarL();
-	UpdateCursorL(ETrue);
+	UpdateCursorL();
 	}
 
 void CRFtermOutput::AppendL(const TDesC& aBuf)
 	{
 	TInt lastPos = iText->DocumentLength();
-	iText->InsertL(lastPos, aBuf);
+	if (lastPos > iLastLineCursorPos)
+		{
+		// Replace the text after cursor
+		TInt tailLength = lastPos - iLastLineCursorPos;
+		iText->DeleteL(iLastLineCursorPos, Min(tailLength, aBuf.Length()));
+		}
+	iText->InsertL(iLastLineCursorPos, aBuf);
 	iTextView->HandleGlobalChangeL();
-	ScrollToEndL();
+	if (aBuf == KParagraphDelimeter)
+		{
+		ScrollToEndL();
+		}
+	else
+		{
+		iLastLineCursorPos += aBuf.Length();
+		UpdateCursorL();
+		}
+	}
+
+TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& aPos)
+	{
+	aPos = KErrNotFound;
+	TPtrC subText(aText);
+	TInt pos;
+
+	for (TInt i = 0; i < KCtrlChars().Length(); i++)
+		{
+		TBufC<1> specChar;
+		specChar = KCtrlChars().Mid(i, 1);
+		pos = subText.Find(specChar);
+		if (KErrNotFound != pos)
+			{
+			aPos = pos;
+			aCtrlChar = specChar;
+			if (pos == 0) break;
+			subText.Set(subText.Left(aPos));
+			}
+		}
+
+	return (KErrNotFound == aPos) ? EFalse : ETrue;
 	}
 
 void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 	{
 	if (iCurrentPrefix != aPrefix)
 		{
+		iLastLineCursorPos = iText->DocumentLength();
 		AppendL(KParagraphDelimeter);
 		AppendL(aPrefix);
+		iLastLineStartPos = iText->DocumentLength();
+		iLastLineCursorPos = iLastLineStartPos;
 		}
 	
 	HBufC* tempText = HBufC::NewLC(aText.Length());
 	tempText->Des().Copy(aText);
 	
-	// Remove carriare return (CR).
-	TInt crPos = tempText->Find(KCR);
-	if (KErrNotFound != crPos)
-		{
-		do
-			{
-			tempText->Des().Replace(crPos, KCR().Length(), KNullDesC);
-			crPos = tempText->Find(KCR);
-			}
-		while (KErrNotFound != crPos);
-		}
+	TBuf<1> specChar;
+	TInt specCharPos;
 	
-	// Replace line forward (LF) with paragraph delimeter.
-	TInt lfPos = tempText->Find(KLF);
-	if (KErrNotFound != lfPos)
+	while (TextHasCtrlChar(*tempText, specChar, specCharPos))
 		{
-		if (lfPos > 0)
+		if (specCharPos > 0)
 			{
-			AppendL(tempText->Left(lfPos));
+			AppendL(tempText->Left(specCharPos));
+			}
+		
+		if (specChar.Compare(KCR) == 0)
+			{
+			iLastLineCursorPos = iLastLineStartPos;
+			UpdateCursorL();
+			}
+		else if (specChar.Compare(KLF) == 0 || specChar.Compare(KLT) == 0)
+			{
+			TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
+
+			// Go to next line
+			iLastLineCursorPos = iText->DocumentLength();
+			AppendL(KParagraphDelimeter);
+			AppendL(aPrefix);
+			iLastLineStartPos = iText->DocumentLength();
+			iLastLineCursorPos = iLastLineStartPos;
+
+			if (indentLength)
+				{
+				HBufC* indent = HBufC::NewLC(indentLength);
+				TChar space(0x20);
+				indent->Des().SetLength(indentLength);
+				indent->Des().Fill(space);
+				AppendL(*indent);
+				CleanupStack::PopAndDestroy(indent);
+				}
+			}
+		else if (specChar.Compare(KTB) == 0)
+			{
+			TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
+			TInt tabLength = KTabWidth - (indentLength % KTabWidth);
+			TChar space(0x20);
+			HBufC* tab = HBufC::NewLC(tabLength);
+			tab->Des().SetLength(tabLength);
+			tab->Des().Fill(space);
+			AppendL(*tab);
+			CleanupStack::PopAndDestroy(tab);
+			}
+		else if (specChar.Compare(KBS) == 0)
+			{
+			if (iLastLineCursorPos > iLastLineStartPos)
+				{
+				iLastLineCursorPos -= 1;
+				UpdateCursorL();
+				}
+			}
+		else if (specChar.Compare(KBL) == 0)
+			{
+			HBufC* bellNotify = StringLoader::LoadLC (R_STR_BELL);
+			TRequestStatus status;
+			CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
+			globalNote->SetTone(EAknNoteDialogWarningTone);
+			globalNote->ShowNoteL(status, EAknGlobalInformationNote, *bellNotify);
+			User::WaitForRequest(status);
+			CleanupStack::PopAndDestroy(2); // bellNotify, globalNote
+			}
+		else if (specChar.Compare(KFF) == 0)
+			{
+			ClearL();
+			}
+		else if (specChar.Compare(KNL) == 0)
+			{
+			// Do nothing
 			}
 		else
 			{
-			AppendL(KParagraphDelimeter);
-			AppendL(aPrefix);
+			Panic(ERFtermOutputBadCtrlChar);
 			}
-		tempText->Des().Copy(
-			tempText->Mid(lfPos + KLF().Length()));
 
-		lfPos = tempText->Find(KLF);
-		while (KErrNotFound != lfPos)
-			{
-			AppendL(KParagraphDelimeter);
-			AppendL(aPrefix);
-			AppendL(tempText->Left(lfPos));
-			tempText->Des().Copy(
-				tempText->Mid(lfPos + KLF().Length()));
-			lfPos = tempText->Find(KLF);
-			}
-		if (tempText->Length())
-			{
-			AppendL(KParagraphDelimeter);
-			AppendL(aPrefix);
-			AppendL(*tempText);
-			}
+		tempText->Des().Copy(
+			tempText->Mid(specCharPos + specChar.Length()));
 		}
-	else
+
+	if (tempText->Length())
 		{
 		AppendL(*tempText);
 		}

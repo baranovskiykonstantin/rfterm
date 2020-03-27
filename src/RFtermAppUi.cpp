@@ -348,8 +348,8 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Last string."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("\tT\tes\tt st\tring..."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Last\ntest string.\r\n!!!\r.."), KPrefixIn);
 			break;
 			}
 
