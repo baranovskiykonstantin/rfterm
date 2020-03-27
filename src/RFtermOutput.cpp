@@ -360,7 +360,10 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 
 void CRFtermOutput::AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefix)
 	{
-	iCurrentPrefix.Set(KNullDesC);
+	if ((iLastLineCursorPos > iLastLineStartPos) && (iCurrentPrefix == aPrefix))
+		{
+		iCurrentPrefix.Set(KNullDesC);
+		}
 	AppendTextL(aText, aPrefix);
 	}
 

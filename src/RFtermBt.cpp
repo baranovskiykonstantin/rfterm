@@ -612,14 +612,6 @@ void CRFtermBt::SetSecurityWithChannelL(
 	// Set the Port to listen to.
 	listeningAddress.SetPort(channel);
 
-	// Write Log events
-	HBufC* strGetPort = StringLoader::LoadLC (R_STR_GET_PORT);
-	TBuf<10> channelStr;
-	channelStr.Num(channel);
-	iRFtermOutput->AppendTextL(*strGetPort, KPrefixNote);
-	iRFtermOutput->AppendTextOnNewLineL(channelStr, KPrefixNote);
-	CleanupStack::PopAndDestroy(strGetPort);
-
 	User::LeaveIfError(iSocket.Bind(listeningAddress));
 	User::LeaveIfError(iSocket.Listen(KListeningQueSize));
 
@@ -640,11 +632,17 @@ void CRFtermBt::SetSecurityWithChannelL(
 	SetActive();
 
 	// Write Log events
-	HBufC* acceptNextConn = StringLoader::LoadLC (
-		R_STR_ACCEPT_NEXT_CONN);
-	iRFtermOutput->AppendTextOnNewLineL(*acceptNextConn, KPrefixNote);
-	CleanupStack::PopAndDestroy(acceptNextConn);
+	HBufC* strWaitingConn = StringLoader::LoadLC (
+		R_STR_WAITING_CONN);
+	iRFtermOutput->AppendTextOnNewLineL(*strWaitingConn, KPrefixNote);
+	CleanupStack::PopAndDestroy(strWaitingConn);
 
+	HBufC* strPortNumber = StringLoader::LoadLC (R_STR_PORT_NUMBER);
+	TBuf<10> channelStr;
+	channelStr.Num(channel);
+	iRFtermOutput->AppendTextOnNewLineL(*strPortNumber, KPrefixNote);
+	iRFtermOutput->AppendTextL(channelStr, KPrefixNote);
+	CleanupStack::PopAndDestroy(strPortNumber);
 
 	// Set the security according to.
 	TBTServiceSecurity serviceSecurity;
