@@ -12,7 +12,6 @@
 #include <gdi.h>
 #include <fbs.h>
 #include <stringloader.h>
-#include <aknglobalnote.h> 
 #include <avkon.hrh>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFterm.pan"
@@ -100,6 +99,9 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 	iOutputCursor.iColor = KRgbWhite;
 
 	ClearL();
+
+	iBellNote = CAknGlobalNote::NewL();
+	iBellNote->SetTone(EAknNoteDialogWarningTone);
 	}
 
 CRFtermOutput::CRFtermOutput()
@@ -113,6 +115,8 @@ CRFtermOutput::CRFtermOutput()
 CRFtermOutput::~CRFtermOutput()
 	{
 	CEikonEnv::Static()->ScreenDevice()->RemoveFile(iRFtermFontID); 
+
+	delete iBellNote;
 	}
 
 TBool CRFtermOutput::IsEmpty()
@@ -250,7 +254,11 @@ TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& 
 			}
 		}
 
-	return (KErrNotFound == aPos) ? EFalse : ETrue;
+	if (KErrNotFound == aPos)
+		{
+		return EFalse;
+		}
+	return ETrue;
 	}
 
 void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
@@ -324,13 +332,10 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 			}
 		else if (specChar.Compare(KBL) == 0)
 			{
-			HBufC* bellNotify = StringLoader::LoadLC (R_STR_BELL);
-			TRequestStatus status;
-			CAknGlobalNote* globalNote = CAknGlobalNote::NewLC();
-			globalNote->SetTone(EAknNoteDialogWarningTone);
-			globalNote->ShowNoteL(status, EAknGlobalInformationNote, *bellNotify);
-			User::WaitForRequest(status);
-			CleanupStack::PopAndDestroy(2); // bellNotify, globalNote
+			iBellNote->CancelNoteL(iBellNoteID);
+			HBufC* bellNotify = StringLoader::LoadLC(R_STR_BELL);
+			iBellNoteID = iBellNote->ShowNoteL(EAknGlobalInformationNote, *bellNotify);
+			CleanupStack::PopAndDestroy(bellNotify);
 			}
 		else if (specChar.Compare(KFF) == 0)
 			{

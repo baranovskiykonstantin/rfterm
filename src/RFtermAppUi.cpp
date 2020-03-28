@@ -16,14 +16,13 @@
 #include <s32file.h>
 #include <hlplch.h>
 
-#include <rfterm_0xae7f53fa.rsg>
+#include <RFterm_0xae7f53fa.rsg>
 
 #ifdef _HELP_AVAILABLE_
 #include "RFterm_0xae7f53fa.hlp.hrh"
 #endif
 #include "RFterm.hrh"
 #include "RFterm.pan"
-#include "RFterm_0xae7f53fa.rsg"
 #include "RFtermApplication.h"
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
@@ -312,12 +311,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			if(iBtClient->IsConnected())
 				{
 				TBuf<KRFtermTextBufLength> text;
-				if (iAppView->ShowDataQueryL(
-						R_DIALOG_DATA_QUERY,
-						0,
-						0,
-						KRFtermTextBufLength,
-						text))
+				if (iAppView->ShowTextQueryL(KNullDesC, text))
 					{
 					iBtClient->SendMessageL(text);
 					}
@@ -334,7 +328,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 		case ESettings:
 			{
 	
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("***"), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("***\a"), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
@@ -349,7 +343,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("\tT\tes\tt st\tring..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Last\ntest string.\r\n!!!\r.."), KPrefixIn);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Last\ntest string.\r\n!!!\r..\a"), KPrefixIn);
 			break;
 			}
 

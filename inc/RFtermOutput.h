@@ -11,6 +11,7 @@
 #define RFTERMOUTPUT_H
 
 #include <eikedwin.h>
+#include <aknglobalnote.h> 
 
 class CRFtermOutput : public CEikEdwin
 	{
@@ -56,6 +57,8 @@ private:
 	TBool iIsVScrollBarShown;
 	TInt iLastLineStartPos;
 	TInt iLastLineCursorPos;
+	CAknGlobalNote* iBellNote;
+	TInt iBellNoteID;
 	};
 
 #endif /* RFTERMOUTPUT_H */

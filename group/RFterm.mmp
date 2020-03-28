@@ -26,7 +26,7 @@ SOURCE			RFtermBtServiceSearcher.cpp
 SOURCE			RFtermSdpAttributeParser.cpp
 SOURCE			RFtermServiceAdvertiser.cpp
 SOURCE			RFtermServiceSearcher.cpp
-SOURCE			RFtermSendQueryDialog.cpp
+SOURCE			RFtermTextQueryDialog.cpp
 
 SOURCEPATH		..\data
 

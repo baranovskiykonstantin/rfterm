@@ -45,7 +45,7 @@
 #define qtn_rfterm_service_description "RFterm application"
 
 // Dialogs
-#define qtn_str_data_query_label "Send:"
+#define qtn_str_text_query_label "Send:"
 
 // Messages
 #define qtn_str_disconnected "Disconnected"

@@ -1,28 +1,28 @@
 /*
  ============================================================================
- Name        : RFtermSendQueryDialog.h
+ Name        : RFtermTextQueryDialog.h
  Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Query of send data.
  ============================================================================
  */
 
-#ifndef RFTERMSENDQUERYDIALOG_H
-#define RFTERMSENDQUERYDIALOG_H
+#ifndef RFTERMTEXTQUERYDIALOG_H
+#define RFTERMTEXTQUERYDIALOG_H
 
 #include <AknQueryDialog.h>
 
-class CRFtermSendQueryDialog: public CAknTextQueryDialog
+class CRFtermTextQueryDialog: public CAknTextQueryDialog
 	{
 public:
-	static CRFtermSendQueryDialog* NewL(TDes &aDataText);
+	static CRFtermTextQueryDialog* NewL(TDes &aDataText);
 	
 protected:
 	virtual void UpdateLeftSoftKeyL();
 	
 private:
-	CRFtermSendQueryDialog(TDes &aDataText);
-	~CRFtermSendQueryDialog();
+	CRFtermTextQueryDialog(TDes &aDataText);
+	~CRFtermTextQueryDialog();
 	};
 
-#endif /* RFTERMSENDQUERYDIALOG_H */
+#endif /* RFTERMTEXTQUERYDIALOG_H */

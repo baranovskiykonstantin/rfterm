@@ -182,7 +182,7 @@ RESOURCE TBUF r_msg_connected_text { buf=qtn_msg_connected; }
 RESOURCE TBUF r_rfterm_service_name { buf=qtn_rfterm_service_name; }
 RESOURCE TBUF r_rfterm_service_description { buf=qtn_rfterm_service_description; }
 
-RESOURCE TBUF r_str_data_query_label { buf=qtn_str_data_query_label; }
+RESOURCE TBUF r_str_text_query_label { buf=qtn_str_text_query_label; }
 
 RESOURCE TBUF r_str_disconnected { buf=qtn_str_disconnected; }
 RESOURCE TBUF r_str_disconnect_complete { buf=qtn_str_disconnect_complete; }
@@ -229,13 +229,13 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 
 //----------------------------------------------------
 //
-//    r_chat_data_query
-//    Recource of Data query
+//    r_chat_text_query
+//    Recource of Text query
 //
 //----------------------------------------------------
 //
 
-RESOURCE DIALOG r_dialog_data_query
+RESOURCE DIALOG r_dialog_text_query
 	{
 	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
@@ -249,7 +249,7 @@ RESOURCE DIALOG r_dialog_data_query
 			control = AVKON_DATA_QUERY
 				{
 				layout = EDataLayout;
-				label = qtn_str_data_query_label;
+				label = qtn_str_text_query_label;
 				control = EDWIN
 					{
 					flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable | EEikEdwinOnlyASCIIChars;

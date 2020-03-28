@@ -10,9 +10,11 @@
 // INCLUDE FILES
 #include <coemain.h>
 #include <aknappui.h>
+#include <stringloader.h>
+#include <RFterm_0xae7f53fa.rsg>
 #include "RFtermAppView.h"
 #include "RFtermConstants.h"
-#include "RFtermSendQueryDialog.h"
+#include "RFtermTextQueryDialog.h"
 #include "RFterm.pan"
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -208,40 +210,20 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 // Display of Data Query.
 // ----------------------------------------------------------------------------
 //
-TBool CRFtermAppView::ShowDataQueryL(
-	const TInt aQueryResourceId,
-	const TInt aTextResourceId,
-	const TInt aPromptResoureId,
-	const TInt aMaxLength,
-	TDes& aText)
+TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 	{
 	
 	iDisplayDialog = ETrue;
 
-	TBuf<KRFtermTextBufLength> textData;
+	TBuf<KRFtermTextBufLength> textData(aInitialText);
 	
-	if (aTextResourceId)
-		{
-		iCoeEnv->ReadResourceL(textData, aTextResourceId);
-		}
-	
-	CRFtermSendQueryDialog* dlg = CRFtermSendQueryDialog::NewL(textData);
+	CRFtermTextQueryDialog* dlg = CRFtermTextQueryDialog::NewL(textData);
 	CleanupStack::PushL(dlg);
 
-	if (aPromptResoureId)
-		{
-		TBuf<KRFtermTextBufLength> prompt;
-		iCoeEnv->ReadResourceL(prompt, aTextResourceId);
-		dlg->SetPromptL(prompt);
-		}
+	dlg->SetMaxLength(KRFtermTextBufLength);
 
-	if (aMaxLength)
-		{
-		dlg->SetMaxLength(aMaxLength);
-		}
-		
 	CleanupStack::Pop(dlg);
-	TBool answer(dlg->ExecuteLD(aQueryResourceId));
+	TBool answer(dlg->ExecuteLD(R_DIALOG_TEXT_QUERY));
 	
 	iDisplayDialog = EFalse;
 

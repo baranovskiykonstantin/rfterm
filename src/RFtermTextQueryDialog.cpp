@@ -1,30 +1,30 @@
 /*
  ============================================================================
- Name        : RFtermSendQueryDialog.cpp
+ Name        : RFtermTextQueryDialog.cpp
  Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : Query of send data.
  ============================================================================
  */
 
-#include "RFtermSendQueryDialog.h"
+#include "RFtermTextQueryDialog.h"
 
-CRFtermSendQueryDialog* CRFtermSendQueryDialog::NewL(TDes &aDataText)
+CRFtermTextQueryDialog* CRFtermTextQueryDialog::NewL(TDes &aDataText)
 	{
-	CRFtermSendQueryDialog* self = new (ELeave) CRFtermSendQueryDialog(aDataText);
+	CRFtermTextQueryDialog* self = new (ELeave) CRFtermTextQueryDialog(aDataText);
 	return self;
 	}
 
-CRFtermSendQueryDialog::CRFtermSendQueryDialog(TDes &aDataText)
+CRFtermTextQueryDialog::CRFtermTextQueryDialog(TDes &aDataText)
 	: CAknTextQueryDialog(aDataText)
 	{
 	}
 
-CRFtermSendQueryDialog::~CRFtermSendQueryDialog()
+CRFtermTextQueryDialog::~CRFtermTextQueryDialog()
 	{
 	}
 
-void CRFtermSendQueryDialog::UpdateLeftSoftKeyL()
+void CRFtermTextQueryDialog::UpdateLeftSoftKeyL()
 	{
 	// Do not hide OK button. Allow empty input.
 	}

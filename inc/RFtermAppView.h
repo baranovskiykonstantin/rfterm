@@ -103,20 +103,12 @@ public: // from CCoeControl
 	
 public: // New functions
 	/**
-	* ShowDataQueryL()
-	* Show data query.
-	* @param aQueryResourceId the id of the query
-	* @param aTextResourceId for inial value
-	* @param aPromptResoureId for prompt
-	* @param aMaxLength sets up the length of the character
+	* ShowTextQueryL()
+	* Show text query.
+	* @param aInitialText for inial value
 	* @param aText text of the query
 	*/
-	TBool ShowDataQueryL(
-		const TInt aQueryResourceId,
-		const TInt aTextResourceId,
-		const TInt aPromptResoureId,
-		const TInt aMaxLength,
-		TDes& aText);
+	TBool ShowTextQueryL(const TDesC& aInitialText, TDes& aText);
 
 private:
 	// Constructors
