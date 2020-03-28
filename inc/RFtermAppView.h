@@ -110,6 +110,13 @@ public: // New functions
 	*/
 	TBool ShowTextQueryL(const TDesC& aInitialText, TDes& aText);
 
+	/**
+	* ShowHistoryQueryL()
+	* Show history query.
+	* @param aText chosen text from history
+	*/
+	TBool ShowHistoryQueryL(TDes& aText);
+
 private:
 	// Constructors
 
@@ -135,18 +142,14 @@ private:
 	 */
 	TPoint iPrevPointerPos;
 	
+	CDesCArraySeg* iMessageHistoryArray;
+	
 public:
 	
 	/**
 	* iRFtermOutput
 	*/
 	CRFtermOutput* iRFtermOutput;
-
-	/**
-	* iDisplayDialog
-	* boolean for Display Dialog
-	*/
-	TBool iDisplayDialog;
 
 	};
 

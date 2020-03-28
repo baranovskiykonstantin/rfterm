@@ -48,6 +48,8 @@ _LIT(KNL, "\0"); // NULL ^@
 _LIT(KCRLF, "\r\n");
 _LIT(KParagraphDelimeter, "\x2029"); //CEditableText::EParagraphDelimiter
 
-const TInt KTabWidth = 8;
+const TInt KTabWidth = 4;
+
+const TInt KMessageHistorySize = 8;
 
 #endif /* RFTERMCONSTANTS_H */

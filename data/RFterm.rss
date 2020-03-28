@@ -7,7 +7,7 @@
 ============================================================================
 */
 //  RESOURCE IDENTIFIER
-NAME RFTE	// 4 letter ID
+NAME RFTM	// 4 letter ID
 
 
 //  INCLUDES
@@ -85,6 +85,7 @@ RESOURCE MENU_PANE r_menu
 		MENU_ITEM
 				{
 				command = ESend;
+				cascade = r_send_menu;
 				txt = qtn_send;
 				},
 		MENU_ITEM
@@ -131,6 +132,28 @@ RESOURCE MENU_PANE r_menu
 				{
 				command = EAknSoftkeyExit;
 				txt = qtn_exit;
+				}
+		};
+	}
+
+RESOURCE MENU_PANE r_send_menu
+	{
+	items =
+		{
+		MENU_ITEM
+				{
+				command = EMessage;
+				txt = qtn_message;
+				},
+		MENU_ITEM
+				{
+				command = EHistory;
+				txt = qtn_history;
+				},
+		MENU_ITEM
+				{
+				command = ECtrlChar;
+				txt = qtn_ctrl_char;
 				}
 		};
 	}
@@ -183,6 +206,7 @@ RESOURCE TBUF r_rfterm_service_name { buf=qtn_rfterm_service_name; }
 RESOURCE TBUF r_rfterm_service_description { buf=qtn_rfterm_service_description; }
 
 RESOURCE TBUF r_str_text_query_label { buf=qtn_str_text_query_label; }
+RESOURCE TBUF r_str_history_query_label { buf=qtn_str_history_query_label; }
 
 RESOURCE TBUF r_str_disconnected { buf=qtn_str_disconnected; }
 RESOURCE TBUF r_str_disconnect_complete { buf=qtn_str_disconnect_complete; }
@@ -229,7 +253,7 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 
 //----------------------------------------------------
 //
-//    r_chat_text_query
+//    r_dialog_text_query
 //    Recource of Text query
 //
 //----------------------------------------------------
@@ -265,6 +289,34 @@ RESOURCE DIALOG r_dialog_text_query
 					// It's calculable from LAF
 					base_line_delta = 21;
 					};
+				};
+			}
+		};
+	}
+
+//----------------------------------------------------
+//
+//    r_dialog_text_query
+//    Recource of Message History query
+//
+//----------------------------------------------------
+//
+
+RESOURCE DIALOG r_dialog_history_query
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items =
+		{
+		AVKON_LIST_QUERY_DLG_LINE
+			{
+			control = AVKON_LIST_QUERY_CONTROL
+				{
+				listtype = EAknCtSinglePopupMenuListBox;
+				listbox = AVKON_LIST_QUERY_LIST
+					{
+					};
+				heading = qtn_str_history_query_label;
 				};
 			}
 		};

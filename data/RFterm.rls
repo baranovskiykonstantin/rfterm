@@ -22,6 +22,10 @@
 #define qtn_stop "Stop"
 
 #define qtn_send "Send"
+#define qtn_message "Message"
+#define qtn_history "Message from history"
+#define qtn_ctrl_char "Control character"
+
 #define qtn_clear "Clear"
 
 #define qtn_settings "Settings"
@@ -46,6 +50,7 @@
 
 // Dialogs
 #define qtn_str_text_query_label "Send:"
+#define qtn_str_history_query_label "Message History"
 
 // Messages
 #define qtn_str_disconnected "Disconnected"

@@ -307,6 +307,11 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ESend:
 			{
+			break;
+			}
+
+		case EMessage:
+			{
 //			iAppView->iRFtermOutput->AppendLineL(_L("ESend"), KPrefixNote);
 			if(iBtClient->IsConnected())
 				{
@@ -316,6 +321,24 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 					iBtClient->SendMessageL(text);
 					}
 				}
+			break;
+			}
+
+		case EHistory:
+			{
+			if(iBtClient->IsConnected())
+				{
+				TBuf<KRFtermTextBufLength> text;
+				if (iAppView->ShowHistoryQueryL(text))
+					{
+					iBtClient->SendMessageL(text);
+					}
+				}
+			break;
+			}
+
+		case ECtrlChar:
+			{
 			break;
 			}
 

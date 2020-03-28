@@ -11,6 +11,7 @@
 #include <coemain.h>
 #include <aknappui.h>
 #include <stringloader.h>
+#include <aknlistquerydialog.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermAppView.h"
 #include "RFtermConstants.h"
@@ -68,6 +69,8 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	);
 
 	iRFtermOutput->SetFocus(ETrue);
+	
+	iMessageHistoryArray = new (ELeave) CDesCArraySeg(KMessageHistorySize);
 
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
@@ -92,6 +95,9 @@ CRFtermAppView::~CRFtermAppView()
 	{
 	delete iRFtermOutput;
 	iRFtermOutput = NULL;
+	
+	delete iMessageHistoryArray;
+	iMessageHistoryArray = NULL;
 	}
 
 // ----------------------------------------------------------------------------
@@ -197,7 +203,7 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
 			{
 			// Tap output to send
-			iAvkonAppUi->HandleCommandL(ESend);
+			iAvkonAppUi->HandleCommandL(EMessage);
 			}
 		}
 
@@ -206,15 +212,12 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	}
 
 // ----------------------------------------------------------------------------
-// CRFtermAppView::ShowDataQueryL()
-// Display of Data Query.
+// CRFtermAppView::ShowTextQueryL()
+// Display of Text Query.
 // ----------------------------------------------------------------------------
 //
 TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 	{
-	
-	iDisplayDialog = ETrue;
-
 	TBuf<KRFtermTextBufLength> textData(aInitialText);
 	
 	CRFtermTextQueryDialog* dlg = CRFtermTextQueryDialog::NewL(textData);
@@ -224,15 +227,57 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 
 	CleanupStack::Pop(dlg);
 	TBool answer(dlg->ExecuteLD(R_DIALOG_TEXT_QUERY));
-	
-	iDisplayDialog = EFalse;
 
 	// get message
 	aText = textData;
 	
-	DrawNow();
+	if (answer && textData.Length())
+		{
+		TInt posOfCopy;
+		if (iMessageHistoryArray->Find(textData, posOfCopy) == 0)
+			{
+			iMessageHistoryArray->Delete(posOfCopy);
+			iMessageHistoryArray->Compress();
+			}
+		if (iMessageHistoryArray->Count() == KMessageHistorySize)
+			{
+			iMessageHistoryArray->Delete(0);
+			iMessageHistoryArray->Compress();
+			}
+		iMessageHistoryArray->AppendL(textData);
+		}
 
 	return answer;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::ShowHistoryQueryL()
+// Choose a message form history
+// ----------------------------------------------------------------------------
+//
+TBool CRFtermAppView::ShowHistoryQueryL(TDes& aText)
+	{
+	TBuf<KRFtermTextBufLength> textData;
+
+	TInt chosenItem;
+	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
+	dlg->PrepareLC(R_DIALOG_HISTORY_QUERY);
+	dlg->SetItemTextArray(iMessageHistoryArray);
+	dlg->SetOwnershipType(ELbmDoesNotOwnItemArray);
+	TInt answer = dlg->RunLD(); 
+	
+	if (EAknSoftkeyOk == answer)
+		{
+		aText = iMessageHistoryArray->MdcaPoint(chosenItem);
+
+		// Move the selected item to the end
+		iMessageHistoryArray->Delete(chosenItem);
+		iMessageHistoryArray->Compress();
+		iMessageHistoryArray->AppendL(aText);
+
+		return ETrue;
+		}
+	return EFalse;
 	}
 
 // End of File
