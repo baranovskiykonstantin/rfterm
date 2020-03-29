@@ -227,12 +227,12 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 
 	CleanupStack::Pop(dlg);
 	TBool answer(dlg->ExecuteLD(R_DIALOG_TEXT_QUERY));
-
-	// get message
-	aText = textData;
 	
-	if (answer && textData.Length())
+	if ((EAknSoftkeyOk == answer) && textData.Length())
 		{
+		// get message
+		aText = textData;
+
 		TInt posOfCopy;
 		if (iMessageHistoryArray->Find(textData, posOfCopy) == 0)
 			{
@@ -245,9 +245,11 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 			iMessageHistoryArray->Compress();
 			}
 		iMessageHistoryArray->AppendL(textData);
+
+		return ETrue;
 		}
 
-	return answer;
+	return EFalse;
 	}
 
 // ----------------------------------------------------------------------------
@@ -257,8 +259,6 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 //
 TBool CRFtermAppView::ShowHistoryQueryL(TDes& aText)
 	{
-	TBuf<KRFtermTextBufLength> textData;
-
 	TInt chosenItem;
 	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
 	dlg->PrepareLC(R_DIALOG_HISTORY_QUERY);
@@ -277,6 +277,110 @@ TBool CRFtermAppView::ShowHistoryQueryL(TDes& aText)
 
 		return ETrue;
 		}
+	return EFalse;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::ShowCtrlCharQueryL()
+// Choose a control character to send
+// ----------------------------------------------------------------------------
+//
+TBool CRFtermAppView::ShowCtrlCharQueryL(TDes& aText)
+	{
+	TInt chosenItem;
+	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
+	dlg->PrepareLC(R_DIALOG_CTRLCHAR_QUERY);
+	TInt answer = dlg->RunLD(); 
+	
+	if (EAknSoftkeyOk == answer)
+		{
+		switch (chosenItem)
+			{
+			case 0:
+				{
+				aText = KCR;
+				break;
+				}
+			case 1:
+				{
+				aText = KLF;
+				break;
+				}
+			case 2:
+				{
+				aText = KTB;
+				break;
+				}
+			case 3:
+				{
+				aText = KBS;
+				break;
+				}
+			case 4:
+				{
+				aText = KBL;
+				break;
+				}
+			case 5:
+				{
+				aText = KFF;
+				break;
+				}
+			case 6:
+				{
+				aText = KNL;
+				break;
+				}
+			case 7:
+				{
+				aText = KCRLF;
+				break;
+				}
+			case 8:
+				{
+				// Custom control character
+				TInt ctrlCharInt;
+				if (ShowIntQueryL(ctrlCharInt))
+					{
+					TChar ctrlChar(ctrlCharInt);
+					TBuf<1> ctrlCharText;
+					ctrlCharText.Append(ctrlChar);
+					aText = ctrlCharText;
+					}
+				else
+					{
+					return EFalse;
+					}
+				break;
+				}
+			default:
+				{
+				Panic(ERFtermInputBadCtrlChar);
+				}
+			}
+
+		return ETrue;
+		}
+	return EFalse;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::ShowIntQueryL()
+// Display of Integer Query.
+// ----------------------------------------------------------------------------
+//
+TBool CRFtermAppView::ShowIntQueryL(TInt& aInt)
+	{
+	TInt intValue(0);
+	CAknNumberQueryDialog* dlg = CAknNumberQueryDialog::NewL(intValue);
+	TInt answer = dlg->ExecuteLD(R_DIALOG_INT_QUERY);
+
+	if (EAknSoftkeyOk == answer)
+		{
+		aInt = intValue;
+		return ETrue;
+		}
+
 	return EFalse;
 	}
 

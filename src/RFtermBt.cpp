@@ -509,9 +509,8 @@ void CRFtermBt::ConnectToServerL()
 // Send a message to a service on a remote machine.
 // ----------------------------------------------------------------------------
 //
-void CRFtermBt::SendMessageL(TDes& aText)
+void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 	{
-
 	RDebug::Printf("SendMessageL() -> Beginning");
 	if (State() != EConnected)
 		{
@@ -528,25 +527,32 @@ void CRFtermBt::SendMessageL(TDes& aText)
 		{
 		Cancel();
 		}
-	TBufC<KRFtermTextBufLength> message (aText);
 	SetState(ESendingMessage);
-	HBufC* tempString = HBufC::NewL(message.Length() + 1); // + line forward char
-	CleanupStack::PushL(tempString);
-	tempString->Des().Copy(message);
-	tempString->Des().Append(_L("\n"));
-	
-	iMessage = HBufC8::NewL(tempString->Length());
-	CleanupStack::Pop(tempString);
-	iMessage->Des().Copy(*tempString);
+
+	if (iMessage)
+		{
+		delete iMessage;
+		}
+
+	if (aIsCtrlChar)
+		{
+		iMessage = HBufC8::NewL(aText.Length());
+		iMessage->Des().Copy(aText);
+		}
+	else
+		{
+		iMessage = HBufC8::NewL(aText.Length() + KLF().Length()); // + line forward char
+		iMessage->Des().Copy(aText);
+		iMessage->Des().Append(KLF);
+
+		iRFtermOutput->AppendTextOnNewLineL(aText, KPrefixOut);
+		}
 	
 	if (iActiveSocket)
 		{
-		iRFtermOutput->AppendTextOnNewLineL(*tempString, KPrefixOut);
 		iActiveSocket->Write(*iMessage, iStatus);
 		}
 
-	delete tempString;
-	
 	SetActive();
 	RDebug::Printf("SendMessageL() -> End");
 	}

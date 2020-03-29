@@ -107,8 +107,9 @@ public: // New functions
 	* SendMessageL()
 	* Sends a message to a service on a remote machine.
 	* @param aText Text to send
+	* @param aIsCtrlChar send aText as control character
 	*/
-	void SendMessageL(TDes& aText);
+	void SendMessageL(TDes& aText, const TBool aIsCtrlChar=EFalse);
 
 	/**
 	* StartL()

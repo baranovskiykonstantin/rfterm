@@ -20,6 +20,7 @@ enum TRFtermPanics
 	ERFtermUnableToDisconnect,
 	ERFtermOutputIllegalPosition,
 	ERFtermOutputBadCtrlChar,
+	ERFtermInputBadCtrlChar,
 	// add further panics here
 	};
 

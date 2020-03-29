@@ -51,6 +51,8 @@
 // Dialogs
 #define qtn_str_text_query_label "Send:"
 #define qtn_str_history_query_label "Message History"
+#define qtn_str_ctrlchar_query_label "Control Characters"
+#define qtn_str_int_query_label "Integer (0-255)"
 
 // Messages
 #define qtn_str_disconnected "Disconnected"

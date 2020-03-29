@@ -36,16 +36,17 @@ _LIT(KPrefixNote, "* ");
 _LIT(KPrefixError, "! ");
 _LIT(KPrefixIn, "> ");
 _LIT(KPrefixOut, "< ");
-_LIT(KCtrlChars, "\r\n\t\b\a\v\f\0");
+_LIT(KCtrlChars, "\r\n\t\b\a\v\f\0\x007f");
 _LIT(KCR, "\r"); // CARRIAGE RETURN ^M
 _LIT(KLF, "\n"); // LINE FEED ^J
+_LIT(KCRLF, "\r\n"); // CR+LF
 _LIT(KTB, "\t"); // CHARACTER TABULATION ^I
 _LIT(KBS, "\b"); // BACKSPACE ^H
 _LIT(KBL, "\a"); // BELL ^G
 _LIT(KLT, "\v"); // LINE TABULATION ^K
 _LIT(KFF, "\f"); // FORM FEED ^L
 _LIT(KNL, "\0"); // NULL ^@
-_LIT(KCRLF, "\r\n");
+_LIT(KDL, "\x007f"); // Delete
 _LIT(KParagraphDelimeter, "\x2029"); //CEditableText::EParagraphDelimiter
 
 const TInt KTabWidth = 4;

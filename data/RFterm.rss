@@ -207,6 +207,8 @@ RESOURCE TBUF r_rfterm_service_description { buf=qtn_rfterm_service_description;
 
 RESOURCE TBUF r_str_text_query_label { buf=qtn_str_text_query_label; }
 RESOURCE TBUF r_str_history_query_label { buf=qtn_str_history_query_label; }
+RESOURCE TBUF r_str_ctrlchar_query_label { buf=qtn_str_ctrlchar_query_label; }
+RESOURCE TBUF r_str_int_query_label { buf=qtn_str_int_query_label; }
 
 RESOURCE TBUF r_str_disconnected { buf=qtn_str_disconnected; }
 RESOURCE TBUF r_str_disconnect_complete { buf=qtn_str_disconnect_complete; }
@@ -296,7 +298,7 @@ RESOURCE DIALOG r_dialog_text_query
 
 //----------------------------------------------------
 //
-//    r_dialog_text_query
+//    r_dialog_history_query
 //    Recource of Message History query
 //
 //----------------------------------------------------
@@ -317,6 +319,84 @@ RESOURCE DIALOG r_dialog_history_query
 					{
 					};
 				heading = qtn_str_history_query_label;
+				};
+			}
+		};
+	}
+
+//----------------------------------------------------
+//
+//    r_dialog_ctrlchar_query
+//    Recource of Control Character query
+//
+//----------------------------------------------------
+//
+
+RESOURCE ARRAY r_ctrlchar_items
+	{
+	items =
+		{
+		LBUF { txt = "^M - CARRIAGE RETURN"; },
+		LBUF { txt = "^J - LINE FEED"; },
+		LBUF { txt = "^I - TABULATION"; },
+		LBUF { txt = "^H - BACKSPACE"; },
+		LBUF { txt = "^G - BELL"; },
+		LBUF { txt = "^L - FORM FEED"; },
+		LBUF { txt = "^@ - NULL"; },
+		LBUF { txt = "^M^J - CR+LF"; },
+		LBUF { txt = "Custom..."; }
+		};
+	}
+
+RESOURCE DIALOG r_dialog_ctrlchar_query
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items =
+		{
+		AVKON_LIST_QUERY_DLG_LINE
+			{
+			control = AVKON_LIST_QUERY_CONTROL
+				{
+				listtype = EAknCtSinglePopupMenuListBox;
+				listbox = AVKON_LIST_QUERY_LIST
+					{
+					array_id = r_ctrlchar_items;
+					};
+				heading = qtn_str_ctrlchar_query_label;
+				};
+			}
+		};
+	}
+
+//----------------------------------------------------
+//
+//    r_dialog_int_query
+//    Recource of integer query
+//
+//----------------------------------------------------
+//
+
+RESOURCE DIALOG r_dialog_int_query
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EGeneralQuery;
+			control = AVKON_DATA_QUERY
+				{
+				layout = ENumberLayout;
+				label = qtn_str_int_query_label;
+				control = AVKON_INTEGER_EDWIN
+					{
+					min = 0;
+					max = 255;
+					};
 				};
 			}
 		};

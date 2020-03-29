@@ -339,6 +339,15 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ECtrlChar:
 			{
+			if(iBtClient->IsConnected())
+				{
+				TBuf<KRFtermTextBufLength> ctrlChar;
+				if (iAppView->ShowCtrlCharQueryL(ctrlChar))
+					{
+					iBtClient->SendMessageL(ctrlChar, ETrue);
+					iAppView->iRFtermOutput->UpdateCursorL();
+					}
+				}
 			break;
 			}
 

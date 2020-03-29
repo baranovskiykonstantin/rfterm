@@ -117,6 +117,20 @@ public: // New functions
 	*/
 	TBool ShowHistoryQueryL(TDes& aText);
 
+	/**
+	* ShowCtrlCharQueryL()
+	* Show control character query.
+	* @param aText chosen control character as text
+	*/
+	TBool ShowCtrlCharQueryL(TDes& aText);
+
+	/**
+	* ShowIntQueryL()
+	* Show integer query.
+	* @param aInt integer of the query
+	*/
+	TBool ShowIntQueryL(TInt& aInt);
+
 private:
 	// Constructors
 

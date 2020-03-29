@@ -345,6 +345,14 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 			{
 			// Do nothing
 			}
+		else if (specChar.Compare(KDL) == 0)
+			{
+			if (iLastLineCursorPos < iText->DocumentLength())
+				{
+				iText->DeleteL(iLastLineCursorPos, 1);
+				iTextView->HandleGlobalChangeL();
+				}
+			}
 		else
 			{
 			Panic(ERFtermOutputBadCtrlChar);
