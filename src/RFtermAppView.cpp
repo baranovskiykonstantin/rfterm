@@ -13,6 +13,7 @@
 #include <stringloader.h>
 #include <aknlistquerydialog.h>
 #include <RFterm_0xae7f53fa.rsg>
+#include "RFtermAppUi.h"
 #include "RFtermAppView.h"
 #include "RFtermConstants.h"
 #include "RFtermTextQueryDialog.h"
@@ -70,7 +71,7 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 
 	iRFtermOutput->SetFocus(ETrue);
 	
-	iMessageHistoryArray = new (ELeave) CDesCArraySeg(KMessageHistorySize);
+	iMessageHistoryArray = new (ELeave) CDesCArraySeg(4);
 
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
@@ -189,17 +190,17 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		if (iRFtermOutput->SelectionLength())
 			{
 			// Do not show the send query if a text selection is present.
-			iPrevPointerPos.SetXY(-KMaxDelta, -KMaxDelta);
+			iDownPointerPos.SetXY(-KMaxDelta, -KMaxDelta);
 			
 			}
 		else
 			{
-			iPrevPointerPos = aPointerEvent.iPosition;
+			iDownPointerPos = aPointerEvent.iPosition;
 			}
 		}
 	else if (TPointerEvent::EButton1Up == aPointerEvent.iType)
 		{
-		TPoint posDelta = iPrevPointerPos - aPointerEvent.iPosition;
+		TPoint posDelta = iDownPointerPos - aPointerEvent.iPosition;
 		if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
 			{
 			// Tap output to send
@@ -228,23 +229,36 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 	CleanupStack::Pop(dlg);
 	TBool answer(dlg->ExecuteLD(R_DIALOG_TEXT_QUERY));
 	
-	if ((EAknSoftkeyOk == answer) && textData.Length())
+	if (EAknSoftkeyOk == answer)
 		{
 		// get message
 		aText = textData;
 
-		TInt posOfCopy;
-		if (iMessageHistoryArray->Find(textData, posOfCopy) == 0)
+		if (textData.Length())
 			{
-			iMessageHistoryArray->Delete(posOfCopy);
-			iMessageHistoryArray->Compress();
+			CRFtermAppUi* appUi = (CRFtermAppUi*)CEikonEnv::Static()->EikAppUi();
+			TInt historySize = appUi->iSettings->iMessageHistorySize;
+
+			if (historySize > 0)
+				{
+				if (historySize > 1)
+					{
+					TInt posOfCopy;
+					if (iMessageHistoryArray->Find(textData, posOfCopy) == 0)
+						{
+						iMessageHistoryArray->Delete(posOfCopy);
+						iMessageHistoryArray->Compress();
+						}
+					}
+
+				if (iMessageHistoryArray->Count() == historySize)
+					{
+					iMessageHistoryArray->Delete(0);
+					iMessageHistoryArray->Compress();
+					}
+				iMessageHistoryArray->AppendL(textData);
+				}
 			}
-		if (iMessageHistoryArray->Count() == KMessageHistorySize)
-			{
-			iMessageHistoryArray->Delete(0);
-			iMessageHistoryArray->Compress();
-			}
-		iMessageHistoryArray->AppendL(textData);
 
 		return ETrue;
 		}

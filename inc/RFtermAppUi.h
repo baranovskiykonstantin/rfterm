@@ -12,6 +12,7 @@
 
 // INCLUDES
 #include <aknappui.h>
+#include <RFtermSettings.h>
 
 // FORWARD DECLARATIONS
 class CRFtermAppView;
@@ -86,9 +87,16 @@ private:
 	*/
 	void ShowBTNotAvailableNoteL();
 
-private:  // From MEikMenuObserver
+private: // From MEikMenuObserver
 
 	void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
+	
+private: // New functions
+	
+	void InternalizeSettingsL();
+	void ExternalizeSettingsL() const;
+	
+	void HandleSettingsChange();
 
 private:
 	// Data
@@ -110,6 +118,18 @@ private:
 	* iBtAvailable, ETrue if an SDP session can be opened, EFalse otherwise.
 	*/
 	TBool iBtAvailable;
+	
+	/**
+	 * iSettingsFileName - name of the file with stored settings.
+	 */
+	TFileName iSettingsFileName;
+	
+public:
+	
+	/**
+	 * iSettings - application settings.
+	 */
+	CRFtermSettings* iSettings;
 	};
 
 #endif // __RFTERMAPPUI_h__

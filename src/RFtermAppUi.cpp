@@ -28,6 +28,7 @@
 #include "RFtermAppView.h"
 #include "RFtermBt.h"
 #include "RFtermConstants.h"
+#include "RFtermSettingsDialog.h"
 
 _LIT(KFileName, "C:\\private\\ae7f53fa\\RFterm.txt");
 _LIT(KText, "Hello World!");
@@ -45,6 +46,15 @@ void CRFtermAppUi::ConstructL()
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
 	
+	// Prepare private path
+	RFs& fsSession = iEikonEnv->FsSession();
+	User::LeaveIfError(fsSession.CreatePrivatePath(EDriveC));
+	User::LeaveIfError(fsSession.PrivatePath(iSettingsFileName));
+	iSettingsFileName += KSettingsFile;
+	iSettings = CRFtermSettings::NewL();
+	// Read settings from stream
+	InternalizeSettingsL();
+
 	// Create view object
 	iAppView = CRFtermAppView::NewL(ClientRect());
 	AddToStackL(iAppView);
@@ -120,6 +130,59 @@ CRFtermAppUi::~CRFtermAppUi()
 
 	}
 
+// -----------------------------------------------------------------------------
+// CRFtermAppUi::InternalizeSettingsL()
+// Load settings.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppUi::InternalizeSettingsL() 
+	{
+	RFs& fs = iEikonEnv->FsSession();
+	RFileReadStream readStream;
+	TInt error = readStream.Open(fs, iSettingsFileName, EFileRead);
+	TInt internalizationError = KErrNone;
+	// If file existed, try to read settings.
+	if (error == KErrNone)
+		{
+		TRAP(internalizationError, iSettings->LoadL(readStream);)
+		}
+	else
+		{
+		// Use default values in first time when no 
+		// setting file exists
+		iSettings->SetDefaultValues();
+		}
+	readStream.Release();
+	// Reading failed, settings file might be corrupted.
+	if (internalizationError != KErrNone)
+		{
+		User::LeaveIfError(fs.Delete(iSettingsFileName));
+		}
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppUi::ExternalizeSettingsL()
+// Save settings.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppUi::ExternalizeSettingsL() const 
+
+	{
+	RFs& fs = iEikonEnv->FsSession();
+	RFileWriteStream writeStream;
+	TInt error = writeStream.Open(fs, iSettingsFileName, EFileWrite);
+	// Setting file did not exist, create one.
+	if (error != KErrNone)
+		{
+		User::LeaveIfError(writeStream.Create(fs, iSettingsFileName, EFileWrite));
+		}
+	writeStream.PushL();
+	iSettings->SaveL(writeStream);
+	writeStream.CommitL();
+	writeStream.Pop();
+	writeStream.Release();
+	}
+
 // ----------------------------------------------------
 // CRFtermAppUi::HandleKeyEventL(
 //     const TKeyEvent& aKeyEvent,TEventCode aType)
@@ -181,6 +244,14 @@ void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 			aMenuPane->SetItemDimmed(EStop, ETrue);
 			}
 		}
+
+	else if (aResourceId == R_SEND_MENU)
+		{
+		if (iAppView->iMessageHistoryArray->Count() == 0)
+			{
+			aMenuPane->SetItemDimmed(EHistory, ETrue);
+			}
+		}
 	}
 
 // -----------------------------------------------------------------------------
@@ -207,6 +278,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 					}
 				}
 
+			ExternalizeSettingsL();
 			Exit();
 			break;
 			}
@@ -359,23 +431,9 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ESettings:
 			{
-	
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("***\a"), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Test string..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("\tT\tes\tt st\tring..."), KPrefixIn);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("Last\ntest string.\r\n!!!\r..\a"), KPrefixIn);
+			CRFtermSettingsDialog::RunDlgLD(iSettings);
+			HandleSettingsChange();
+			iAppView->iRFtermOutput->UpdateCursorL();
 			break;
 			}
 
@@ -450,6 +508,22 @@ void CRFtermAppUi::ShowBTNotAvailableNoteL()
 
 	// Pop HBuf from CleanUpStack and Destroy it.
 	CleanupStack::PopAndDestroy(textResource);
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppUi::HandleSettingsChange()
+// Update application to new settings.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppUi::HandleSettingsChange()
+	{
+	// Message history size
+	TInt sizeDiff = iAppView->iMessageHistoryArray->Count() - iSettings->iMessageHistorySize;
+	if (sizeDiff > 0)
+		{
+		iAppView->iMessageHistoryArray->Delete(0, sizeDiff);
+		iAppView->iMessageHistoryArray->Compress();
+		}
 	}
 
 // End of File

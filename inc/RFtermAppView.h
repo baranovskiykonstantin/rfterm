@@ -152,11 +152,9 @@ private:
 private:
 	
 	/**
-	 * iPrevPointerPos
+	 * iDownPointerPos
 	 */
-	TPoint iPrevPointerPos;
-	
-	CDesCArraySeg* iMessageHistoryArray;
+	TPoint iDownPointerPos;
 	
 public:
 	
@@ -164,6 +162,11 @@ public:
 	* iRFtermOutput
 	*/
 	CRFtermOutput* iRFtermOutput;
+	
+	/**
+	 * iMessageHistoryArray
+	 */
+	CDesCArraySeg* iMessageHistoryArray;
 
 	};
 

@@ -38,6 +38,8 @@ private:
 	void ConstructL(const CCoeControl *aParent, const TRect& aRect);
 	CRFtermOutput();
 	void AppendL(const TDesC& aBuf);
+	void AppendCRL();
+	void AppendLFL(const TDesC& aPrefix);
 	/*
 	 * Find control character (one of KCtrlChars).
 	 * aText - the text for searching;

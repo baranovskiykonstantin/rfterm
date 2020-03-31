@@ -18,6 +18,8 @@ const TInt KServiceClass = 0x1101; // SerialPort
 
 const TUid KUidRFtermApp = {_UID3};
 
+_LIT(KSettingsFile, "settings.ini");
+
 _LIT(KStrRFCOMM, "RFCOMM");
 
 const TInt KListeningQueSize = 1;
@@ -48,9 +50,5 @@ _LIT(KFF, "\f"); // FORM FEED ^L
 _LIT(KNL, "\0"); // NULL ^@
 _LIT(KDL, "\x007f"); // Delete
 _LIT(KParagraphDelimeter, "\x2029"); //CEditableText::EParagraphDelimiter
-
-const TInt KTabWidth = 4;
-
-const TInt KMessageHistorySize = 8;
 
 #endif /* RFTERMCONSTANTS_H */

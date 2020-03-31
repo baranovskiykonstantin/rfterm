@@ -29,4 +29,19 @@ enum TRFtermIds
 	EAbout
 	};
 
+// Identifiers of settings dialog items
+enum TRFtermSettingPageIds
+	{
+	ESettingPageInput = 1,
+	ESettingPageOutput
+	};
+
+enum TRFtermSettingIds
+	{
+	ESettingAppendix = 1,
+	ESettingHistorySize,
+	ESettingMapping,
+	ESettingTabSize
+	};
+
 #endif // __RFTERM_HRH__

@@ -205,11 +205,6 @@ RESOURCE TBUF r_msg_connected_text { buf=qtn_msg_connected; }
 RESOURCE TBUF r_rfterm_service_name { buf=qtn_rfterm_service_name; }
 RESOURCE TBUF r_rfterm_service_description { buf=qtn_rfterm_service_description; }
 
-RESOURCE TBUF r_str_text_query_label { buf=qtn_str_text_query_label; }
-RESOURCE TBUF r_str_history_query_label { buf=qtn_str_history_query_label; }
-RESOURCE TBUF r_str_ctrlchar_query_label { buf=qtn_str_ctrlchar_query_label; }
-RESOURCE TBUF r_str_int_query_label { buf=qtn_str_int_query_label; }
-
 RESOURCE TBUF r_str_disconnected { buf=qtn_str_disconnected; }
 RESOURCE TBUF r_str_disconnect_complete { buf=qtn_str_disconnect_complete; }
 RESOURCE TBUF r_str_connected { buf=qtn_str_connected; }
@@ -394,11 +389,142 @@ RESOURCE DIALOG r_dialog_int_query
 				label = qtn_str_int_query_label;
 				control = AVKON_INTEGER_EDWIN
 					{
+					maxlength = 3;
 					min = 0;
 					max = 255;
 					};
 				};
 			}
+		};
+	}
+
+//----------------------------------------------------
+//
+//    r_settings_dialog
+//    Recource of settings dialog
+//
+//----------------------------------------------------
+//
+
+RESOURCE DIALOG r_settings_dialog
+	{
+	flags = EEikDialogFlagNoBorder | EEikDialogFlagNoDrag |
+			EEikDialogFlagNoTitleBar | EEikDialogFlagFillAppClientRect |
+			EEikDialogFlagCbaButtons | EEikDialogFlagWait;
+	buttons = R_AVKON_SOFTKEYS_EDIT_DONE;
+	pages = setting_pages;
+	}
+
+RESOURCE ARRAY setting_pages
+	{
+	items =
+		{
+		PAGE
+			{
+			id = ESettingPageInput;
+			text = qtn_str_settings_input_label;
+			form = settings_input_form;
+			},
+		PAGE
+			{
+			id = ESettingPageOutput;
+			text = qtn_str_settings_output_label;
+			form = settings_output_form;
+			}
+		};
+	}
+
+RESOURCE FORM settings_input_form
+	{
+	flags = EEikFormUseDoubleSpacedFormat;
+	items =
+		{
+		DLG_LINE
+			{
+			id = ESettingAppendix;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_appendix_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_appendix_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
+				};
+			},
+		DLG_LINE
+			{
+			id = ESettingHistorySize;
+			type = EEikCtNumberEditor;
+			prompt = qtn_str_setting_historysize_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = NUMBER_EDITOR
+				{
+				min = 0;
+				max = 15;
+				};
+			}
+		};
+	}
+
+RESOURCE ARRAY setting_appendix_items
+	{
+	items =
+		{
+		LBUF { txt = qtn_str_setting_appendix_item0; },
+		LBUF { txt = qtn_str_setting_appendix_item1; },
+		LBUF { txt = qtn_str_setting_appendix_item2; },
+		LBUF { txt = qtn_str_setting_appendix_item3; }
+		};
+	}
+
+RESOURCE FORM settings_output_form
+	{
+	flags = EEikFormUseDoubleSpacedFormat;
+	items =
+		{
+		DLG_LINE
+			{
+			id = ESettingMapping;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_mapping_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_mapping_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
+				};
+			},
+		DLG_LINE
+			{
+			id = ESettingTabSize;
+			type = EAknCtSlider;
+			prompt = qtn_str_setting_tabsize_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = SLIDER
+				{
+				layout = EAknFormSliderLayout1;
+				minvalue = 1;
+				maxvalue = 8;
+				step = 1;
+				valuetype = EAknSliderValueDecimal;
+				minlabel = "min";
+				maxlabel = "max";
+				};
+			}
+		};
+	}
+
+RESOURCE ARRAY setting_mapping_items
+	{
+	items =
+		{
+		LBUF { txt = qtn_str_setting_mapping_item0; },
+		LBUF { txt = qtn_str_setting_mapping_item1; },
+		LBUF { txt = qtn_str_setting_mapping_item2; },
+		LBUF { txt = qtn_str_setting_mapping_item3; },
+		LBUF { txt = qtn_str_setting_mapping_item4; }
 		};
 	}
 

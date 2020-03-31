@@ -14,6 +14,7 @@
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermServiceAdvertiser.h"
 #include "RFtermServiceSearcher.h"
+#include "RFtermAppUi.h"
 #include "RFtermBt.h"
 #include "RFtermOutput.h"
 #include "RFtermConstants.h"
@@ -541,9 +542,12 @@ void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 		}
 	else
 		{
-		iMessage = HBufC8::NewL(aText.Length() + KLF().Length()); // + line forward char
+		CRFtermAppUi* appUi = (CRFtermAppUi*)CEikonEnv::Static()->EikAppUi();
+		iMessage = HBufC8::NewL(
+			aText.Length() + appUi->iSettings->iMessageAddendum.Length()
+		);
 		iMessage->Des().Copy(aText);
-		iMessage->Des().Append(KLF);
+		iMessage->Des().Append(appUi->iSettings->iMessageAddendum);
 
 		iRFtermOutput->AppendTextOnNewLineL(aText, KPrefixOut);
 		}

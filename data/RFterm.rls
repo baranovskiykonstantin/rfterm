@@ -54,6 +54,29 @@
 #define qtn_str_ctrlchar_query_label "Control Characters"
 #define qtn_str_int_query_label "Integer (0-255)"
 
+// Settings
+#define qtn_str_settings_input_label "Input"
+
+#define qtn_str_setting_appendix_label "Append to message"
+#define qtn_str_setting_appendix_item0 "CARRIAGE RETURN"
+#define qtn_str_setting_appendix_item1 "LINE FEED"
+#define qtn_str_setting_appendix_item2 "CR+LF"
+#define qtn_str_setting_appendix_item3 "Nothing"
+
+#define qtn_str_setting_historysize_label "Message history size"
+
+
+#define qtn_str_settings_output_label "Output"
+
+#define qtn_str_setting_mapping_label "Control char mapping"
+#define qtn_str_setting_mapping_item0 "CR -> LF"
+#define qtn_str_setting_mapping_item1 "CR -> CR+LF"
+#define qtn_str_setting_mapping_item2 "LF -> CR"
+#define qtn_str_setting_mapping_item3 "LF -> CR+LF"
+#define qtn_str_setting_mapping_item4 "None"
+
+#define qtn_str_setting_tabsize_label "Tab size"
+
 // Messages
 #define qtn_str_disconnected "Disconnected"
 #define qtn_str_disconnect_complete "Disconnect complete"

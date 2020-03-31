@@ -13,10 +13,13 @@
 #include <fbs.h>
 #include <stringloader.h>
 #include <avkon.hrh>
+#include <coemain.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFterm.pan"
+#include "RFtermAppUi.h"
 #include "RFtermOutput.h"
 #include "RFtermConstants.h"
+#include "RFtermSettings.h"
 
 CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent, const TRect& aRect)
 	{
@@ -261,6 +264,35 @@ TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& 
 	return ETrue;
 	}
 
+void CRFtermOutput::AppendCRL()
+	{
+	iLastLineCursorPos = iLastLineStartPos;
+	UpdateCursorL();
+	
+	}
+
+void CRFtermOutput::AppendLFL(const TDesC& aPrefix)
+	{
+	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
+
+	// Go to next line
+	iLastLineCursorPos = iText->DocumentLength();
+	AppendL(KParagraphDelimeter);
+	AppendL(aPrefix);
+	iLastLineStartPos = iText->DocumentLength();
+	iLastLineCursorPos = iLastLineStartPos;
+
+	if (indentLength)
+		{
+		HBufC* indent = HBufC::NewLC(indentLength);
+		TChar space(0x20);
+		indent->Des().SetLength(indentLength);
+		indent->Des().Fill(space);
+		AppendL(*indent);
+		CleanupStack::PopAndDestroy(indent);
+		}
+	}
+
 void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 	{
 	if (iCurrentPrefix != aPrefix)
@@ -272,6 +304,8 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 		iLastLineCursorPos = iLastLineStartPos;
 		}
 	
+	CRFtermAppUi* appUi = (CRFtermAppUi*)CEikonEnv::Static()->EikAppUi();
+
 	HBufC* tempText = HBufC::NewLC(aText.Length());
 	tempText->Des().Copy(aText);
 	
@@ -287,40 +321,67 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 		
 		if (specChar.Compare(KCR) == 0)
 			{
-			iLastLineCursorPos = iLastLineStartPos;
-			UpdateCursorL();
-			}
-		else if (specChar.Compare(KLF) == 0 || specChar.Compare(KLT) == 0)
-			{
-			TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
-
-			// Go to next line
-			iLastLineCursorPos = iText->DocumentLength();
-			AppendL(KParagraphDelimeter);
-			AppendL(aPrefix);
-			iLastLineStartPos = iText->DocumentLength();
-			iLastLineCursorPos = iLastLineStartPos;
-
-			if (indentLength)
+			switch (appUi->iSettings->iCtrlCharMapping)
 				{
-				HBufC* indent = HBufC::NewLC(indentLength);
-				TChar space(0x20);
-				indent->Des().SetLength(indentLength);
-				indent->Des().Fill(space);
-				AppendL(*indent);
-				CleanupStack::PopAndDestroy(indent);
+				case EMapCRtoLF:
+					{
+					AppendLFL(aPrefix);
+					break;
+					}
+				case EMapCRtoCRLF:
+					{
+					AppendCRL();
+					AppendLFL(aPrefix);
+					break;
+					}
+				default:
+					{
+					AppendCRL();
+					}
 				}
+			}
+		else if (specChar.Compare(KLF) == 0)
+			{
+			switch (appUi->iSettings->iCtrlCharMapping)
+				{
+				case EMapLFtoCR:
+					{
+					AppendCRL();
+					break;
+					}
+				case EMapLFtoCRLF:
+					{
+					AppendCRL();
+					AppendLFL(aPrefix);
+					break;
+					}
+				default:
+					{
+					AppendLFL(aPrefix);
+					}
+				}
+			}
+		else if (specChar.Compare(KLT) == 0)
+			{
+			AppendLFL(aPrefix);
 			}
 		else if (specChar.Compare(KTB) == 0)
 			{
 			TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
-			TInt tabLength = KTabWidth - (indentLength % KTabWidth);
-			TChar space(0x20);
-			HBufC* tab = HBufC::NewLC(tabLength);
-			tab->Des().SetLength(tabLength);
-			tab->Des().Fill(space);
-			AppendL(*tab);
-			CleanupStack::PopAndDestroy(tab);
+			TInt tabLength = appUi->iSettings->iTabSize - (indentLength % appUi->iSettings->iTabSize);
+			TInt targetPos = iLastLineCursorPos + tabLength;
+			if (iText->DocumentLength() < targetPos)
+				{
+				tabLength = targetPos - iText->DocumentLength();
+				TChar space(0x20);
+				HBufC* tab = HBufC::NewLC(tabLength);
+				tab->Des().SetLength(tabLength);
+				tab->Des().Fill(space);
+				AppendL(*tab);
+				CleanupStack::PopAndDestroy(tab);
+				}
+			iLastLineCursorPos = targetPos;
+			UpdateCursorL();
 			}
 		else if (specChar.Compare(KBS) == 0)
 			{
