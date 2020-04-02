@@ -21,6 +21,12 @@ enum TCtrlCharMapping {
 	EMapNone
 };
 
+enum TCodePage {
+	ECodePageLatin1 = 1,
+	ECodePageLatinCyrilic,
+	ECodePage1252
+};
+
 class CRFtermSettings : public CBase
 	{
 public:
@@ -47,12 +53,18 @@ public:
 	
 	// Size of the message history.
 	TInt iMessageHistorySize;
+	
+	// Output sent message
+	TBool iEcho;
 
 	// Map one control character with another.
 	TCtrlCharMapping iCtrlCharMapping;
 	
 	// Size of the tabulation step.
 	TInt iTabSize;
+	
+	// Output code page
+	TCodePage iCodePage;
 	};
 
 #endif /* RFTERMSETTINGS_H */

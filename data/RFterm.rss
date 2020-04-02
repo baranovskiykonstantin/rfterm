@@ -463,6 +463,19 @@ RESOURCE FORM settings_input_form
 				min = 0;
 				max = 15;
 				};
+			},
+		DLG_LINE
+			{
+			id = ESettingEcho;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_echo_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_onoff_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
+				};
 			}
 		};
 	}
@@ -475,6 +488,15 @@ RESOURCE ARRAY setting_appendix_items
 		LBUF { txt = qtn_str_setting_appendix_item1; },
 		LBUF { txt = qtn_str_setting_appendix_item2; },
 		LBUF { txt = qtn_str_setting_appendix_item3; }
+		};
+	}
+
+RESOURCE ARRAY setting_onoff_items
+	{
+	items =
+		{
+		LBUF { txt = qtn_str_setting_off_label; },
+		LBUF { txt = qtn_str_setting_on_label; }
 		};
 	}
 
@@ -512,6 +534,19 @@ RESOURCE FORM settings_output_form
 				minlabel = "min";
 				maxlabel = "max";
 				};
+			},
+		DLG_LINE
+			{
+			id = ESettingCodePage;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_codepage_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_codepage_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
+				};
 			}
 		};
 	}
@@ -525,6 +560,16 @@ RESOURCE ARRAY setting_mapping_items
 		LBUF { txt = qtn_str_setting_mapping_item2; },
 		LBUF { txt = qtn_str_setting_mapping_item3; },
 		LBUF { txt = qtn_str_setting_mapping_item4; }
+		};
+	}
+
+RESOURCE ARRAY setting_codepage_items
+	{
+	items =
+		{
+		LBUF { txt = qtn_str_setting_codepage_item0; },
+		LBUF { txt = qtn_str_setting_codepage_item1; },
+		LBUF { txt = qtn_str_setting_codepage_item2; }
 		};
 	}
 

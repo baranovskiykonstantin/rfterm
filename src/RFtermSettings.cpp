@@ -37,8 +37,10 @@ void CRFtermSettings::SetDefaultValues()
 	{
 	iMessageAddendum = KCRLF;
 	iMessageHistorySize = 8;
+	iEcho = ETrue;
 	iCtrlCharMapping = EMapCRtoCRLF;
 	iTabSize = 4;
+	iCodePage = ECodePageLatin1;
 	}
 
 void CRFtermSettings::ConstructL()
@@ -50,8 +52,10 @@ void CRFtermSettings::LoadL(RReadStream& aStream)
 	{
 	aStream >> iMessageAddendum;
 	iMessageHistorySize = aStream.ReadInt32L();
+	iEcho = aStream.ReadInt8L();
 	iCtrlCharMapping = (TCtrlCharMapping) aStream.ReadInt32L();
 	iTabSize = aStream.ReadInt32L();
+	iCodePage = (TCodePage) aStream.ReadInt32L();
 	}
 
 // Storing setting data into stream void
@@ -59,7 +63,9 @@ void CRFtermSettings::SaveL(RWriteStream& aStream) const
 	{
 	aStream << iMessageAddendum;
 	aStream.WriteInt32L(iMessageHistorySize);
+	aStream.WriteInt8L(iEcho);
 	aStream.WriteInt32L((TInt)iCtrlCharMapping);
 	aStream.WriteInt32L(iTabSize);
+	aStream.WriteInt32L((TInt)iCodePage);
 	}
 

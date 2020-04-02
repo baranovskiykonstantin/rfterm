@@ -19,7 +19,7 @@
 #include "RFtermAppUi.h"
 #include "RFtermOutput.h"
 #include "RFtermConstants.h"
-#include "RFtermSettings.h"
+#include "RFtermCodePages.h"
 
 CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent, const TRect& aRect)
 	{
@@ -108,7 +108,8 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 	}
 
 CRFtermOutput::CRFtermOutput()
-	: iCurrentPrefix(KPrefixIn)
+	: iCodePage(KCodePageLatin1)
+	, iCurrentPrefix(KPrefixIn)
 	, iIsVScrollBarShown(EFalse)
 	, iLastLineStartPos(0)
 	, iLastLineCursorPos(0)
@@ -215,24 +216,84 @@ void CRFtermOutput::ScrollToEndL()
 	UpdateCursorL();
 	}
 
+void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
+	{
+	switch (aCodePage)
+		{
+		case ECodePageLatin1:
+			{
+			iCodePage.Set(KCodePageLatin1);
+			break;
+			}
+		case ECodePageLatinCyrilic:
+			{
+			iCodePage.Set(KCodePageLatinCyrillic);
+			break;
+			}
+		case ECodePage1252:
+			{
+			iCodePage.Set(KCodePage1252);
+			break;
+			}
+		default:
+			{
+			Panic(ERFtermOutputBadCodePage);
+			}
+		}
+	}
+
 void CRFtermOutput::AppendL(const TDesC& aBuf)
 	{
-	TInt lastPos = iText->DocumentLength();
-	if (lastPos > iLastLineCursorPos)
-		{
-		// Replace the text after cursor
-		TInt tailLength = lastPos - iLastLineCursorPos;
-		iText->DeleteL(iLastLineCursorPos, Min(tailLength, aBuf.Length()));
-		}
-	iText->InsertL(iLastLineCursorPos, aBuf);
-	iTextView->HandleGlobalChangeL();
 	if (aBuf == KParagraphDelimeter)
 		{
+		iText->InsertL(iLastLineCursorPos, aBuf);
+		iTextView->HandleGlobalChangeL();
 		ScrollToEndL();
 		}
 	else
 		{
-		iLastLineCursorPos += aBuf.Length();
+		HBufC* normalText = HBufC::NewLC(aBuf.Length());
+
+		// Remove unsupported control characters
+		TChar ch;
+		for (TInt i = 0; i < aBuf.Length(); i++)
+			{
+			ch = aBuf[i];
+			// if inside codepage and not control char
+			if ((TUint)ch < KCodePageSize and (TUint)ch > 0x1f)
+				{
+				if ((TUint)ch > 0x7f)
+					{
+					// Extended ASCII (code page)
+					TUint chOffset = (TUint)ch - 0x80;
+					TChar chFromCodePage = iCodePage[chOffset];
+					// Unsupported chars are maked with space
+					if ((TUint)chFromCodePage != 0x20)
+						{
+						normalText->Des().Append(chFromCodePage);
+						}
+					}
+				else
+					{
+					// ASCII
+					normalText->Des().Append(ch);
+					}
+				}
+			}
+
+		// Insert text
+		TInt lastPos = iText->DocumentLength();
+		if (lastPos > iLastLineCursorPos)
+			{
+			// Replace the text after cursor
+			TInt tailLength = lastPos - iLastLineCursorPos;
+			iText->DeleteL(iLastLineCursorPos, Min(tailLength, normalText->Length()));
+			}
+
+		iText->InsertL(iLastLineCursorPos, *normalText);
+		iTextView->HandleGlobalChangeL();
+		iLastLineCursorPos += normalText->Length();
+		CleanupStack::PopAndDestroy(normalText);
 		UpdateCursorL();
 		}
 	}
@@ -297,8 +358,19 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 	{
 	if (iCurrentPrefix != aPrefix)
 		{
-		iLastLineCursorPos = iText->DocumentLength();
-		AppendL(KParagraphDelimeter);
+		if (iLastLineCursorPos > iLastLineStartPos)
+			{
+			// Append new line
+			iLastLineCursorPos = iText->DocumentLength();
+			AppendL(KParagraphDelimeter);
+			}
+		else
+			{
+			// Line is empty. Change prefix only.
+			iText->ToParagraphStart(iLastLineCursorPos);
+			TInt prefixLength = iText->DocumentLength() - iLastLineCursorPos;
+			iText->DeleteL(iLastLineCursorPos, prefixLength);
+			}
 		AppendL(aPrefix);
 		iLastLineStartPos = iText->DocumentLength();
 		iLastLineCursorPos = iLastLineStartPos;

@@ -157,6 +157,7 @@ void CRFtermAppUi::InternalizeSettingsL()
 	if (internalizationError != KErrNone)
 		{
 		User::LeaveIfError(fs.Delete(iSettingsFileName));
+		iSettings->SetDefaultValues();
 		}
 	}
 
@@ -523,6 +524,12 @@ void CRFtermAppUi::HandleSettingsChange()
 		{
 		iAppView->iMessageHistoryArray->Delete(0, sizeDiff);
 		iAppView->iMessageHistoryArray->Compress();
+		}
+
+	// Output code page
+	if (iAppView->iRFtermOutput)
+		{
+		iAppView->iRFtermOutput->ChangeCodePage(iSettings->iCodePage);
 		}
 	}
 

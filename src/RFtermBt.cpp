@@ -549,7 +549,10 @@ void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 		iMessage->Des().Copy(aText);
 		iMessage->Des().Append(appUi->iSettings->iMessageAddendum);
 
-		iRFtermOutput->AppendTextOnNewLineL(aText, KPrefixOut);
+		if (appUi->iSettings->iEcho)
+			{
+			iRFtermOutput->AppendTextOnNewLineL(aText, KPrefixOut);
+			}
 		}
 	
 	if (iActiveSocket)

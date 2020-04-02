@@ -12,6 +12,7 @@
 
 #include <eikedwin.h>
 #include <aknglobalnote.h> 
+#include "RFtermSettings.h"
 
 class CRFtermOutput : public CEikEdwin
 	{
@@ -20,6 +21,7 @@ public:
 	static CRFtermOutput* NewLC(const CCoeControl *aParent, const TRect& aRect);
 	virtual ~CRFtermOutput();
 
+	void ChangeCodePage(TCodePage aCodePage);
 	TBool IsEmpty();
 	void ClearL();
 	void AppendTextL(const TDesC& aText, const TDesC& aPrefix);
@@ -54,6 +56,7 @@ private:
 	
 private:
 	TInt iRFtermFontID;
+	TPtrC iCodePage;
 	TPtrC iCurrentPrefix;
 	TTextCursor iOutputCursor;
 	TBool iIsVScrollBarShown;

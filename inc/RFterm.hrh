@@ -40,8 +40,10 @@ enum TRFtermSettingIds
 	{
 	ESettingAppendix = 1,
 	ESettingHistorySize,
+	ESettingEcho,
 	ESettingMapping,
-	ESettingTabSize
+	ESettingTabSize,
+	ESettingCodePage
 	};
 
 #endif // __RFTERM_HRH__
