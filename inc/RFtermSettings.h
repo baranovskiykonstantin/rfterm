@@ -23,8 +23,13 @@ enum TCtrlCharMapping {
 
 enum TCodePage {
 	ECodePageLatin1 = 1,
+	ECodePageLatin2,
+	ECodePageLatin3,
+	ECodePageLatin4,
 	ECodePageLatinCyrilic,
-	ECodePage1252
+	ECodePage1251,
+	ECodePage1252,
+	ECodePageKOI8,
 };
 
 class CRFtermSettings : public CBase

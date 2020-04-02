@@ -225,14 +225,39 @@ void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
 			iCodePage.Set(KCodePageLatin1);
 			break;
 			}
+		case ECodePageLatin2:
+			{
+			iCodePage.Set(KCodePageLatin2);
+			break;
+			}
+		case ECodePageLatin3:
+			{
+			iCodePage.Set(KCodePageLatin3);
+			break;
+			}
+		case ECodePageLatin4:
+			{
+			iCodePage.Set(KCodePageLatin4);
+			break;
+			}
 		case ECodePageLatinCyrilic:
 			{
 			iCodePage.Set(KCodePageLatinCyrillic);
 			break;
 			}
+		case ECodePage1251:
+			{
+			iCodePage.Set(KCodePage1251);
+			break;
+			}
 		case ECodePage1252:
 			{
 			iCodePage.Set(KCodePage1252);
+			break;
+			}
+		case ECodePageKOI8:
+			{
+			iCodePage.Set(KCodePageKOI8);
 			break;
 			}
 		default:

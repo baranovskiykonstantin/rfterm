@@ -569,7 +569,12 @@ RESOURCE ARRAY setting_codepage_items
 		{
 		LBUF { txt = qtn_str_setting_codepage_item0; },
 		LBUF { txt = qtn_str_setting_codepage_item1; },
-		LBUF { txt = qtn_str_setting_codepage_item2; }
+		LBUF { txt = qtn_str_setting_codepage_item2; },
+		LBUF { txt = qtn_str_setting_codepage_item3; },
+		LBUF { txt = qtn_str_setting_codepage_item4; },
+		LBUF { txt = qtn_str_setting_codepage_item5; },
+		LBUF { txt = qtn_str_setting_codepage_item6; },
+		LBUF { txt = qtn_str_setting_codepage_item7; }
 		};
 	}
 

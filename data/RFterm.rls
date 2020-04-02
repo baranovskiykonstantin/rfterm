@@ -83,8 +83,13 @@
 
 #define qtn_str_setting_codepage_label "Code page"
 #define qtn_str_setting_codepage_item0 "ISO 8859-1 (Latin-1)"
-#define qtn_str_setting_codepage_item1 "ISO 8859-5 (Latin/Cyrillic)"
-#define qtn_str_setting_codepage_item2 "CP 1252"
+#define qtn_str_setting_codepage_item1 "ISO 8859-2 (Latin-2)"
+#define qtn_str_setting_codepage_item2 "ISO 8859-3 (Latin-3)"
+#define qtn_str_setting_codepage_item3 "ISO 8859-4 (Latin-4)"
+#define qtn_str_setting_codepage_item4 "ISO 8859-5 (Latin/Cyrillic)"
+#define qtn_str_setting_codepage_item5 "CP 1251 (Cyrillic)"
+#define qtn_str_setting_codepage_item6 "CP 1252 (Latin-1)"
+#define qtn_str_setting_codepage_item7 "KOI-8"
 
 // Messages
 #define qtn_str_disconnected "Disconnected"
