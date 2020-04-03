@@ -138,13 +138,13 @@ TKeyResponse CRFtermAppView
 // Draws the display.
 // -----------------------------------------------------------------------------
 //
-void CRFtermAppView::Draw(const TRect& /*aRect*/) const
+void CRFtermAppView::Draw(const TRect& aRect) const
 	{
 	// Get the standard graphics context
 	CWindowGc& gc = SystemGc();
 
 	// Gets the control's extent
-	TRect drawRect(Rect());
+	TRect drawRect(aRect);
 
 	// Clears the screen
 	gc.SetBrushColor(KRgbBlack);

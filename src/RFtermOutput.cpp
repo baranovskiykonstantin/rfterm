@@ -155,6 +155,22 @@ void CRFtermOutput::UpdateVScrollBarL(TBool aIsSizeChanged)
 			TInt scrollbarWidth = ScrollBarFrame()->VerticalScrollBar()->ScrollBarBreadth();
 			outputRect.SetWidth(outputRect.Width() - scrollbarWidth);
 			SetRect(outputRect);
+			TRect scrollbarRect(
+				outputRect.Width(),
+				0,
+				outputRect.Width() + scrollbarWidth,
+				outputRect.Height()
+			);
+
+			// Clear background under scrollbar
+			CWindowGc& gc = SystemGc();
+			gc.Activate(Window());
+			Window().BeginRedraw(scrollbarRect);
+			gc.SetBrushColor(KRgbBlack);
+			gc.Clear(scrollbarRect);
+			Window().EndRedraw();
+			gc.Deactivate();
+
 			iIsVScrollBarShown = ETrue;
 			UpdateScrollBarsL();
 			}
