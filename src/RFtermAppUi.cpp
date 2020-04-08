@@ -128,6 +128,8 @@ CRFtermAppUi::~CRFtermAppUi()
 		iAppView = NULL;
 		}
 
+	delete iSettings;
+	iSettings = NULL;
 	}
 
 // -----------------------------------------------------------------------------
