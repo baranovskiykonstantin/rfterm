@@ -26,13 +26,9 @@ public:
 	void ClearL();
 	void AppendTextL(const TDesC& aText, const TDesC& aPrefix);
 	void AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefix);
-	void UpdateVScrollBarL(TBool aIsSizeChanged=EFalse);
-	/* If "aProcessLastLine" is true and
-	 * last line of the text is partially showing
-	 * at the bottom of the view
-	 * the edwin will be scrolled down by one line.
-	 */
-	void UpdateCursorL(TBool aProcessLastLine=EFalse);
+	void ScrollToEndL();
+	void UpdateScrollBarsL();
+	void UpdateCursorL();
 
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent,TEventCode aType);
 
@@ -50,7 +46,6 @@ private:
 	 * Returns ETrue if found and EFalse otherwise.
 	 */
 	TBool TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& aPos);
-	void ScrollToEndL();
 	void HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType);
 	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
 	
@@ -59,9 +54,18 @@ private:
 	TPtrC iCodePage;
 	TPtrC iCurrentPrefix;
 	TTextCursor iOutputCursor;
-	TBool iIsVScrollBarShown;
+
+	CEikScrollBarFrame* iScrollBars;
+	TAknDoubleSpanScrollBarModel iVScrollBarModel;
+	TAknDoubleSpanScrollBarModel iHScrollBarModel;
+	TInt iVScrollBarPos;
+	TInt iHScrollBarPos;
+	TBool iVScrollBarIsShown;
+	TBool iHScrollBarIsShown;
+
 	TInt iLastLineStartPos;
 	TInt iLastLineCursorPos;
+
 	CAknGlobalNote* iBellNote;
 	TInt iBellNoteID;
 	};

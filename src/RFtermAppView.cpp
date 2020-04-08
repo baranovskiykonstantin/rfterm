@@ -62,15 +62,15 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	iRFtermOutput = CRFtermOutput::NewL(this, aRect);
 
 	// It's needed for iRFtermOutput->UpdateCursor (SetTextCursor)
-	iRFtermOutput->TextView()->SetDisplayContextL(
-			static_cast<CBitmapDevice*> (CEikonEnv::Static()->ScreenDevice()),
-			&Window(),
-			&iEikonEnv->RootWin(),
-			&iEikonEnv->WsSession()
-	);
+//	iRFtermOutput->TextView()->SetDisplayContextL(
+//			static_cast<CBitmapDevice*> (CEikonEnv::Static()->ScreenDevice()),
+//			&Window(),
+//			&iEikonEnv->RootWin(),
+//			&iEikonEnv->WsSession()
+//	);
 
 	iRFtermOutput->SetFocus(ETrue);
-	
+
 	iMessageHistoryArray = new (ELeave) CDesCArraySeg(4);
 
 	// Activate the window, which makes it ready to be drawn
@@ -167,8 +167,7 @@ void CRFtermAppView::SizeChanged()
 		TRect clientRect = iAvkonAppUi->ClientRect(); 
 		TRect outputRect(clientRect.Size());
 		iRFtermOutput->SetRect(outputRect); 
-		iRFtermOutput->UpdateVScrollBarL(ETrue);
-		iRFtermOutput->UpdateCursorL();
+		iRFtermOutput->ScrollToEndL();
 		}
 
 	DrawNow();

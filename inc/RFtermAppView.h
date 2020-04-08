@@ -12,7 +12,6 @@
 
 // INCLUDES
 #include <coecntrl.h>
-//#include <AknQueryDialog.h>
 
 #include "RFtermOutput.h"
 
@@ -150,19 +149,19 @@ private:
 	CRFtermAppView();
 	
 private:
-	
+
 	/**
 	 * iDownPointerPos
 	 */
 	TPoint iDownPointerPos;
-	
+
 public:
-	
+
 	/**
-	* iRFtermOutput
-	*/
+	 * iRFtermOutput
+	 */
 	CRFtermOutput* iRFtermOutput;
-	
+
 	/**
 	 * iMessageHistoryArray
 	 */

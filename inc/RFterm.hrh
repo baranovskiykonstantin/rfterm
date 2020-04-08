@@ -26,7 +26,8 @@ enum TRFtermIds
 	EClear,
 	ESettings,
 	EHelp,
-	EAbout
+	EAbout,
+	ETest
 	};
 
 // Identifiers of settings dialog items

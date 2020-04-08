@@ -14,6 +14,7 @@
 #include <stringloader.h>
 #include <avkon.hrh>
 #include <coemain.h>
+#include <eiksbfrm.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFterm.pan"
 #include "RFtermAppUi.h"
@@ -39,21 +40,15 @@ CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent, const TRect& aRe
 void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 	{
 	CEikEdwin::ConstructL(
-		ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor,
+		ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor | ENoWrap,
 		0,
 		0,
 		0
 	);
 	SetContainerWindowL(*aParent);
-	// A rect placed at (0,0)
+	// A rect is placed at (0,0)
 	TRect rect(aRect.Size());
 	SetRect(rect);
-
-	CreateScrollBarFrameL();
-	ScrollBarFrame()->SetScrollBarVisibilityL(
-		CEikScrollBarFrame::EOff,
-		CEikScrollBarFrame::EAuto
-	);
 
 	SetBackgroundColorL(KRgbBlack);
 	iTextView->SetBackgroundColor(KRgbBlack);
@@ -101,6 +96,15 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 	iOutputCursor.iFlags = 0;
 	iOutputCursor.iColor = KRgbWhite;
 
+	iScrollBars = new (ELeave) CEikScrollBarFrame(this, this, ETrue);
+	iScrollBars->CreateDoubleSpanScrollBarsL(ETrue, EFalse, ETrue, ETrue);
+	iScrollBars->DrawBackground(EFalse, EFalse);
+	iScrollBars->SetTypeOfVScrollBar(CEikScrollBarFrame::EDoubleSpan);
+	iScrollBars->SetTypeOfHScrollBar(CEikScrollBarFrame::EDoubleSpan);
+	iScrollBars->SetScrollBarVisibilityL(
+		CEikScrollBarFrame::EOn,
+		CEikScrollBarFrame::EOn);
+
 	ClearL();
 
 	iBellNote = CAknGlobalNote::NewL();
@@ -110,7 +114,10 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 CRFtermOutput::CRFtermOutput()
 	: iCodePage(KCodePageLatin1)
 	, iCurrentPrefix(KPrefixIn)
-	, iIsVScrollBarShown(EFalse)
+	, iVScrollBarPos(0)
+	, iHScrollBarPos(0)
+	, iVScrollBarIsShown(EFalse)
+	, iHScrollBarIsShown(EFalse)
 	, iLastLineStartPos(0)
 	, iLastLineCursorPos(0)
 	{
@@ -118,9 +125,13 @@ CRFtermOutput::CRFtermOutput()
 
 CRFtermOutput::~CRFtermOutput()
 	{
-	CEikonEnv::Static()->ScreenDevice()->RemoveFile(iRFtermFontID); 
-
 	delete iBellNote;
+	iBellNote = NULL;
+
+	delete iScrollBars;
+	iScrollBars = NULL;
+
+	CEikonEnv::Static()->ScreenDevice()->RemoveFile(iRFtermFontID); 
 	}
 
 TBool CRFtermOutput::IsEmpty()
@@ -138,77 +149,15 @@ void CRFtermOutput::ClearL()
 	iLastLineStartPos = iText->DocumentLength();
 	iLastLineCursorPos = iLastLineStartPos;
 	HandleTextChangedL();
-	UpdateVScrollBarL();
+	UpdateScrollBarsL();
 	UpdateCursorL();
 	}
 
-void CRFtermOutput::UpdateVScrollBarL(TBool aIsSizeChanged)
-	{
-	TRect viewRect = iTextView->ViewRect();
-	TSize textSize;
-	iLayout->GetMinimumSizeL(viewRect.Width(), textSize);
-	if (textSize.iHeight > viewRect.Height())
-		{
-		if (!iIsVScrollBarShown or (iIsVScrollBarShown and aIsSizeChanged))
-			{
-			TRect outputRect = Rect();
-			TInt scrollbarWidth = ScrollBarFrame()->VerticalScrollBar()->ScrollBarBreadth();
-			outputRect.SetWidth(outputRect.Width() - scrollbarWidth);
-			SetRect(outputRect);
-			TRect scrollbarRect(
-				outputRect.Width(),
-				0,
-				outputRect.Width() + scrollbarWidth,
-				outputRect.Height()
-			);
-
-			// Clear background under scrollbar
-			CWindowGc& gc = SystemGc();
-			gc.Activate(Window());
-			Window().BeginRedraw(scrollbarRect);
-			gc.SetBrushColor(KRgbBlack);
-			gc.Clear(scrollbarRect);
-			Window().EndRedraw();
-			gc.Deactivate();
-
-			iIsVScrollBarShown = ETrue;
-			UpdateScrollBarsL();
-			}
-		}
-	else if (textSize.iHeight <= viewRect.Height() and iIsVScrollBarShown)
-		{
-		TRect outputRect = Rect();
-		TInt scrollbarWidth = ScrollBarFrame()->VerticalScrollBar()->ScrollBarBreadth();
-		outputRect.SetWidth(outputRect.Width() + scrollbarWidth);
-		SetRect(outputRect);
-		iIsVScrollBarShown = EFalse;
-		}
-	}
-
-void CRFtermOutput::UpdateCursorL(TBool aProcessLastLine)
+void CRFtermOutput::UpdateCursorL()
 	{
 	TPoint outputCursorPos;
 	iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
-	
-	if (aProcessLastLine)
-		{
-		TRect firstLineRect;
-		iLayout->GetLineRect(0, firstLineRect);
-		TInt helfLineHeight = firstLineRect.Height() / 2;
-		
-		TRect outputRect = Rect();
-		
-		TInt bottomCursorOffset = outputRect.iBr.iY - outputCursorPos.iY;
-		
-		// Avoid partial visibility of the last text line at the bottom of the output.
-		if (bottomCursorOffset > -helfLineHeight && bottomCursorOffset < helfLineHeight)
-			{
-			iTextView->ScrollDisplayL(
-					TCursorPosition::EFLineDown,
-					CTextLayout::EFAllowScrollingBlankSpace);
-			iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
-			}
-		}
+	outputCursorPos.iX -= iHScrollBarPos;
 	
 	iEikonEnv->RootWin().SetTextCursor(
 			Window(),
@@ -225,10 +174,8 @@ void CRFtermOutput::ScrollToEndL()
 				TCursorPosition::EFLineDown);
 		}
 	while (isScrolled);
-	iLastLineCursorPos = iText->DocumentLength();
-	SetCursorPosL(iLastLineCursorPos, EFalse);
-//	SetSelectionL(iLastLineCursorPos, lastPos);
-	UpdateVScrollBarL();
+
+	UpdateScrollBarsL();
 	UpdateCursorL();
 	}
 
@@ -288,6 +235,7 @@ void CRFtermOutput::AppendL(const TDesC& aBuf)
 	if (aBuf == KParagraphDelimeter)
 		{
 		iText->InsertL(iLastLineCursorPos, aBuf);
+		iLastLineCursorPos = iText->DocumentLength();
 		iTextView->HandleGlobalChangeL();
 		ScrollToEndL();
 		}
@@ -556,15 +504,41 @@ void CRFtermOutput::AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefi
 
 void CRFtermOutput::HandleScrollEventL(CEikScrollBar * aScrollBar, TEikScrollEvent aEventType)
 	{
-	CEikEdwin::HandleScrollEventL(aScrollBar, aEventType);
-	if (aEventType == EEikScrollThumbReleaseVert)
+	TInt thumbPos = aScrollBar->ThumbPosition();
+
+	if (aEventType == EEikScrollThumbDragVert)
 		{
-		UpdateCursorL(ETrue);
-		
+		TRect lineRect;
+		iLayout->GetLineRect(0, lineRect);
+		TInt vDelta = (thumbPos - iVScrollBarPos) / lineRect.Height();
+		iVScrollBarPos += vDelta * lineRect.Height();
+		TCursorPosition::TMovementType direction = TCursorPosition::EFLineDown;
+		if (vDelta < 0)
+			{
+			vDelta = -vDelta;
+			direction = TCursorPosition::EFLineUp;
+			}
+		for (; vDelta > 0; vDelta--)
+			{
+			// Do not use ScrollDisplayLinesL(...).
+			// That skips lines on fast scrolling.
+			iTextView->ScrollDisplayL(direction, CTextLayout::EFAllowScrollingBlankSpace);
+			}
+		UpdateCursorL();
 		}
-	else
+	else if (aEventType == EEikScrollThumbDragHoriz)
 		{
-		UpdateCursorL(EFalse);
+		TInt hDelta = thumbPos - iHScrollBarPos;
+		iHScrollBarPos += hDelta;
+		TCursorPosition::TMovementType direction = TCursorPosition::EFRight;
+		if (hDelta < 0)
+			{
+			hDelta = -hDelta;
+			direction = TCursorPosition::EFLeft;
+			}
+		iTextView->SetHorizontalScrollJump(hDelta);
+		iTextView->ScrollDisplayL(direction, CTextLayout::EFAllowScrollingBlankSpace);
+		UpdateCursorL();
 		}
 	}
 
@@ -592,4 +566,82 @@ TKeyResponse CRFtermOutput::OfferKeyEventL(
 			}
 		}
 	return response;
+	}
+
+void CRFtermOutput::UpdateScrollBarsL()
+	{
+	if (!iScrollBars)
+		{
+		return;
+		}
+
+	TSize windowSize = Parent()->Rect().Size();
+	TSize contentSize;
+	iLayout->GetMinimumSizeL(KMaxTInt, contentSize);
+
+	TRect outputRect(windowSize);
+	TInt vBreadth(0);
+	TInt hBreadth(0);
+
+	CEikScrollBar* vScrollBar = iScrollBars->GetScrollBarHandle(CEikScrollBar::EVertical);
+	CEikScrollBar* hScrollBar = iScrollBars->GetScrollBarHandle(CEikScrollBar::EHorizontal);
+
+	// There are 2 scrollbars in the output, so scrollbars visibility
+	// must be checked 2 times.
+	// After enabling one of scrollbar another one must be checked again
+	// because the size of output changes.
+	for (TInt i = 2; i > 0; i--)
+		{
+		iVScrollBarIsShown = contentSize.iHeight > outputRect.Height();
+		iHScrollBarIsShown = contentSize.iWidth > outputRect.Width();
+
+		if (iVScrollBarIsShown)
+			{
+			vBreadth = vScrollBar->ScrollBarBreadth();
+			}
+		outputRect.SetWidth(windowSize.iWidth - vBreadth);
+
+		if (iHScrollBarIsShown)
+			{
+			hBreadth = hScrollBar->ScrollBarBreadth();
+			}
+		outputRect.SetHeight(windowSize.iHeight - hBreadth);
+		}
+
+	if (outputRect != Rect())
+		{
+		SetRect(outputRect);
+		}
+
+	// Avoid partial visibility of the last text line at the bottom of the output.
+	TRect lineRect;
+	iLayout->GetLineRect(0, lineRect);
+	TInt helfLineHeight = lineRect.Height() / 2;
+	TPoint outputCursorPos;
+	iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
+	TInt bottomCursorOffset = outputRect.iBr.iY - outputCursorPos.iY;
+	if (bottomCursorOffset > -helfLineHeight && bottomCursorOffset < helfLineHeight)
+		{
+		iTextView->ScrollDisplayL(
+				TCursorPosition::EFLineDown,
+				CTextLayout::EFAllowScrollingBlankSpace);
+		}
+
+	iVScrollBarPos = contentSize.iHeight + lineRect.Height() - outputRect.Height();
+	iVScrollBarModel.SetScrollSpan(contentSize.iHeight + lineRect.Height());
+	iVScrollBarModel.SetWindowSize(outputRect.Height());
+	iVScrollBarModel.SetFocusPosition(iVScrollBarPos);
+	iHScrollBarPos = 0;
+	iHScrollBarModel.SetScrollSpan(contentSize.iWidth + iOutputCursor.iWidth);
+	iHScrollBarModel.SetWindowSize(outputRect.Width());
+	iHScrollBarModel.SetFocusPosition(iHScrollBarPos);
+	TEikScrollBarFrameLayout sbLayout;
+	sbLayout.iTilingMode = TEikScrollBarFrameLayout::EClientRectConstant;
+	TRect sbRect(windowSize);
+	iScrollBars->TileL(&iHScrollBarModel, &iVScrollBarModel, outputRect, sbRect, sbLayout);
+
+	if (iVScrollBarIsShown || iHScrollBarIsShown)
+		{
+		iScrollBars->DrawScrollBarsNow();
+		}
 	}

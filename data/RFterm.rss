@@ -132,6 +132,11 @@ RESOURCE MENU_PANE r_menu
 				{
 				command = EAknSoftkeyExit;
 				txt = qtn_exit;
+				},
+		MENU_ITEM
+				{
+				command = ETest;
+				txt = "Test";
 				}
 		};
 	}
