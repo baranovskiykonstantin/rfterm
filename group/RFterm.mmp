@@ -29,6 +29,7 @@ SOURCE			RFtermServiceSearcher.cpp
 SOURCE			RFtermTextQueryDialog.cpp
 SOURCE			RFtermSettings.cpp
 SOURCE			RFtermSettingsDialog.cpp
+SOURCE			RFtermScrollBars.cpp
 
 SOURCEPATH		..\data
 
@@ -57,6 +58,7 @@ LIBRARY			btextnotifiers.lib
 LIBRARY			commonengine.lib
 LIBRARY			cone.lib
 LIBRARY			efsrv.lib 
+LIBRARY			egul.lib
 LIBRARY			eikcoctl.lib
 LIBRARY			eikcore.lib
 LIBRARY			eikctl.lib

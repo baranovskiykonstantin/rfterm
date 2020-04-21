@@ -464,7 +464,8 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 		case ETest:
 			{
 			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"), KPrefixNote);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"), KPrefixNote);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"), KPrefixNote);
+			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"), KPrefixNote);
 			break;
 			}
 

@@ -14,6 +14,7 @@
 #include <coecntrl.h>
 
 #include "RFtermOutput.h"
+#include "RFtermScrollBars.h"
 
 // CLASS DECLARATION
 class CRFtermAppView : public CCoeControl
@@ -156,6 +157,11 @@ private:
 	TPoint iDownPointerPos;
 
 public:
+
+	/**
+	 * iRFtermScrollBars
+	 */
+	CRFtermScrollBars* iRFtermScrollBars;
 
 	/**
 	 * iRFtermOutput

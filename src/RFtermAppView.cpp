@@ -56,10 +56,13 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	// Create a window for this application view
 	CreateWindowL();
 
-	// Set the windows size
-	SetRect(aRect);
-	
+	iRFtermScrollBars = new (ELeave) CRFtermScrollBars(aRect);
+	iRFtermScrollBars->SetContainerWindowL(*this);
+
 	iRFtermOutput = CRFtermOutput::NewL(this, aRect);
+
+	iRFtermScrollBars->SetObserver(iRFtermOutput);
+	iRFtermOutput->SetObserver(iRFtermScrollBars);
 
 	// It's needed for iRFtermOutput->UpdateCursor (SetTextCursor)
 //	iRFtermOutput->TextView()->SetDisplayContextL(
@@ -69,9 +72,10 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 //			&iEikonEnv->WsSession()
 //	);
 
-	iRFtermOutput->SetFocus(ETrue);
-
 	iMessageHistoryArray = new (ELeave) CDesCArraySeg(4);
+
+	// Set the windows size
+	SetRect(aRect);
 
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
@@ -94,11 +98,14 @@ CRFtermAppView::CRFtermAppView()
 //
 CRFtermAppView::~CRFtermAppView()
 	{
+	delete iMessageHistoryArray;
+	iMessageHistoryArray = NULL;
+
 	delete iRFtermOutput;
 	iRFtermOutput = NULL;
 	
-	delete iMessageHistoryArray;
-	iMessageHistoryArray = NULL;
+	delete iRFtermScrollBars;
+	iRFtermScrollBars = NULL;
 	}
 
 // ----------------------------------------------------------------------------
@@ -108,7 +115,7 @@ CRFtermAppView::~CRFtermAppView()
 //
 TInt CRFtermAppView::CountComponentControls() const
 	{
-	return 1; // Only have one Component
+	return 2; // iRFtermScrollBars, iRFtermOutput
 	}
 
 // ----------------------------------------------------------------------------
@@ -118,8 +125,22 @@ TInt CRFtermAppView::CountComponentControls() const
 //
 CCoeControl* CRFtermAppView::ComponentControl(TInt aIndex) const
 	{
-	__ASSERT_ALWAYS(aIndex == 0, Panic(ERFtermInvalidControlIndex));
-	return iRFtermOutput;    //  Return the component
+	switch (aIndex)
+		{
+		case 0:
+			{
+			return iRFtermScrollBars;
+			}
+		case 1:
+			{
+			return iRFtermOutput;
+			}
+		default:
+			{
+			Panic(ERFtermInvalidControlIndex);
+			}
+		}
+	return NULL; // This never be reached.
 	}
 
 // ----------------------------------------------------------------------------
@@ -130,6 +151,11 @@ CCoeControl* CRFtermAppView::ComponentControl(TInt aIndex) const
 TKeyResponse CRFtermAppView
 ::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType)
 	{
+	if (aType == EEventKey && aKeyEvent.iScanCode == EStdKeyDevice3)
+		{
+		// Press directional rocker to send
+		iAvkonAppUi->HandleCommandL(EMessage);
+		}
 	return iRFtermOutput->OfferKeyEventL(aKeyEvent, aType);
 	}
 
@@ -158,16 +184,24 @@ void CRFtermAppView::Draw(const TRect& aRect) const
 //
 void CRFtermAppView::SizeChanged()
 	{
-	if (iRFtermOutput) 
-		{
-		// The next line is important!
-		// Without it the custom text cursor gets disappeared on size changing.
-		iEikonEnv->RootWin().CancelTextCursor();
+	// The next line is important!
+	// Without it the custom text cursor gets disappeared on size changing.
+	iEikonEnv->RootWin().CancelTextCursor();
 
-		TRect clientRect = iAvkonAppUi->ClientRect(); 
-		TRect outputRect(clientRect.Size());
+	TRect clientRect = iAvkonAppUi->ClientRect(); 
+	TRect windowRect(clientRect.Size());
+	TRect outputRect = windowRect;
+	if (iRFtermScrollBars)
+		{
+		iRFtermScrollBars->SetRect(windowRect);
+		iRFtermScrollBars->GetFreeRect(outputRect);
+		}
+	if (iRFtermOutput)
+		{
 		iRFtermOutput->SetRect(outputRect); 
-		iRFtermOutput->ScrollToEndL();
+		iRFtermOutput->NotifyViewRectChangedL();
+		iRFtermOutput->UpdateCursorL();
+		iRFtermOutput->SetFocus(ETrue);
 		}
 
 	DrawNow();
@@ -184,7 +218,29 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	{
 	TInt KMaxDelta = 15;
 
-	if (TPointerEvent::EButton1Down == aPointerEvent.iType)
+	TPointerEvent pointerEvent = aPointerEvent;
+
+	// Scrollbars are too thin to be tapped on the touch screen,
+	// so part of the output control is used to.
+	TRect vScrollBarArea = Rect();
+	vScrollBarArea.iTl.iX = vScrollBarArea.iBr.iX - KRFtermScrollBarSensorBreadth;
+	TRect hScrollBarArea = Rect();
+	hScrollBarArea.iTl.iY = hScrollBarArea.iBr.iY - KRFtermScrollBarSensorBreadth;
+	if (iRFtermScrollBars->IsVScrollBarVisible() &&
+			vScrollBarArea.Contains(aPointerEvent.iPosition))
+		{
+		// Shift pointer event position to the middle of the vert scrollbar
+		pointerEvent.iPosition.iX = vScrollBarArea.iBr.iX - (KRFtermScrollBarBreadth / 2);
+		}
+	else if (iRFtermScrollBars->IsHScrollBarVisible() &&
+			hScrollBarArea.Contains(aPointerEvent.iPosition))
+		{
+		// Shift pointer event position to the middle of the horiz scrollbar
+		pointerEvent.iPosition.iY = hScrollBarArea.iBr.iY - (KRFtermScrollBarBreadth / 2);
+		}
+
+	if (TPointerEvent::EButton1Down == pointerEvent.iType &&
+			iRFtermOutput->Rect().Contains(pointerEvent.iPosition))
 		{
 		if (iRFtermOutput->SelectionLength())
 			{
@@ -194,12 +250,12 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 			}
 		else
 			{
-			iDownPointerPos = aPointerEvent.iPosition;
+			iDownPointerPos = pointerEvent.iPosition;
 			}
 		}
-	else if (TPointerEvent::EButton1Up == aPointerEvent.iType)
+	else if (TPointerEvent::EButton1Up == pointerEvent.iType)
 		{
-		TPoint posDelta = iDownPointerPos - aPointerEvent.iPosition;
+		TPoint posDelta = iDownPointerPos - pointerEvent.iPosition;
 		if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
 			{
 			// Tap output to send
@@ -208,7 +264,7 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		}
 
 	// Call base class HandlePointerEventL()
-	CCoeControl::HandlePointerEventL(aPointerEvent);
+	CCoeControl::HandlePointerEventL(pointerEvent);
 	}
 
 // ----------------------------------------------------------------------------
