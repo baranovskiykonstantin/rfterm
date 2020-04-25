@@ -144,18 +144,19 @@ void CRFtermBtServiceSearcher::NextRecordRequestCompleteL(
 		{
 		TBuf<6> errorStr;
 		errorStr.Num(aError);
-		iRFtermOutput->AppendTextL(KErrNRRCErr, KPrefixError);
-		iRFtermOutput->AppendTextOnNewLineL(errorStr, KPrefixError);
+		HBufC* errNRRC = StringLoader::LoadLC(R_ERR_NRRC_ERROR);
+		HBufC* errFull = HBufC::NewLC(errNRRC->Length() + errorStr.Length());
+		iRFtermOutput->AppendMessageL(*errFull);
+		CleanupStack::PopAndDestroy(2); // errNRRC, errFull
 		Finished(aError);
 		return;
 		}
 
 	if (aTotalRecordsCount == 0)
 		{
-		HBufC* errNRRCNoRecords = StringLoader
-			::LoadLC (R_ERR_NRRC_NO_RECORDS);
-		iRFtermOutput->AppendTextOnNewLineL(*errNRRCNoRecords, KPrefixError);
-		CleanupStack::PopAndDestroy (errNRRCNoRecords);
+		HBufC* errNRRCNoRecords = StringLoader::LoadLC(R_ERR_NRRC_NO_RECORDS);
+		iRFtermOutput->AppendMessageL(*errNRRCNoRecords);
+		CleanupStack::PopAndDestroy(errNRRCNoRecords);
 		Finished(KErrNotFound);
 		return;
 		}
@@ -234,13 +235,12 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 	{
 	if (aError != KErrNone)
 		{
-		HBufC* errCantGetAttribute = StringLoader
-			::LoadLC (R_ERR_CANT_GET_ATTRIBUTE);
+		HBufC* errCantGetAttribute = StringLoader::LoadLC(R_ERR_CANT_GET_ATTRIBUTE);
 		TBuf<6> errorStr;
 		errorStr.Num(aError);
-		iRFtermOutput->AppendTextL(*errCantGetAttribute, KPrefixError);
-		iRFtermOutput->AppendTextOnNewLineL(errorStr, KPrefixError);
-		CleanupStack::PopAndDestroy (errCantGetAttribute);
+		HBufC* errFull = HBufC::NewLC(errCantGetAttribute->Length() + errorStr.Length());
+		iRFtermOutput->AppendMessageL(*errFull);
+		CleanupStack::PopAndDestroy(2); // errCantGetAttribute, errFull
 		}
 	else if (!HasFinishedSearching())
 		{
@@ -249,10 +249,9 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 		}
 	else
 		{
-		HBufC* errAttrReqCom = StringLoader
-			::LoadLC (R_ERR_ATTR_REQ_COM);
-		iRFtermOutput->AppendTextOnNewLineL(*errAttrReqCom, KPrefixError);
-		CleanupStack::PopAndDestroy (errAttrReqCom);
+		HBufC* errAttrReqCom = StringLoader::LoadLC(R_ERR_ATTR_REQ_COM);
+		iRFtermOutput->AppendMessageL(*errAttrReqCom);
+		CleanupStack::PopAndDestroy(errAttrReqCom);
 		Finished();
 		}
 	}

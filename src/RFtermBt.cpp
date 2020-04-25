@@ -8,7 +8,6 @@
  */
 
 // INCLUDE FILES
-#include <e32debug.h>
 #include <StringLoader.h>
 #include <coemain.h>
 #include <RFterm_0xae7f53fa.rsg>
@@ -127,10 +126,8 @@ void CRFtermBt::RunL()
 	if (iStatus == KErrDisconnected)
 		{
 		// Disconnected
-		RDebug::Printf("RunL()::EErrDisconnected");
-		HBufC* strDisconnected = StringLoader
-			::LoadLC (R_STR_DISCONNECTED);
-		iRFtermOutput->AppendTextOnNewLineL(*strDisconnected, KPrefixNote);
+		HBufC* strDisconnected = StringLoader::LoadLC(R_STR_DISCONNECTED);
+		iRFtermOutput->AppendMessageL(*strDisconnected);
 		CleanupStack::PopAndDestroy(strDisconnected);
 		StopL();
 		return;
@@ -138,10 +135,8 @@ void CRFtermBt::RunL()
 		
 	else if (iStatus == KErrAbort)
 		{
-		RDebug::Printf("RunL()::EErrAbort");
-		HBufC* strDisconnected = StringLoader
-			::LoadLC (R_STR_DISCONNECTED);
-		iRFtermOutput->AppendTextOnNewLineL(*strDisconnected, KPrefixNote);
+		HBufC* strDisconnected = StringLoader::LoadLC(R_STR_DISCONNECTED);
+		iRFtermOutput->AppendMessageL(*strDisconnected);
 		CleanupStack::PopAndDestroy(strDisconnected);
 		StopL();
 		return;
@@ -152,56 +147,44 @@ void CRFtermBt::RunL()
 		switch (State())
 			{
 			case EGettingDevice:
-				RDebug::Printf("RunL()::EGettingDevice");
 				if (iStatus == KErrCancel)
 					{
-					textResource = StringLoader
-						::LoadLC(R_ERR_NO_DEVICE_SELECTED);
-					iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixError);
+					textResource = StringLoader::LoadLC(R_ERR_NO_DEVICE_SELECTED);
+					iRFtermOutput->AppendMessageL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 					}
 				SetState(EWaitingToGetDevice);
 				break;
 				
 			case EGettingService:
-				RDebug::Printf("RunL()::EGettingService");
-			
 			case EGettingConnection:
-				RDebug::Printf("RunL()::EGettingConnection");
-				textResource = StringLoader
-					::LoadLC(R_ERR_CONNECTION_ERROR);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixError);
+				textResource = StringLoader::LoadLC(R_ERR_CONNECTION_ERROR);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EWaitingToGetDevice);
 				break;
 				
 			case EConnected:
-				RDebug::Printf("RunL()::EConnected");
-				textResource = StringLoader
-					::LoadLC(R_ERR_LOST_CONNECTION);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixError);
+				textResource = StringLoader::LoadLC(R_ERR_LOST_CONNECTION);
+				iRFtermOutput->AppendMessageL(*textResource);
 				DisconnectFromServerL();
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EDisconnecting);
 				break;
 				
 			case ESendingMessage:
-				RDebug::Printf("RunL()::ESendMessage");
-				textResource = StringLoader
-					::LoadLC(R_ERR_MESSAGE_FAILED);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixError);
+				textResource = StringLoader::LoadLC(R_ERR_MESSAGE_FAILED);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				DisconnectFromServerL();
 				SetState(EDisconnecting);
 				break;
 				
 			case EDisconnecting:
-				RDebug::Printf("RunL()::EDisconnecting");
 				if (iStatus == KErrDisconnected)
 					{
-					textResource = StringLoader
-						::LoadLC(R_STR_DISCONNECT_COMPLETE);
-					iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixNote);
+					textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
+					iRFtermOutput->AppendMessageL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 
 					StopL();
@@ -209,9 +192,8 @@ void CRFtermBt::RunL()
 					}
 				else
 					{
-					textResource = StringLoader
-						::LoadLC(R_ERR_FAILED_TO_DISCONNECT);
-					iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixError);
+					textResource = StringLoader::LoadLC(R_ERR_FAILED_TO_DISCONNECT);
+					iRFtermOutput->AppendMessageL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 
 					Panic(ERFtermUnableToDisconnect);
@@ -219,10 +201,8 @@ void CRFtermBt::RunL()
 				break;
 			
 			case EWaitingToGetDevice:
-				RDebug::Printf("RunL()::EWaitingToGetDevice");
-				textResource = StringLoader
-					::LoadLC(R_STR_DISCONNECTED);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixNote);
+				textResource = StringLoader::LoadLC(R_STR_DISCONNECTED);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				break;
 				
@@ -237,12 +217,8 @@ void CRFtermBt::RunL()
 		switch (State())
 			{
 			case EGettingDevice:
-				RDebug::Printf("RunL()::EGettingDevice");
 				// found a device now search for a suitable service
-				iRFtermOutput->AppendTextOnNewLineL(
-					iServiceSearcher->ResponseParams().DeviceName(),
-					KPrefixNote
-				);
+				iRFtermOutput->AppendMessageL(iServiceSearcher->ResponseParams().DeviceName());
 				SetState(EGettingService);
 				iStatus = KRequestPending;  // this means that the RunL 
 											// can not be called until
@@ -253,9 +229,8 @@ void CRFtermBt::RunL()
 				break;
 				
 			case EConnecting:
-				RDebug::Printf("RunL()::EConnecting");
-				textResource = StringLoader::LoadLC (R_STR_CONNECTED);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixNote);
+				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				
 				// do not accept any more connections
@@ -265,55 +240,44 @@ void CRFtermBt::RunL()
 				break;
 				
 			case EGettingService:
-				RDebug::Printf("RunL()::EGettingService");
-				textResource = StringLoader
-					::LoadLC(R_STR_FOUND_SERVICE);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixNote);
+				textResource = StringLoader::LoadLC(R_STR_FOUND_SERVICE);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EGettingConnection);
 				ConnectToServerL();
 				break;
 				
 			case EGettingConnection:
-				RDebug::Printf("RunL()::EGettingConnection");
-				textResource = StringLoader
-					::LoadLC(R_STR_CONNECTED);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixNote);
+				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EConnected);
 				RequestData();
 				break;
 				
 			case EConnected:
-				RDebug::Printf("RunL()::EConnected -> Beginning");
 				textResource = HBufC::NewLC(iBuffer.Length());
 				textResource->Des().Copy(iBuffer); // Convert buf8 to buf16
-				iRFtermOutput->AppendTextL(*textResource, KPrefixIn);
+				iRFtermOutput->AppendTextL(*textResource);
 				iBuffer.Zero();
 				CleanupStack::PopAndDestroy(textResource);
-				RDebug::Printf("RunL()::EConnected");
 				RequestData();
-				RDebug::Printf("RunL()::EConnected -> End");
 				break;
 				
 			case ESendingMessage:
-				RDebug::Printf("RunL()::ESendingMessage");
 				SetState(EConnected);
 				RequestData();
 				break;
 				
 			case EDisconnecting:
-				RDebug::Printf("RunL()::EDisconnectin");
-				textResource = StringLoader
-					::LoadLC(R_STR_DISCONNECT_COMPLETE);
-				iRFtermOutput->AppendTextOnNewLineL(*textResource, KPrefixNote);
+				textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
+				iRFtermOutput->AppendMessageL(*textResource);
 				CleanupStack::PopAndDestroy (textResource);
 				iSocket.Close();
 				SetState(EWaitingToGetDevice);
 				break;
 			
 			case EWaitingToGetDevice:
-				RDebug::Printf("RunL()::EWaitingToDevice");
 				
 				break;
 				
@@ -426,8 +390,8 @@ void CRFtermBt::ConnectL()
 		}
 	else
 		{
-		HBufC* errClientBusy = StringLoader::LoadLC (R_STR_CLIENT_BUSY);
-		iRFtermOutput->AppendTextOnNewLineL(*errClientBusy, KPrefixNote);
+		HBufC* errClientBusy = StringLoader::LoadLC(R_STR_CLIENT_BUSY);
+		iRFtermOutput->AppendMessageL(*errClientBusy);
 		CleanupStack::PopAndDestroy(errClientBusy);
 		
 		User::Leave(KErrInUse);
@@ -448,8 +412,8 @@ void CRFtermBt::DisconnectL()
 		}
 	else
 		{
-		HBufC* errNoConn = StringLoader::LoadLC (R_ERR_NO_CONN);
-		iRFtermOutput->AppendTextOnNewLineL(*errNoConn, KPrefixNote);
+		HBufC* errNoConn = StringLoader::LoadLC(R_ERR_NO_CONN);
+		iRFtermOutput->AppendMessageL(*errNoConn);
 		CleanupStack::PopAndDestroy(errNoConn);
 		User::Leave(KErrDisconnected);
 		}
@@ -466,9 +430,8 @@ void CRFtermBt::DisconnectFromServerL()
 	iSocket.CancelAll();
 	Cancel();
 
-	HBufC* strReleasingConn = StringLoader
-		::LoadLC (R_STR_RELEASING_CONN);
-	iRFtermOutput->AppendTextOnNewLineL(*strReleasingConn, KPrefixNote);
+	HBufC* strReleasingConn = StringLoader::LoadLC(R_STR_RELEASING_CONN);
+	iRFtermOutput->AppendMessageL(*strReleasingConn);
 	CleanupStack::PopAndDestroy(strReleasingConn);
 	iSocket.Shutdown(RSocket::ENormal, iStatus);
 	SetActive();
@@ -481,9 +444,8 @@ void CRFtermBt::DisconnectFromServerL()
 //
 void CRFtermBt::ConnectToServerL()
 	{
-	HBufC* strConnecting = StringLoader
-		::LoadLC (R_STR_CONNECTING);
-	iRFtermOutput->AppendTextOnNewLineL(*strConnecting, KPrefixNote);
+	HBufC* strConnecting = StringLoader::LoadLC(R_STR_CONNECTING);
+	iRFtermOutput->AppendMessageL(*strConnecting);
 	CleanupStack::PopAndDestroy(strConnecting);
 
 	User::LeaveIfError(iSocket.Open(iSocketServer, KStrRFCOMM));
@@ -512,7 +474,6 @@ void CRFtermBt::ConnectToServerL()
 //
 void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 	{
-	RDebug::Printf("SendMessageL() -> Beginning");
 	if (State() != EConnected)
 		{
 		User::Leave(KErrDisconnected);
@@ -551,7 +512,7 @@ void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 
 		if (appUi->iSettings->iEcho)
 			{
-			iRFtermOutput->AppendTextOnNewLineL(aText, KPrefixOut);
+			iRFtermOutput->AppendTextL(aText);
 			}
 		}
 	
@@ -561,7 +522,6 @@ void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 		}
 
 	SetActive();
-	RDebug::Printf("SendMessageL() -> End");
 	}
 
 // ----------------------------------------------------------------------------
@@ -645,17 +605,18 @@ void CRFtermBt::SetSecurityWithChannelL(
 	SetActive();
 
 	// Write Log events
-	HBufC* strWaitingConn = StringLoader::LoadLC (
-		R_STR_WAITING_CONN);
-	iRFtermOutput->AppendTextOnNewLineL(*strWaitingConn, KPrefixNote);
+	HBufC* strWaitingConn = StringLoader::LoadLC(R_STR_WAITING_CONN);
+	iRFtermOutput->AppendMessageL(*strWaitingConn);
 	CleanupStack::PopAndDestroy(strWaitingConn);
 
-	HBufC* strPortNumber = StringLoader::LoadLC (R_STR_PORT_NUMBER);
+	HBufC* strPortNumber = StringLoader::LoadLC(R_STR_PORT_NUMBER);
 	TBuf<10> channelStr;
 	channelStr.Num(channel);
-	iRFtermOutput->AppendTextOnNewLineL(*strPortNumber, KPrefixNote);
-	iRFtermOutput->AppendTextL(channelStr, KPrefixNote);
-	CleanupStack::PopAndDestroy(strPortNumber);
+	HBufC* portStrWithNumber = HBufC::NewLC(strPortNumber->Length() + channelStr.Length());
+	portStrWithNumber->Des().Copy(*strPortNumber);
+	portStrWithNumber->Des().Append(channelStr);
+	iRFtermOutput->AppendMessageL(*portStrWithNumber);
+	CleanupStack::PopAndDestroy(2); // strPortNumber, portStrWithNumber
 
 	// Set the security according to.
 	TBTServiceSecurity serviceSecurity;
@@ -707,13 +668,11 @@ void CRFtermBt::StopL()
 //
 void CRFtermBt::RequestData()
 	{
-	RDebug::Printf("RequestData() -> Begining");
 	if (iActiveSocket)
 		{
 		iActiveSocket->RecvOneOrMore(iBuffer, 0, iStatus, iLen);
 		}
 	SetActive();
-	RDebug::Printf("RequestData() -> End");
 	}
 
 // End of File

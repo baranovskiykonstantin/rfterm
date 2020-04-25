@@ -23,22 +23,22 @@
 #include "RFtermConstants.h"
 #include "RFtermCodePages.h"
 
-CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent, const TRect& aRect)
+CRFtermOutput* CRFtermOutput::NewL(const CCoeControl *aParent)
 	{
-	CRFtermOutput* self = CRFtermOutput::NewLC(aParent, aRect);
+	CRFtermOutput* self = CRFtermOutput::NewLC(aParent);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent, const TRect& aRect)
+CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent)
 	{
 	CRFtermOutput* self = new (ELeave) CRFtermOutput;
 	CleanupStack::PushL(self);
-	self->ConstructL(aParent, aRect);
+	self->ConstructL(aParent);
 	return self;
 	}
 
-void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
+void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	{
 	CEikEdwin::ConstructL(
 		ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor | ENoWrap,
@@ -47,11 +47,6 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 		0
 	);
 	SetContainerWindowL(*aParent);
-	// A rect is placed at (0,0)
-	TRect rect(aRect.Size());
-	SetRect(rect);
-
-	SetEdwinSizeObserver(this);
 
 	SetBackgroundColorL(KRgbBlack);
 	iTextView->SetBackgroundColor(KRgbBlack);
@@ -106,14 +101,10 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent, const TRect& aRect)
 
 	iBellNote = CAknGlobalNote::NewL();
 	iBellNote->SetTone(EAknNoteDialogWarningTone);
-
-	ClearL();
 	}
 
 CRFtermOutput::CRFtermOutput()
 	: iCodePage(KCodePageLatin1)
-	, iCurrentPrefix(KPrefixIn)
-	, iViewPos(TPoint(0, 0))
 	, iLastLineStartPos(0)
 	, iLastLineCursorPos(0)
 	{
@@ -127,9 +118,21 @@ CRFtermOutput::~CRFtermOutput()
 	CEikonEnv::Static()->ScreenDevice()->RemoveFile(iRFtermFontID); 
 	}
 
-TBool CRFtermOutput::IsEmpty()
+void CRFtermOutput::UpdateRect(const TRect& aNewRect)
 	{
-	if (iText->DocumentLength() > iCurrentPrefix.Length())
+	// The error does not matter.
+	// TRAP is used to hide leaving.
+	TInt error;
+	TRAP(error, SetCursorPosL(0, EFalse));
+
+	SetRect(aNewRect);
+
+	TRAP(error, ScrollToCursorPosL(ETrue));
+	}
+
+TBool CRFtermOutput::IsEmpty() const
+	{
+	if (iText->DocumentLength())
 		{
 		return EFalse;
 		}
@@ -138,10 +141,12 @@ TBool CRFtermOutput::IsEmpty()
 
 void CRFtermOutput::ClearL()
 	{
-	SetTextL(&iCurrentPrefix);
+	iText->DeleteL(0, iText->DocumentLength());
+	iTextView->HandleGlobalChangeL();
+	iTextView->FinishBackgroundFormattingL();
 	iLastLineStartPos = iText->DocumentLength();
 	iLastLineCursorPos = iLastLineStartPos;
-	HandleTextChangedL();
+	NotifyViewRectChangedL();
 	UpdateCursorL();
 	}
 
@@ -150,7 +155,7 @@ void CRFtermOutput::UpdateCursorL()
 	TPoint outputCursorPos;
 	iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
 	outputCursorPos.iX += iOutputCursor.iWidth / 2;
-	outputCursorPos.iX -= iViewPos.iX;
+	outputCursorPos.iX -= iOutputRect.iTl.iX;
 	
 	if (iTextView->ViewRect().Contains(outputCursorPos))
 		{
@@ -165,34 +170,31 @@ void CRFtermOutput::UpdateCursorL()
 		}
 	}
 
-TBool CRFtermOutput::IsViewPosChangedL()
+void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
 	{
-	TRect viewRect = iTextView->ViewRect();
-	TPoint viewOffset = viewRect.iTl;
-	TRect firstParaRect = iTextView->ParagraphRectL(0);
-	firstParaRect.Move(-viewOffset);
-	if (iViewPos != -(firstParaRect.iTl))
-		{
-		return ETrue;
-		}
-	return EFalse;
-	}
+	// Scroll to the cursor pos
+	SetCursorPosL(iLastLineCursorPos, EFalse);
 
-void CRFtermOutput::ScrollToEndL()
-	{
-	TInt isScrolled;
-	do
+	if (!aSkipAdditionalScroll)
 		{
-		isScrolled = iTextView->ScrollDisplayL(
-				TCursorPosition::EFLineDown);
+		// Avoid partial visibility of the last text line at the bottom of the output.
+		TRect firstLineRect;
+		iLayout->GetLineRect(0, firstLineRect);
+		TInt helfLineHeight = firstLineRect.Height() / 2;
+		TPoint outputCursorPos;
+		iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
+		TRect outputRect = Rect();
+		TInt bottomCursorOffset = Abs(outputCursorPos.iY - outputRect.iBr.iY);
+		if (bottomCursorOffset < helfLineHeight)
+			{
+			iTextView->ScrollDisplayL(
+					TCursorPosition::EFLineDown,
+					CTextLayout::EFAllowScrollingBlankSpace);
+			}
 		}
-	while (isScrolled);
 
-	if (IsViewPosChangedL())
-		{
-		NotifyViewRectChangedL();
-		UpdateCursorL();
-		}
+	NotifyViewRectChangedL();
+	UpdateCursorL();
 	}
 
 void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
@@ -248,12 +250,15 @@ void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
 
 void CRFtermOutput::AppendL(const TDesC& aBuf)
 	{
+	TCursorSelection editedText;
 	if (aBuf == KParagraphDelimeter)
 		{
 		iText->InsertL(iLastLineCursorPos, aBuf);
-		iLastLineCursorPos = iText->DocumentLength();
-		iTextView->HandleGlobalChangeL();
-		ScrollToEndL();
+		editedText.SetSelection(
+				iLastLineCursorPos,
+				iLastLineCursorPos + aBuf.Length());
+		iLastLineStartPos = iText->DocumentLength();
+		iLastLineCursorPos = iLastLineStartPos;
 		}
 	else
 		{
@@ -296,10 +301,11 @@ void CRFtermOutput::AppendL(const TDesC& aBuf)
 			}
 
 		iText->InsertL(iLastLineCursorPos, *normalText);
-		iTextView->HandleGlobalChangeL();
+		editedText.SetSelection(
+				iLastLineCursorPos,
+				iLastLineCursorPos + normalText->Length());
 		iLastLineCursorPos += normalText->Length();
 		CleanupStack::PopAndDestroy(normalText);
-		UpdateCursorL();
 		}
 	}
 
@@ -333,55 +339,35 @@ TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& 
 void CRFtermOutput::AppendCRL()
 	{
 	iLastLineCursorPos = iLastLineStartPos;
-	UpdateCursorL();
-	
 	}
 
-void CRFtermOutput::AppendLFL(const TDesC& aPrefix)
+void CRFtermOutput::AppendIndentL(TInt aIndentLength)
 	{
-	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
-
-	// Go to next line
-	iLastLineCursorPos = iText->DocumentLength();
-	AppendL(KParagraphDelimeter);
-	AppendL(aPrefix);
-	iLastLineStartPos = iText->DocumentLength();
-	iLastLineCursorPos = iLastLineStartPos;
-
-	if (indentLength)
+	if (aIndentLength > 0)
 		{
-		HBufC* indent = HBufC::NewLC(indentLength);
+		HBufC* indent = HBufC::NewLC(aIndentLength);
 		TChar space(0x20);
-		indent->Des().SetLength(indentLength);
+		indent->Des().SetLength(aIndentLength);
 		indent->Des().Fill(space);
 		AppendL(*indent);
 		CleanupStack::PopAndDestroy(indent);
 		}
 	}
 
-void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
+void CRFtermOutput::AppendLFL()
 	{
-	if (iCurrentPrefix != aPrefix)
-		{
-		if (iLastLineCursorPos > iLastLineStartPos)
-			{
-			// Append new line
-			iLastLineCursorPos = iText->DocumentLength();
-			AppendL(KParagraphDelimeter);
-			}
-		else
-			{
-			// Line is empty. Change prefix only.
-			iText->ToParagraphStart(iLastLineCursorPos);
-			TInt prefixLength = iText->DocumentLength() - iLastLineCursorPos;
-			iText->DeleteL(iLastLineCursorPos, prefixLength);
-			}
-		AppendL(aPrefix);
-		iLastLineStartPos = iText->DocumentLength();
-		iLastLineCursorPos = iLastLineStartPos;
-		}
-	
-	CRFtermAppUi* appUi = (CRFtermAppUi*)CEikonEnv::Static()->EikAppUi();
+	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
+
+	// Go to next line
+	iLastLineCursorPos = iText->DocumentLength();
+	AppendL(KParagraphDelimeter);
+
+	AppendIndentL(indentLength);
+	}
+
+void CRFtermOutput::AppendTextL(const TDesC& aText)
+	{
+	CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
 
 	HBufC* tempText = HBufC::NewLC(aText.Length());
 	tempText->Des().Copy(aText);
@@ -402,13 +388,13 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 				{
 				case EMapCRtoLF:
 					{
-					AppendLFL(aPrefix);
+					AppendLFL();
 					break;
 					}
 				case EMapCRtoCRLF:
 					{
 					AppendCRL();
-					AppendLFL(aPrefix);
+					AppendLFL();
 					break;
 					}
 				default:
@@ -429,18 +415,18 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 				case EMapLFtoCRLF:
 					{
 					AppendCRL();
-					AppendLFL(aPrefix);
+					AppendLFL();
 					break;
 					}
 				default:
 					{
-					AppendLFL(aPrefix);
+					AppendLFL();
 					}
 				}
 			}
 		else if (specChar.Compare(KLT) == 0)
 			{
-			AppendLFL(aPrefix);
+			AppendLFL();
 			}
 		else if (specChar.Compare(KTB) == 0)
 			{
@@ -458,14 +444,12 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 				CleanupStack::PopAndDestroy(tab);
 				}
 			iLastLineCursorPos = targetPos;
-			UpdateCursorL();
 			}
 		else if (specChar.Compare(KBS) == 0)
 			{
 			if (iLastLineCursorPos > iLastLineStartPos)
 				{
 				iLastLineCursorPos -= 1;
-				UpdateCursorL();
 				}
 			}
 		else if (specChar.Compare(KBL) == 0)
@@ -477,7 +461,9 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 			}
 		else if (specChar.Compare(KFF) == 0)
 			{
-			ClearL();
+			iText->DeleteL(0, iText->DocumentLength());
+			iLastLineStartPos = iText->DocumentLength();
+			iLastLineCursorPos = iLastLineStartPos;
 			}
 		else if (specChar.Compare(KNL) == 0)
 			{
@@ -488,7 +474,9 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 			if (iLastLineCursorPos < iText->DocumentLength())
 				{
 				iText->DeleteL(iLastLineCursorPos, 1);
-				iTextView->HandleGlobalChangeL();
+				TCursorSelection deletedText(
+						iLastLineCursorPos,
+						iLastLineCursorPos + 1);
 				}
 			}
 		else
@@ -506,16 +494,30 @@ void CRFtermOutput::AppendTextL(const TDesC& aText, const TDesC& aPrefix)
 		}
 
 	CleanupStack::PopAndDestroy(tempText);
-	iCurrentPrefix.Set(aPrefix);
+
+	iTextView->HandleGlobalChangeL();
+	iTextView->FinishBackgroundFormattingL();
+
+	ScrollToCursorPosL();
 	}
 
-void CRFtermOutput::AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefix)
+void CRFtermOutput::AppendMessageL(const TDesC& aMessage)
 	{
-	if ((iLastLineCursorPos > iLastLineStartPos) && (iCurrentPrefix == aPrefix))
+	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
+	if (indentLength)
 		{
-		iCurrentPrefix.Set(KNullDesC);
+		iLastLineCursorPos = iText->DocumentLength();
+		AppendL(KParagraphDelimeter);
 		}
-	AppendTextL(aText, aPrefix);
+	AppendL(KRFtermOutputMessageMark);
+	AppendL(aMessage);
+	AppendL(KParagraphDelimeter);
+	AppendIndentL(indentLength);
+
+	iTextView->HandleGlobalChangeL();
+	iTextView->FinishBackgroundFormattingL();
+
+	ScrollToCursorPosL();
 	}
 
 void CRFtermOutput
@@ -525,8 +527,8 @@ void CRFtermOutput
 		{
 		TRect lineRect;
 		iLayout->GetLineRect(0, lineRect);
-		TInt vDelta = (aModel.iPos - iViewPos.iY) / lineRect.Height();
-		iViewPos.iY += vDelta * lineRect.Height();
+		TInt vDelta = (aModel.iPos - iOutputRect.iTl.iY) / lineRect.Height();
+		iOutputRect.iTl.iY += vDelta * lineRect.Height();
 		TCursorPosition::TMovementType direction = TCursorPosition::EFLineDown;
 		if (vDelta < 0)
 			{
@@ -543,8 +545,8 @@ void CRFtermOutput
 		}
 	else if (aScrollBarType == EHorizontalScrollBar)
 		{
-		TInt hDelta = aModel.iPos - iViewPos.iX;
-		iViewPos.iX += hDelta;
+		TInt hDelta = aModel.iPos - iOutputRect.iTl.iX;
+		iOutputRect.iTl.iX += hDelta;
 		TCursorPosition::TMovementType direction = TCursorPosition::EFRight;
 		if (hDelta < 0)
 			{
@@ -573,8 +575,7 @@ void CRFtermOutput
 		{
 		outputSize.iHeight -= KRFtermScrollBarBreadth;
 		}
-	TRect outputRect(outputSize);
-	SetRect(outputRect);
+	SetSize(outputSize);
 	NotifyViewRectChangedL();
 	}
 
@@ -587,17 +588,8 @@ void CRFtermOutput::HandlePointerEventL(const TPointerEvent &aPointerEvent)
 		}
 	else if (aPointerEvent.iType == TPointerEvent::EDrag)
 		{
-		if (IsViewPosChangedL())
-			{
-			NotifyViewRectChangedL();
-			}
+		NotifyViewRectChangedL();
 		}
-	}
-
-TBool CRFtermOutput::HandleEdwinSizeEventL(CEikEdwin* /*aEdwin*/, TEdwinSizeEvent /*aEventType*/, TSize /*aDesirableEdwinSize*/)
-	{
-	NotifyViewRectChangedL();
-	return ETrue;
 	}
 
 void CRFtermOutput::FocusChanged(TDrawNow aDrawNow)
@@ -605,7 +597,10 @@ void CRFtermOutput::FocusChanged(TDrawNow aDrawNow)
 	CEikEdwin::FocusChanged(aDrawNow);
 	if (IsFocused())
 		{
-		UpdateCursorL();
+		// The error does not matter.
+		// TRAP is used to hide leaving.
+		TInt error;
+		TRAP(error, UpdateCursorL());
 		}
 	else
 		{
@@ -707,33 +702,32 @@ void CRFtermOutput::NotifyViewRectChangedL()
 	iLayout->GetMinimumSizeL(KMaxTInt, contentSize);
 	TRect contentRect(contentSize);
 
-	TRect viewRect = iTextView->ViewRect();
+	TRect outputRect = iTextView->ViewRect();
 	// Sometimes viewRect has the position (iTl)
 	// different from (0, 0).
-	TPoint viewOffset = viewRect.iTl;
-	viewRect.Move(-viewOffset);
+	TPoint viewOffset = outputRect.iTl;
+	outputRect.Move(-viewOffset);
 	TRect firstParaRect = iTextView->ParagraphRectL(0);
 	firstParaRect.Move(-viewOffset);
 
 	// Add some room for cursor
 	contentRect.iBr.iX += iOutputCursor.iWidth * 2;
 	// To avoid partial showing of the last line add extra height.
-	viewRect.iBr.iY -= viewRect.Height() % firstParaRect.Height();
+	__ASSERT_ALWAYS(firstParaRect.Height() > 0, Panic(ERFtermOutputBadContent));
+	outputRect.iBr.iY -= outputRect.Height() % firstParaRect.Height();
 
-	iViewPos = -(firstParaRect.iTl);
-	viewRect.Move(iViewPos);
+	TPoint viewPos = -(firstParaRect.iTl);
+	outputRect.Move(viewPos);
 
-	if (iObserver)
+	if (iObserver && (contentRect != iContentRect || outputRect != iOutputRect))
 		{
-		iObserver->HandleViewRectChangedL(contentRect, viewRect);
+		iContentRect = contentRect;
+		iOutputRect = outputRect;
+		iObserver->HandleViewRectChangedL(iContentRect, iOutputRect);
 		}
 	}
 
 void CRFtermOutput::SetObserver(MRFtermOutputObserver* aObserver)
 	{
 	iObserver = aObserver;
-	if (iObserver)
-		{
-		NotifyViewRectChangedL();
-		}
 	}

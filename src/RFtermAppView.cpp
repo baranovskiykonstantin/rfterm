@@ -56,10 +56,12 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	// Create a window for this application view
 	CreateWindowL();
 
-	iRFtermScrollBars = new (ELeave) CRFtermScrollBars(aRect);
-	iRFtermScrollBars->SetContainerWindowL(*this);
+	iRFtermScrollBars = new (ELeave) CRFtermScrollBars(this);
+	iRFtermScrollBars->SetPosition(TPoint(0, 0));
 
-	iRFtermOutput = CRFtermOutput::NewL(this, aRect);
+	iRFtermOutput = CRFtermOutput::NewL(this);
+	iRFtermOutput->SetPosition(TPoint(0, 0));
+	iRFtermOutput->SetFocus(ETrue);
 
 	iRFtermScrollBars->SetObserver(iRFtermOutput);
 	iRFtermOutput->SetObserver(iRFtermScrollBars);
@@ -79,6 +81,8 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 
 	// Activate the window, which makes it ready to be drawn
 	ActivateL();
+
+	iRFtermOutput->ClearL();
 	}
 
 // -----------------------------------------------------------------------------
@@ -188,20 +192,15 @@ void CRFtermAppView::SizeChanged()
 	// Without it the custom text cursor gets disappeared on size changing.
 	iEikonEnv->RootWin().CancelTextCursor();
 
-	TRect clientRect = iAvkonAppUi->ClientRect(); 
-	TRect windowRect(clientRect.Size());
-	TRect outputRect = windowRect;
+	TRect controlRect = Rect();
 	if (iRFtermScrollBars)
 		{
-		iRFtermScrollBars->SetRect(windowRect);
-		iRFtermScrollBars->GetFreeRect(outputRect);
+		iRFtermScrollBars->SetRect(controlRect);
+		iRFtermScrollBars->GetFreeRect(controlRect);
 		}
 	if (iRFtermOutput)
 		{
-		iRFtermOutput->SetRect(outputRect); 
-		iRFtermOutput->NotifyViewRectChangedL();
-		iRFtermOutput->UpdateCursorL();
-		iRFtermOutput->SetFocus(ETrue);
+		iRFtermOutput->UpdateRect(controlRect); 
 		}
 
 	DrawNow();
@@ -291,7 +290,7 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 
 		if (textData.Length())
 			{
-			CRFtermAppUi* appUi = (CRFtermAppUi*)CEikonEnv::Static()->EikAppUi();
+			CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
 			TInt historySize = appUi->iSettings->iMessageHistorySize;
 
 			if (historySize > 0)

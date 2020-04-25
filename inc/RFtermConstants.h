@@ -34,10 +34,8 @@ const TInt KRFtermTimeOut = 20000000; // 20 seconds time-out
 _LIT(KRFtermFontPath, "c:\\system\\fonts\\RFterm_0xae7f53fa_font.ttf");
 _LIT(KRFtermFontName, "Courier New");
 
-_LIT(KPrefixNote, "* ");
-_LIT(KPrefixError, "! ");
-_LIT(KPrefixIn, "> ");
-_LIT(KPrefixOut, "< ");
+_LIT(KRFtermOutputMessageMark, " RFterm: ");
+
 _LIT(KCtrlChars, "\r\n\t\b\a\v\f\0\x007f");
 _LIT(KCR, "\r"); // CARRIAGE RETURN ^M
 _LIT(KLF, "\n"); // LINE FEED ^J

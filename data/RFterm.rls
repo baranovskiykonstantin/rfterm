@@ -110,6 +110,7 @@
 #define qtn_err_message_failed "Message Failed"
 #define qtn_err_failed_to_disconnect "Failed to disconnect"
 #define qtn_err_no_conn "No connection!"
+#define qtn_err_nrrc_error "NRRC error"
 #define qtn_err_nrrc_no_records "NRRC No records"
 #define qtn_err_cant_get_attribute "Can't get attribute "
 #define qtn_err_attr_req_com "AttrReqCom"

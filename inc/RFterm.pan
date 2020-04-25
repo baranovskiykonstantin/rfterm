@@ -21,6 +21,7 @@ enum TRFtermPanics
 	ERFtermOutputIllegalPosition,
 	ERFtermOutputBadCtrlChar,
 	ERFtermOutputBadCodePage,
+	ERFtermOutputBadContent,
 	ERFtermInputBadCtrlChar,
 	// add further panics here
 	};

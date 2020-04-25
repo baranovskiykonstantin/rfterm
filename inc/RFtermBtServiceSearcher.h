@@ -19,9 +19,6 @@
 #include "RFtermSdpAttributeNotifier.h"
 #include "RFtermConstants.h"
 
-// CONSTANTS
-_LIT(KErrNRRCErr, "NRRC ERR ");
-
 // CLASS DECLARATIONS
 class CRFtermOutput;
 

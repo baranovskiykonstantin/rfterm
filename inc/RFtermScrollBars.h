@@ -20,7 +20,7 @@ class CRFtermScrollBars : public CCoeControl, public MRFtermOutputObserver
 	{
 public:
 	// Constructor, destructor
-	CRFtermScrollBars(const TRect& aRect);
+	CRFtermScrollBars(const CCoeControl *aParent);
 	~CRFtermScrollBars();
 	
 	// New functions
@@ -65,9 +65,10 @@ private:
 	TRect iCornerBackgroundRect;
 
 	TPoint iPrevPointerPos;
-	TBool iPointerOnVScrollBar;
-	TBool iPointerOnHScrollBar;
+	TBool iVScrollBarIsActive;
+	TBool iHScrollBarIsActive;
 
+	// Non owning pointer to observer
 	MRFtermScrollBarsObserver* iObserver;
 	};
 

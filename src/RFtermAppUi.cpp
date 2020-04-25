@@ -420,7 +420,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				if (iAppView->ShowCtrlCharQueryL(ctrlChar))
 					{
 					iBtClient->SendMessageL(ctrlChar, ETrue);
-					iAppView->iRFtermOutput->UpdateCursorL();
 					}
 				}
 			break;
@@ -436,7 +435,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			{
 			CRFtermSettingsDialog::RunDlgLD(iSettings);
 			HandleSettingsChange();
-			iAppView->iRFtermOutput->UpdateCursorL();
 			break;
 			}
 
@@ -463,9 +461,10 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ETest:
 			{
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"), KPrefixNote);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"), KPrefixNote);
-			iAppView->iRFtermOutput->AppendTextOnNewLineL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"), KPrefixNote);
+			iAppView->iRFtermOutput->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
+			iAppView->iRFtermOutput->AppendMessageL(_L("0123456789"));
+			iAppView->iRFtermOutput->AppendTextL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"));
+			iAppView->iRFtermOutput->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
 			break;
 			}
 

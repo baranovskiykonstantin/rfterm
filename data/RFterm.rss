@@ -228,6 +228,7 @@ RESOURCE TBUF r_err_lost_connection { buf=qtn_err_lost_connection; }
 RESOURCE TBUF r_err_message_failed { buf=qtn_err_message_failed; }
 RESOURCE TBUF r_err_failed_to_disconnect { buf=qtn_err_failed_to_disconnect; }
 RESOURCE TBUF r_err_no_conn { buf=qtn_err_no_conn; }
+RESOURCE TBUF r_err_nrrc_error { buf=qtn_err_nrrc_error; }
 RESOURCE TBUF r_err_nrrc_no_records { buf=qtn_err_nrrc_no_records; }
 RESOURCE TBUF r_err_cant_get_attribute { buf=qtn_err_cant_get_attribute; }
 RESOURCE TBUF r_err_attr_req_com { buf=qtn_err_attr_req_com; }

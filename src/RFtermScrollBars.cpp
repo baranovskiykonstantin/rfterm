@@ -9,13 +9,12 @@
 
 #include "RFtermScrollBars.h"
 
-CRFtermScrollBars::CRFtermScrollBars(const TRect& aRect)
+CRFtermScrollBars::CRFtermScrollBars(const CCoeControl *aParent)
 	: iVIsVisible(EFalse)
 	, iHIsVisible(EFalse)
 	, iObserver(NULL)
 	{
-	TRect rect(aRect.Size());
-	SetRect(rect);
+	SetContainerWindowL(*aParent);
 	}
 
 CRFtermScrollBars::~CRFtermScrollBars()
@@ -28,7 +27,14 @@ void CRFtermScrollBars::DrawVScrollBar(CWindowGc& aGc) const
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbDarkGray);
 	aGc.Clear(iVBackgroundRect);
-	aGc.SetBrushColor(KRgbWhite);
+	if (iVScrollBarIsActive)
+		{
+		aGc.SetBrushColor(KRgbGray);
+		}
+	else
+		{
+		aGc.SetBrushColor(KRgbWhite);
+		}
 	aGc.DrawRect(iVThumbRect);
 	}
 
@@ -38,7 +44,14 @@ void CRFtermScrollBars::DrawHScrollBar(CWindowGc& aGc) const
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
 	aGc.SetBrushColor(KRgbDarkGray);
 	aGc.Clear(iHBackgroundRect);
-	aGc.SetBrushColor(KRgbWhite);
+	if (iHScrollBarIsActive)
+		{
+		aGc.SetBrushColor(KRgbGray);
+		}
+	else
+		{
+		aGc.SetBrushColor(KRgbWhite);
+		}
 	aGc.DrawRect(iHThumbRect);
 	}
 
@@ -107,8 +120,8 @@ void CRFtermScrollBars::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 	{
 	if (TPointerEvent::EButton1Down == aPointerEvent.iType)
 		{
-		iPointerOnVScrollBar = EFalse;
-		iPointerOnHScrollBar = EFalse;
+		iVScrollBarIsActive = EFalse;
+		iHScrollBarIsActive = EFalse;
 		iPrevPointerPos = aPointerEvent.iPosition;
 		TRect vSensorRect = iVBackgroundRect;
 		vSensorRect.iTl.iX -= KRFtermScrollBarSensorBreadth;
@@ -116,16 +129,16 @@ void CRFtermScrollBars::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		vSensorRect.iTl.iY -= KRFtermScrollBarSensorBreadth;
 		if (vSensorRect.Contains(aPointerEvent.iPosition))
 			{
-			iPointerOnVScrollBar = ETrue;
+			iVScrollBarIsActive = ETrue;
 			}
 		else if (hSensorRect.Contains(aPointerEvent.iPosition))
 			{
-			iPointerOnHScrollBar = ETrue;
+			iHScrollBarIsActive = ETrue;
 			}
 		}
 	else if (TPointerEvent::EDrag == aPointerEvent.iType)
 		{
-		if (iPointerOnVScrollBar)
+		if (iVScrollBarIsActive)
 			{
 			TInt deltaY = aPointerEvent.iPosition.iY - iPrevPointerPos.iY;
 			if (deltaY < 0 && -(deltaY) > iVThumbRect.iTl.iY)
@@ -150,7 +163,7 @@ void CRFtermScrollBars::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 
 			iPrevPointerPos = aPointerEvent.iPosition;
 			}
-		else if (iPointerOnHScrollBar)
+		else if (iHScrollBarIsActive)
 			{
 			TInt deltaX = aPointerEvent.iPosition.iX - iPrevPointerPos.iX;
 			if (deltaX < 0 && -(deltaX) > iHThumbRect.iTl.iX)
@@ -175,6 +188,19 @@ void CRFtermScrollBars::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 
 			iPrevPointerPos = aPointerEvent.iPosition;
 			
+			}
+		}
+	else if (TPointerEvent::EButton1Up == aPointerEvent.iType)
+		{
+		if (iVScrollBarIsActive)
+			{
+			iVScrollBarIsActive = EFalse;
+			DrawVScrollBarNow();
+			}
+		if (iHScrollBarIsActive)
+			{
+			iHScrollBarIsActive = EFalse;
+			DrawHScrollBarNow();
 			}
 		}
 	}

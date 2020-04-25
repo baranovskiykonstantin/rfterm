@@ -16,28 +16,23 @@
 #include "RFtermOutputObserver.h"
 #include "RFtermScrollBarsObserver.h"
 
-class CRFtermOutput
-	: public CEikEdwin
-	, public MRFtermScrollBarsObserver
-	, public MEikEdwinSizeObserver
+class CRFtermOutput : public CEikEdwin , public MRFtermScrollBarsObserver
 	{
 public:
 	// Constructor, destructor
-	static CRFtermOutput* NewL(const CCoeControl *aParent, const TRect& aRect);
-	static CRFtermOutput* NewLC(const CCoeControl *aParent, const TRect& aRect);
+	static CRFtermOutput* NewL(const CCoeControl *aParent);
+	static CRFtermOutput* NewLC(const CCoeControl *aParent);
 	virtual ~CRFtermOutput();
 
 	// New functions
 	void ChangeCodePage(TCodePage aCodePage);
-	TBool IsEmpty();
+	TBool IsEmpty() const;
 	void ClearL();
-	void AppendTextL(const TDesC& aText, const TDesC& aPrefix);
-	void AppendTextOnNewLineL(const TDesC& aText, const TDesC& aPrefix);
-	void ScrollToEndL();
-	void UpdateCursorL();
-
-	// MEikEdwinSizeObserver
-	TBool HandleEdwinSizeEventL(CEikEdwin *aEdwin, TEdwinSizeEvent aEventType, TSize aDesirableEdwinSize);
+	void AppendTextL(const TDesC& aText);
+	void AppendMessageL(const TDesC& aMessage);
+	// There is no ability to override SizeChanged() of CEikEdwin here,
+	// so custom method is used to properly change the rect of the control.
+	void UpdateRect(const TRect& aNewRect);
 
 	// CEikEdwin
 	void FocusChanged(TDrawNow aDrawNow);
@@ -49,7 +44,7 @@ public:
 
 private:
 	// Constructor
-	void ConstructL(const CCoeControl *aParent, const TRect& aRect);
+	void ConstructL(const CCoeControl *aParent);
 	CRFtermOutput();
 
 	// CEikEdwin
@@ -58,7 +53,10 @@ private:
 	// New functions
 	void AppendL(const TDesC& aBuf);
 	void AppendCRL();
-	void AppendLFL(const TDesC& aPrefix);
+	void AppendLFL();
+	void AppendIndentL(TInt aIndentLength);
+	void ScrollToCursorPosL(TBool aSkipAdditionalScroll=EFalse);
+	void UpdateCursorL();
 	/*
 	 * Find control character (one of KCtrlChars).
 	 * aText - the text for searching;
@@ -67,7 +65,6 @@ private:
 	 * Returns ETrue if found and EFalse otherwise.
 	 */
 	TBool TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& aPos);
-	TBool IsViewPosChangedL();
 
 	// MRFtermScrollBarsObserver
 	void HandleScrollEventL(
@@ -80,15 +77,7 @@ private:
 private:
 	TInt iRFtermFontID;
 	TPtrC iCodePage;
-	TPtrC iCurrentPrefix;
 	TTextCursor iOutputCursor;
-
-	/**
-	 * iViewPos
-	 * Position of the view rect relative
-	 * to the content rect.
-	 */
-	TPoint iViewPos;
 
 	TInt iLastLineStartPos;
 	TInt iLastLineCursorPos;
@@ -97,6 +86,13 @@ private:
 	TInt iBellNoteID;
 	
 	MRFtermOutputObserver* iObserver;
+	TRect iContentRect;
+	/**
+	 * iOutputRect
+	 * Position of the view rect is
+	 * relative to the content rect pos.
+	 */
+	TRect iOutputRect;
 	};
 
 #endif /* RFTERMOUTPUT_H */
