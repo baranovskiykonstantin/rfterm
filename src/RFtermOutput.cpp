@@ -612,19 +612,9 @@ TKeyResponse CRFtermOutput
 				}
 			case EStdKeyDownArrow:
 				{
-				TRect viewRect = iTextView->ViewRect();
-				TPoint viewOffset = viewRect.iTl;
-				viewRect.Move(-viewOffset);
-				TRect firstParaRect = iTextView->ParagraphRectL(0);
-				firstParaRect.Move(-viewOffset);
-				// Set the view's iTl pos relatively to the content's iTl (0, 0)
-				viewRect.Move(-firstParaRect.iTl);
-				TSize contentSize;
-				iLayout->GetMinimumSizeL(KMaxTInt, contentSize);
-
 				// Allow scrolling only when bottom adge of viewRect
 				// is inside of contentRect
-				if (viewRect.iBr.iY < contentSize.iHeight)
+				if (iOutputRect.iBr.iY < iContentRect.Height())
 					{
 					iTextView->ScrollDisplayL(
 						TCursorPosition::EFLineDown,
@@ -647,20 +637,9 @@ TKeyResponse CRFtermOutput
 				}
 			case EStdKeyRightArrow:
 				{
-				TRect viewRect = iTextView->ViewRect();
-				TPoint viewOffset = viewRect.iTl;
-				viewRect.Move(-viewOffset);
-				TRect firstParaRect = iTextView->ParagraphRectL(0);
-				firstParaRect.Move(-viewOffset);
-				// Set the view's iTl pos relatively to the content's iTl (0, 0)
-				viewRect.Move(-firstParaRect.iTl);
-				TSize contentSize;
-				iLayout->GetMinimumSizeL(KMaxTInt, contentSize);
-				contentSize.iWidth += iOutputCursor.iWidth * 2;
-
 				// Allow scrolling only when right adge of viewRect
 				// is inside of contentRect
-				if (viewRect.iBr.iX < contentSize.iWidth)
+				if (iOutputRect.iBr.iX < iContentRect.Width())
 					{
 					iTextView->ScrollDisplayL(
 						TCursorPosition::EFRight,
