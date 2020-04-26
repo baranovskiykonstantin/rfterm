@@ -51,7 +51,8 @@ private:
 	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
 
 	// New functions
-	void AppendL(const TDesC& aBuf);
+	void AppendNewLineL();
+	void AppendRawTextL(const TDesC& aBuf);
 	void AppendCRL();
 	void AppendLFL();
 	void AppendIndentL(TInt aIndentLength);

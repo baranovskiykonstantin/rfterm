@@ -248,65 +248,57 @@ void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
 		}
 	}
 
-void CRFtermOutput::AppendL(const TDesC& aBuf)
+void CRFtermOutput::AppendNewLineL()
 	{
-	TCursorSelection editedText;
-	if (aBuf == KParagraphDelimeter)
-		{
-		iText->InsertL(iLastLineCursorPos, aBuf);
-		editedText.SetSelection(
-				iLastLineCursorPos,
-				iLastLineCursorPos + aBuf.Length());
-		iLastLineStartPos = iText->DocumentLength();
-		iLastLineCursorPos = iLastLineStartPos;
-		}
-	else
-		{
-		HBufC* normalText = HBufC::NewLC(aBuf.Length());
+	iLastLineCursorPos = iText->DocumentLength();
+	iText->InsertL(iLastLineCursorPos, CPlainText::ELineBreak);
+	iLastLineStartPos = iText->DocumentLength();
+	iLastLineCursorPos = iLastLineStartPos;
+	}
 
-		// Remove unsupported control characters
-		TChar ch;
-		for (TInt i = 0; i < aBuf.Length(); i++)
+void CRFtermOutput::AppendRawTextL(const TDesC& aBuf)
+	{
+	HBufC* normalText = HBufC::NewLC(aBuf.Length());
+
+	// Remove unsupported control characters
+	TChar ch;
+	for (TInt i = 0; i < aBuf.Length(); i++)
+		{
+		ch = aBuf[i];
+		// if inside codepage and not control char
+		if ((TUint)ch < KCodePageSize and (TUint)ch > 0x1f)
 			{
-			ch = aBuf[i];
-			// if inside codepage and not control char
-			if ((TUint)ch < KCodePageSize and (TUint)ch > 0x1f)
+			if ((TUint)ch > 0x7f)
 				{
-				if ((TUint)ch > 0x7f)
+				// Extended ASCII (code page)
+				TUint chOffset = (TUint)ch - 0x80;
+				TChar chFromCodePage = iCodePage[chOffset];
+				// Unsupported chars are maked with a space
+				if ((TUint)chFromCodePage != 0x20)
 					{
-					// Extended ASCII (code page)
-					TUint chOffset = (TUint)ch - 0x80;
-					TChar chFromCodePage = iCodePage[chOffset];
-					// Unsupported chars are maked with space
-					if ((TUint)chFromCodePage != 0x20)
-						{
-						normalText->Des().Append(chFromCodePage);
-						}
-					}
-				else
-					{
-					// ASCII
-					normalText->Des().Append(ch);
+					normalText->Des().Append(chFromCodePage);
 					}
 				}
+			else
+				{
+				// ASCII
+				normalText->Des().Append(ch);
+				}
 			}
-
-		// Insert text
-		TInt lastPos = iText->DocumentLength();
-		if (lastPos > iLastLineCursorPos)
-			{
-			// Replace the text after cursor
-			TInt tailLength = lastPos - iLastLineCursorPos;
-			iText->DeleteL(iLastLineCursorPos, Min(tailLength, normalText->Length()));
-			}
-
-		iText->InsertL(iLastLineCursorPos, *normalText);
-		editedText.SetSelection(
-				iLastLineCursorPos,
-				iLastLineCursorPos + normalText->Length());
-		iLastLineCursorPos += normalText->Length();
-		CleanupStack::PopAndDestroy(normalText);
 		}
+
+	// Insert text
+	TInt lastPos = iText->DocumentLength();
+	if (lastPos > iLastLineCursorPos)
+		{
+		// Replace the text after cursor
+		TInt tailLength = lastPos - iLastLineCursorPos;
+		iText->DeleteL(iLastLineCursorPos, Min(tailLength, normalText->Length()));
+		}
+
+	iText->InsertL(iLastLineCursorPos, *normalText);
+	iLastLineCursorPos += normalText->Length();
+	CleanupStack::PopAndDestroy(normalText);
 	}
 
 TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& aPos)
@@ -349,7 +341,7 @@ void CRFtermOutput::AppendIndentL(TInt aIndentLength)
 		TChar space(0x20);
 		indent->Des().SetLength(aIndentLength);
 		indent->Des().Fill(space);
-		AppendL(*indent);
+		AppendRawTextL(*indent);
 		CleanupStack::PopAndDestroy(indent);
 		}
 	}
@@ -357,11 +349,7 @@ void CRFtermOutput::AppendIndentL(TInt aIndentLength)
 void CRFtermOutput::AppendLFL()
 	{
 	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
-
-	// Go to next line
-	iLastLineCursorPos = iText->DocumentLength();
-	AppendL(KParagraphDelimeter);
-
+	AppendNewLineL();
 	AppendIndentL(indentLength);
 	}
 
@@ -379,7 +367,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 		{
 		if (specCharPos > 0)
 			{
-			AppendL(tempText->Left(specCharPos));
+			AppendRawTextL(tempText->Left(specCharPos));
 			}
 		
 		if (specChar.Compare(KCR) == 0)
@@ -440,7 +428,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 				HBufC* tab = HBufC::NewLC(tabLength);
 				tab->Des().SetLength(tabLength);
 				tab->Des().Fill(space);
-				AppendL(*tab);
+				AppendRawTextL(*tab);
 				CleanupStack::PopAndDestroy(tab);
 				}
 			iLastLineCursorPos = targetPos;
@@ -474,9 +462,6 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 			if (iLastLineCursorPos < iText->DocumentLength())
 				{
 				iText->DeleteL(iLastLineCursorPos, 1);
-				TCursorSelection deletedText(
-						iLastLineCursorPos,
-						iLastLineCursorPos + 1);
 				}
 			}
 		else
@@ -490,7 +475,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 
 	if (tempText->Length())
 		{
-		AppendL(*tempText);
+		AppendRawTextL(*tempText);
 		}
 
 	CleanupStack::PopAndDestroy(tempText);
@@ -506,12 +491,11 @@ void CRFtermOutput::AppendMessageL(const TDesC& aMessage)
 	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
 	if (indentLength)
 		{
-		iLastLineCursorPos = iText->DocumentLength();
-		AppendL(KParagraphDelimeter);
+		AppendNewLineL();
 		}
-	AppendL(KRFtermOutputMessageMark);
-	AppendL(aMessage);
-	AppendL(KParagraphDelimeter);
+	AppendRawTextL(KRFtermOutputMessageMark);
+	AppendRawTextL(aMessage);
+	AppendNewLineL();
 	AppendIndentL(indentLength);
 
 	iTextView->HandleGlobalChangeL();
@@ -696,6 +680,11 @@ TKeyResponse CRFtermOutput
 	return response;
 	}
 
+void CRFtermOutput::SetObserver(MRFtermOutputObserver* aObserver)
+	{
+	iObserver = aObserver;
+	}
+
 void CRFtermOutput::NotifyViewRectChangedL()
 	{
 	TSize contentSize;
@@ -707,14 +696,20 @@ void CRFtermOutput::NotifyViewRectChangedL()
 	// different from (0, 0).
 	TPoint viewOffset = outputRect.iTl;
 	outputRect.Move(-viewOffset);
+	// Output has only one paragraph.
+	// The top left position of this paragraph is
+	// relative to top left position of the text view.
 	TRect firstParaRect = iTextView->ParagraphRectL(0);
+	// Line rect is needed to calculate line height.
+	TRect firstLineRect;
+	iLayout->GetLineRect(firstParaRect.iTl.iY, firstLineRect);
 	firstParaRect.Move(-viewOffset);
 
 	// Add some room for cursor
 	contentRect.iBr.iX += iOutputCursor.iWidth * 2;
 	// To avoid partial showing of the last line add extra height.
-	__ASSERT_ALWAYS(firstParaRect.Height() > 0, Panic(ERFtermOutputBadContent));
-	outputRect.iBr.iY -= outputRect.Height() % firstParaRect.Height();
+	__ASSERT_ALWAYS(firstLineRect.Height() > 0, Panic(ERFtermOutputBadContent));
+	outputRect.iBr.iY -= outputRect.Height() % firstLineRect.Height();
 
 	TPoint viewPos = -(firstParaRect.iTl);
 	outputRect.Move(viewPos);
@@ -725,9 +720,4 @@ void CRFtermOutput::NotifyViewRectChangedL()
 		iOutputRect = outputRect;
 		iObserver->HandleViewRectChangedL(iContentRect, iOutputRect);
 		}
-	}
-
-void CRFtermOutput::SetObserver(MRFtermOutputObserver* aObserver)
-	{
-	iObserver = aObserver;
 	}

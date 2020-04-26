@@ -47,7 +47,6 @@ _LIT(KLT, "\v"); // LINE TABULATION ^K
 _LIT(KFF, "\f"); // FORM FEED ^L
 _LIT(KNL, "\0"); // NULL ^@
 _LIT(KDL, "\x007f"); // Delete
-_LIT(KParagraphDelimeter, "\x2029"); //CEditableText::EParagraphDelimiter
 
 const TInt KRFtermScrollBarBreadth = 5;
 const TInt KRFtermScrollBarSensorBreadth = 30;
