@@ -11,12 +11,14 @@
 #include <coemain.h>
 #include <aknappui.h>
 #include <stringloader.h>
+#include <aknquerydialog.h>
 #include <aknlistquerydialog.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
 #include "RFtermConstants.h"
 #include "RFtermTextQueryDialog.h"
+#include "RFtermCodePages.h"
 #include "RFterm.pan"
 
 // ============================ MEMBER FUNCTIONS ===============================
@@ -259,6 +261,7 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 			{
 			// Tap output to send
 			iAvkonAppUi->HandleCommandL(EMessage);
+			return;
 			}
 		}
 
@@ -276,19 +279,76 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 	TBuf<KRFtermTextBufLength> textData(aInitialText);
 	
 	CRFtermTextQueryDialog* dlg = CRFtermTextQueryDialog::NewL(textData);
-	CleanupStack::PushL(dlg);
 
 	dlg->SetMaxLength(KRFtermTextBufLength);
 
-	CleanupStack::Pop(dlg);
 	TBool answer(dlg->ExecuteLD(R_DIALOG_TEXT_QUERY));
 	
 	if (EAknSoftkeyOk == answer)
 		{
-		// get message
-		aText = textData;
+		HBufC* normalText = HBufC::NewLC(textData.Length());
+		const TInt KBadSymNum = 11;
+		TBuf<KBadSymNum> badSymbols;
 
-		if (textData.Length())
+		// Encode the message accordingly to the current code page.
+		// Unsupported chars are ignored!
+		TPtrC codePage;
+		iRFtermOutput->GetCurrentCodePage(codePage);
+		for (TInt i = 0; i < textData.Length(); i++)
+			{
+			TChar ch = textData[i];
+			if ((TUint)ch < 0x80)
+				{
+				// ASCII
+				normalText->Des().Append(ch);
+				}
+			else
+				{
+				TInt pos = codePage.Locate(ch);
+				if (KErrNotFound != pos)
+					{
+					// Extended ASCII (code page)
+					TChar chNormal(0x80 + pos);
+					normalText->Des().Append(chNormal);
+					}
+				else
+					{
+					if (badSymbols.Length() < (KBadSymNum - 1))
+						{
+						badSymbols.Append(ch);
+						}
+					else if (badSymbols.Length() == (KBadSymNum - 1))
+						{
+						badSymbols.Append(TChar(0x2026)); // Ellipsis
+						}
+					}
+				}
+			}
+
+		if (badSymbols.Length())
+			{
+			HBufC* confirmResource = StringLoader::LoadLC(R_STR_IGNORESYM_CONFIRMATION);
+			HBufC* confirmPrompt = HBufC::NewLC(confirmResource->Length() + badSymbols.Length());
+			confirmPrompt->Des().Format(*confirmResource, &badSymbols);
+
+			CAknQueryDialog* confirmDlg = new (ELeave) CAknQueryDialog();
+			TBool doIgnore = confirmDlg->ExecuteLD(R_DIALOG_IGNORESYM_CONFIRMATION_QUERY, *confirmPrompt);
+
+			CleanupStack::PopAndDestroy(2); // confirmResource, confirmPrompt
+
+			if (!doIgnore)
+				{
+				// Cancel sending message
+				CleanupStack::PopAndDestroy(normalText);
+				return EFalse;
+				}
+			}
+
+		// get message
+		aText = *normalText;
+
+		// add message to history
+		if (normalText->Length())
 			{
 			CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
 			TInt historySize = appUi->iSettings->iMessageHistorySize;
@@ -298,7 +358,7 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 				if (historySize > 1)
 					{
 					TInt posOfCopy;
-					if (iMessageHistoryArray->Find(textData, posOfCopy) == 0)
+					if (iMessageHistoryArray->Find(*normalText, posOfCopy) == 0)
 						{
 						iMessageHistoryArray->Delete(posOfCopy);
 						iMessageHistoryArray->Compress();
@@ -310,9 +370,11 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 					iMessageHistoryArray->Delete(0);
 					iMessageHistoryArray->Compress();
 					}
-				iMessageHistoryArray->AppendL(textData);
+				iMessageHistoryArray->AppendL(*normalText);
 				}
 			}
+
+		CleanupStack::PopAndDestroy(normalText);
 
 		return ETrue;
 		}

@@ -248,6 +248,11 @@ void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
 		}
 	}
 
+void CRFtermOutput::GetCurrentCodePage(TPtrC& aCodePage)
+	{
+	aCodePage.Set(iCodePage);
+	}
+
 void CRFtermOutput::AppendNewLineL()
 	{
 	iLastLineCursorPos = iText->DocumentLength();

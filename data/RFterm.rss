@@ -210,6 +210,8 @@ RESOURCE TBUF r_msg_connected_text { buf=qtn_msg_connected; }
 RESOURCE TBUF r_rfterm_service_name { buf=qtn_rfterm_service_name; }
 RESOURCE TBUF r_rfterm_service_description { buf=qtn_rfterm_service_description; }
 
+RESOURCE TBUF r_str_ignoresym_confirmation { buf=qtn_str_ignoresym_confirmation; }
+
 RESOURCE TBUF r_str_disconnected { buf=qtn_str_disconnected; }
 RESOURCE TBUF r_str_disconnect_complete { buf=qtn_str_disconnect_complete; }
 RESOURCE TBUF r_str_connected { buf=qtn_str_connected; }
@@ -221,6 +223,7 @@ RESOURCE TBUF r_str_waiting_conn { buf=qtn_str_waiting_conn; }
 RESOURCE TBUF r_str_port_number { buf=qtn_str_port_number; }
 RESOURCE TBUF r_str_bell { buf=qtn_str_bell; }
 //RESOURCE TBUF r_str_ { buf=qtn_str_; }
+
 
 RESOURCE TBUF r_err_no_device_selected { buf=qtn_err_no_device_selected; }
 RESOURCE TBUF r_err_connection_error { buf=qtn_err_connection_error; }
@@ -262,6 +265,52 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 //----------------------------------------------------
 //
 
+/*
+RESOURCE DIALOG r_text_query_special_char_table
+	{
+	flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items=
+		{
+		DLG_LINE
+			{
+			type = EAknCtPopupHeadingPane;
+			id = EAknSCTQueryHeadingId;
+			control = AVKON_HEADING
+				{
+				label = "Extended ASCII:";
+				headinglayout = R_AVKON_SCT_LIST_HEADING_PANE;
+				};
+			},
+		DLG_LINE
+			{
+			type = EAknCtSpecialCharacterMap;
+			id = EAknSCTQueryContentId;
+			control = SPECIAL_CHAR_TABLE
+				{
+				contents =
+					{
+					SCT_CHAR_SET
+						{
+						id = EAknSCTLowerCase;
+//						chars = "+;@äö";
+//						chars = "юаб";
+						chars = <0x044e><0x0430><0x0431>;
+						},
+					SCT_CHAR_SET
+						{
+						id = EAknSCTUpperCase;
+//						chars = "+;@ÄÖ";
+//						chars = "ЮАБ";
+						chars = <0x042e><0x0410><0x0411>;
+						}
+					};
+				};
+			}
+		};
+	}
+*/
+
 RESOURCE DIALOG r_dialog_text_query
 	{
 	flags = EGeneralQueryFlags;
@@ -271,18 +320,19 @@ RESOURCE DIALOG r_dialog_text_query
 		{
 		DLG_LINE
 			{
-			type = EAknCtQuery;
 			id = EGeneralQuery;
+			type = EAknCtQuery;
 			control = AVKON_DATA_QUERY
 				{
 				layout = EDataLayout;
 				label = qtn_str_text_query_label;
 				control = EDWIN
 					{
-					flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable | EEikEdwinOnlyASCIIChars;
-					avkon_flags = EAknEditorFlagLatinInputModesOnly;
+					flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable /*| EEikEdwinOnlyASCIIChars*/;
+//					avkon_flags = EAknEditorFlagLatinInputModesOnly;
 					allowed_case_modes = EAknEditorUpperCase | EAknEditorLowerCase;
 					default_case = EAknEditorLowerCase;
+//					special_character_table = r_text_query_special_char_table;
 					width = 5;
 					maxlength = 128;
 					// added to limit expanding in forms.
@@ -290,8 +340,36 @@ RESOURCE DIALOG r_dialog_text_query
 					max_view_height_in_lines = 1;
 					// if you have the line above, you must have this.
 					// It's calculable from LAF
-					base_line_delta = 21;
+//					base_line_delta = 21;
 					};
+				};
+			}
+		};
+	}
+
+//----------------------------------------------------
+//
+//    r_dialog_ignoresym_confirmation_query
+//    Recource of confirmation query to ignore
+//      unsupported symbols
+//
+//----------------------------------------------------
+//
+
+RESOURCE DIALOG r_dialog_ignoresym_confirmation_query
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_YES_NO;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EGeneralQuery;
+			control = AVKON_CONFIRMATION_QUERY
+				{
+				layout = EConfirmationQueryLayout;
+				label = "";
 				};
 			}
 		};
@@ -583,5 +661,7 @@ RESOURCE ARRAY setting_codepage_items
 		LBUF { txt = qtn_str_setting_codepage_item7; }
 		};
 	}
+
+//#include "RFtermSpecCharTables.rh"
 
 // End of File

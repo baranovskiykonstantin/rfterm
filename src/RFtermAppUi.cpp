@@ -288,7 +288,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case EConnect:
 			{
-//			iAppView->iRFtermOutput->AppendLineL(_L("EConnect"), KPrefixNote);
 			if (!iBtAvailable)
 				{
 				ShowBTNotAvailableNoteL();
@@ -318,7 +317,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case EDisconnect:
 			{
-//			iAppView->iRFtermOutput->AppendLineL(_L("EDisconnect"), KPrefixNote);
 			if (iBtClient->IsConnected())
 				{
 				iBtClient->DisconnectL(); 
@@ -354,7 +352,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			
 		case EStart:
 			{
-//			iAppView->iRFtermOutput->AppendLineL(_L("EStart"), KPrefixNote);
 			if (!iBtAvailable)
 				{
 				ShowBTNotAvailableNoteL();
@@ -368,7 +365,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			
 		case EStop:
 			{
-//			iAppView->iRFtermOutput->AppendLineL(_L("EStop"), KPrefixNote);
 			if (!iBtAvailable)
 				{
 				ShowBTNotAvailableNoteL();
@@ -387,13 +383,16 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case EMessage:
 			{
-//			iAppView->iRFtermOutput->AppendLineL(_L("ESend"), KPrefixNote);
 			if(iBtClient->IsConnected())
 				{
 				TBuf<KRFtermTextBufLength> text;
 				if (iAppView->ShowTextQueryL(KNullDesC, text))
 					{
 					iBtClient->SendMessageL(text);
+					}
+				else
+					{
+					iAppView->iRFtermOutput->SetFocus(ETrue);
 					}
 				}
 			break;
@@ -408,6 +407,10 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 					{
 					iBtClient->SendMessageL(text);
 					}
+				else
+					{
+					iAppView->iRFtermOutput->SetFocus(ETrue);
+					}
 				}
 			break;
 			}
@@ -420,6 +423,10 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				if (iAppView->ShowCtrlCharQueryL(ctrlChar))
 					{
 					iBtClient->SendMessageL(ctrlChar, ETrue);
+					}
+				else
+					{
+					iAppView->iRFtermOutput->SetFocus(ETrue);
 					}
 				}
 			break;

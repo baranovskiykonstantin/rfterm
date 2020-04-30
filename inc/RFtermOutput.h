@@ -33,6 +33,7 @@ public:
 	// There is no ability to override SizeChanged() of CEikEdwin here,
 	// so custom method is used to properly change the rect of the control.
 	void UpdateRect(const TRect& aNewRect);
+	void GetCurrentCodePage(TPtrC& aCodePage);
 
 	// CEikEdwin
 	void FocusChanged(TDrawNow aDrawNow);

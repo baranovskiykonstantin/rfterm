@@ -13,7 +13,7 @@
 #define _UID3 0xae7f53fa
 
 // RFterm enumerate command codes
-enum TRFtermIds
+enum TRFtermCommandIds
 	{
 	EConnect = 0x6001, // start value must not be 0
 	EDisconnect,
@@ -37,7 +37,7 @@ enum TRFtermSettingPageIds
 	ESettingPageOutput
 	};
 
-enum TRFtermSettingIds
+enum TRFtermControlIds
 	{
 	ESettingAppendix = 1,
 	ESettingHistorySize,

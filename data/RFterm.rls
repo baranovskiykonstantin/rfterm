@@ -50,6 +50,7 @@
 
 // Dialogs
 #define qtn_str_text_query_label "Send:"
+#define qtn_str_ignoresym_confirmation "Next symbols are not supported by code page and will be ignored:\n%S\nDo you wisht to continue?"
 #define qtn_str_history_query_label "Message History"
 #define qtn_str_ctrlchar_query_label "Control Characters"
 #define qtn_str_int_query_label "Integer (0-255)"
@@ -65,7 +66,7 @@
 
 #define qtn_str_setting_historysize_label "Message history size"
 
-#define qtn_str_setting_echo_label "Output sent message"
+#define qtn_str_setting_echo_label "Output sent message (echo)"
 #define qtn_str_setting_off_label "Off"
 #define qtn_str_setting_on_label "On"
 
