@@ -161,6 +161,7 @@ void CRFtermAppUi::InternalizeSettingsL()
 		User::LeaveIfError(fs.Delete(iSettingsFileName));
 		iSettings->SetDefaultValues();
 		}
+	iSettings->Normalize();
 	}
 
 // -----------------------------------------------------------------------------
@@ -546,6 +547,7 @@ void CRFtermAppUi::HandleSettingsChange()
 	if (iAppView->iRFtermOutput)
 		{
 		iAppView->iRFtermOutput->ChangeCodePage(iSettings->iCodePage);
+		iAppView->iRFtermOutput->SetFontSizeL(iSettings->iFontSize);
 		}
 	}
 

@@ -73,14 +73,16 @@
 
 #define qtn_str_settings_output_label "Output"
 
+#define qtn_str_setting_fontsize_label "Font size"
+
+#define qtn_str_setting_tabsize_label "Tab size"
+
 #define qtn_str_setting_mapping_label "Control char mapping"
 #define qtn_str_setting_mapping_item0 "CR -> LF"
 #define qtn_str_setting_mapping_item1 "CR -> CR+LF"
 #define qtn_str_setting_mapping_item2 "LF -> CR"
 #define qtn_str_setting_mapping_item3 "LF -> CR+LF"
 #define qtn_str_setting_mapping_item4 "None"
-
-#define qtn_str_setting_tabsize_label "Tab size"
 
 #define qtn_str_setting_codepage_label "Code page"
 #define qtn_str_setting_codepage_item0 "ISO 8859-1 (Latin-1)"

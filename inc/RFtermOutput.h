@@ -25,6 +25,7 @@ public:
 	virtual ~CRFtermOutput();
 
 	// New functions
+	void SetFontSizeL(TInt aFontSize);
 	void ChangeCodePage(TCodePage aCodePage);
 	TBool IsEmpty() const;
 	void ClearL();

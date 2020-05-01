@@ -42,8 +42,9 @@ enum TRFtermControlIds
 	ESettingAppendix = 1,
 	ESettingHistorySize,
 	ESettingEcho,
-	ESettingMapping,
+	ESettingFontSize,
 	ESettingTabSize,
+	ESettingMapping,
 	ESettingCodePage
 	};
 

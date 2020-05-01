@@ -74,21 +74,8 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 		{
 		Panic(ERFtermCannotLoadFont);
 		}
-	CCharFormatLayer* pCharFormatLayer = CEikonEnv::NewDefaultCharFormatLayerL();
-	CleanupStack::PushL(pCharFormatLayer);
-//	TCharFormat charFormat;
-	TCharFormat charFormat(KRFtermFontName, 1);
-	TCharFormatMask charFormatMask;
-//	pCharFormatLayer->Sense(charFormat, charFormatMask);
-	charFormat.iFontPresentation.iTextColor = KRgbWhite;
-	charFormatMask.SetAttrib(EAttColor);
-//	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
-	charFormatMask.SetAttrib(EAttFontTypeface);
-	charFormat.iFontSpec.iHeight = 120;
-	charFormatMask.SetAttrib(EAttFontHeight);
-	pCharFormatLayer->SetL(charFormat, charFormatMask);
-	SetCharFormatLayer(pCharFormatLayer);
-	CleanupStack::Pop(pCharFormatLayer);
+	CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
+	SetFontSizeL(appUi->iSettings->iFontSize);
 
 	SetAknEditorAllowedInputModes(EAknEditorNullInputMode);
 
@@ -141,6 +128,7 @@ TBool CRFtermOutput::IsEmpty() const
 
 void CRFtermOutput::ClearL()
 	{
+	SetCursorPosL(0, EFalse);
 	iText->DeleteL(0, iText->DocumentLength());
 	iTextView->HandleGlobalChangeL();
 	iTextView->FinishBackgroundFormattingL();
@@ -195,6 +183,29 @@ void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
 
 	NotifyViewRectChangedL();
 	UpdateCursorL();
+	}
+
+void CRFtermOutput::SetFontSizeL(TInt aFontSize)
+	{
+	CCharFormatLayer* pCharFormatLayer = CEikonEnv::NewDefaultCharFormatLayerL();
+	CleanupStack::PushL(pCharFormatLayer);
+//	TCharFormat charFormat;
+	TCharFormat charFormat(KRFtermFontName, 1);
+	TCharFormatMask charFormatMask;
+//	pCharFormatLayer->Sense(charFormat, charFormatMask);
+	charFormat.iFontPresentation.iTextColor = KRgbWhite;
+	charFormatMask.SetAttrib(EAttColor);
+//	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
+	charFormatMask.SetAttrib(EAttFontTypeface);
+	charFormat.iFontSpec.iHeight = aFontSize;
+	charFormatMask.SetAttrib(EAttFontHeight);
+	pCharFormatLayer->SetL(charFormat, charFormatMask);
+	SetCharFormatLayer(pCharFormatLayer);
+	CleanupStack::Pop(pCharFormatLayer);
+
+	iOutputCursor.iWidth = aFontSize / 12;
+
+	ScrollToCursorPosL(ETrue);
 	}
 
 void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)

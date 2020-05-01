@@ -591,15 +591,19 @@ RESOURCE FORM settings_output_form
 		{
 		DLG_LINE
 			{
-			id = ESettingMapping;
-			type = EAknCtPopupFieldText;
-			prompt = qtn_str_setting_mapping_label;
+			id = ESettingFontSize;
+			type = EAknCtSlider;
+			prompt = qtn_str_setting_fontsize_label;
 			itemflags = EEikDlgItemTakesEnterKey;
-			control = POPUP_FIELD_TEXT
+			control = SLIDER
 				{
-				textarray = setting_mapping_items;
-				popupfield = POPUP_FIELD {};
-				active = 0;
+				layout = EAknFormSliderLayout1;
+				minvalue = 80;
+				maxvalue = 160;
+				step = 1;
+				valuetype = EAknSliderValueDecimal;
+				minlabel = "min";
+				maxlabel = "max";
 				};
 			},
 		DLG_LINE
@@ -617,6 +621,19 @@ RESOURCE FORM settings_output_form
 				valuetype = EAknSliderValueDecimal;
 				minlabel = "min";
 				maxlabel = "max";
+				};
+			},
+		DLG_LINE
+			{
+			id = ESettingMapping;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_mapping_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_mapping_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
 				};
 			},
 		DLG_LINE

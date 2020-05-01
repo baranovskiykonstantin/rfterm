@@ -134,14 +134,18 @@ void CRFtermSettingsDialog::LoadFormDataL()
 	echoControl->SetCurrentValueIndex(index);
 
 	// Output
-	index = ((TInt) iSettings->iCtrlCharMapping) - 1;
-	CAknPopupFieldText* mappingControl =
-		(CAknPopupFieldText*)Control(ESettingMapping);
-	mappingControl->SetCurrentValueIndex(index);
+	CAknSlider* fontSizeControl =
+		(CAknSlider*)Control(ESettingFontSize);
+	fontSizeControl->SetValueL(iSettings->iFontSize);
 
 	CAknSlider* tabSizeControl =
 		(CAknSlider*)Control(ESettingTabSize);
 	tabSizeControl->SetValueL(iSettings->iTabSize);
+
+	index = ((TInt) iSettings->iCtrlCharMapping) - 1;
+	CAknPopupFieldText* mappingControl =
+		(CAknPopupFieldText*)Control(ESettingMapping);
+	mappingControl->SetCurrentValueIndex(index);
 
 	index = ((TInt) iSettings->iCodePage) - 1;
 	CAknPopupFieldText* codePageControl =
@@ -186,13 +190,17 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 	iSettings->iEcho = (TBool) (echoControl->CurrentValueIndex());
 
 	// Output
-	CAknPopupFieldText* mappingControl =
-		(CAknPopupFieldText*)Control(ESettingMapping);
-	iSettings->iCtrlCharMapping = (TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1);
+	CAknSlider* fontSizeControl =
+		(CAknSlider*)Control(ESettingFontSize);
+	iSettings->iFontSize = fontSizeControl->Value();
 
 	CAknSlider* tabSizeControl =
 		(CAknSlider*)Control(ESettingTabSize);
 	iSettings->iTabSize = tabSizeControl->Value();
+
+	CAknPopupFieldText* mappingControl =
+		(CAknPopupFieldText*)Control(ESettingMapping);
+	iSettings->iCtrlCharMapping = (TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1);
 
 	CAknPopupFieldText* codePageControl =
 		(CAknPopupFieldText*)Control(ESettingCodePage);

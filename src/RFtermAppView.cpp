@@ -107,6 +107,16 @@ CRFtermAppView::~CRFtermAppView()
 	delete iMessageHistoryArray;
 	iMessageHistoryArray = NULL;
 
+	if (iRFtermScrollBars)
+		{
+		iRFtermScrollBars->SetObserver(NULL);
+		}
+
+	if (iRFtermOutput)
+		{
+		iRFtermOutput->SetObserver(NULL);
+		}
+
 	delete iRFtermOutput;
 	iRFtermOutput = NULL;
 	

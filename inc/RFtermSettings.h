@@ -45,8 +45,11 @@ public:
 	// Saves settings to stream.
 	void SaveL(RWriteStream& aStream) const;
 
-	// Using default values
+	// Using default values.
 	void SetDefaultValues();
+
+	// Move values into correct ranges.
+	void Normalize();
 
 private:
 	CRFtermSettings();
@@ -61,12 +64,15 @@ public:
 	
 	// Output sent message
 	TBool iEcho;
-
-	// Map one control character with another.
-	TCtrlCharMapping iCtrlCharMapping;
+	
+	// Size of the output font.
+	TInt iFontSize;
 	
 	// Size of the tabulation step.
 	TInt iTabSize;
+
+	// Map one control character with another.
+	TCtrlCharMapping iCtrlCharMapping;
 	
 	// Output code page
 	TCodePage iCodePage;
