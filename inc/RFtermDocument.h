@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef __RFTERMDOCUMENT_h__
-#define __RFTERMDOCUMENT_h__
+#ifndef RFTERMDOCUMENT_H
+#define RFTERMDOCUMENT_H
 
 // INCLUDES
 #include <akndoc.h>
@@ -87,5 +87,5 @@ private:
 
 	};
 
-#endif // __RFTERMDOCUMENT_h__
+#endif // RFTERMDOCUMENT_H
 // End of File

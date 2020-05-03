@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef __RFTERMAPPUI_h__
-#define __RFTERMAPPUI_h__
+#ifndef RFTERMAPPUI_H
+#define RFTERMAPPUI_H
 
 // INCLUDES
 #include <aknappui.h>
@@ -132,5 +132,5 @@ public:
 	CRFtermSettings* iSettings;
 	};
 
-#endif // __RFTERMAPPUI_h__
+#endif // RFTERMAPPUI_H
 // End of File

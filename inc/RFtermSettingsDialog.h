@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMTEXTQUERYDIALOG_H
-#define RFTERMTEXTQUERYDIALOG_H
+#ifndef RFTERMSETTINGSDIALOG_H
+#define RFTERMSETTINGSDIALOG_H
 
 #include <aknform.h>
 #include "RFtermSettings.h"
@@ -45,4 +45,4 @@ private: // data
 	TPoint iDownPointerPos;
 	};
 
-#endif /* RFTERMTEXTQUERYDIALOG_H */
+#endif /* RFTERMSETTINGSDIALOG_H */

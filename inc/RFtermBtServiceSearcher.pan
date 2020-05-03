@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef __RFTERMBTSERVICE_SEARCHER_PAN__
-#define __RFTERMBTSERVICE_SEARCHER_PAN__
+#ifndef RFTERMBTSERVICESEARCHER_PAN
+#define RFTERMBTSERVICESEARCHER_PAN
 
 #include <e32std.h>
 
@@ -31,6 +31,6 @@ inline void Panic(TRFtermBtServiceSearcherPanics aReason)
 	User::Panic(KPanicServiceSearcher, aReason);
 	}
 
-#endif // __RFTERMBTSERVICE_SEARCHER_PAN__
+#endif // RFTERMBTSERVICESEARCHER_PAN
 
 // End of File

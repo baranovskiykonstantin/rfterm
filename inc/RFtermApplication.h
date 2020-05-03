@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef __RFTERMAPPLICATION_H__
-#define __RFTERMAPPLICATION_H__
+#ifndef RFTERMAPPLICATION_H
+#define RFTERMAPPLICATION_H
 
 // INCLUDES
 #include <aknapp.h>
@@ -45,5 +45,5 @@ protected:
 	CApaDocument* CreateDocumentL();
 	};
 
-#endif // __RFTERMAPPLICATION_H__
+#endif // RFTERMAPPLICATION_H
 // End of File

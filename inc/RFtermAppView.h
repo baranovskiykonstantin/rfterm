@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef __RFTERMAPPVIEW_h__
-#define __RFTERMAPPVIEW_h__
+#ifndef RFTERMAPPVIEW_H
+#define RFTERMAPPVIEW_H
 
 // INCLUDES
 #include <coecntrl.h>
@@ -175,5 +175,5 @@ public:
 
 	};
 
-#endif // __RFTERMAPPVIEW_h__
+#endif // RFTERMAPPVIEW_H
 // End of File
