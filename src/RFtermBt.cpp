@@ -15,7 +15,6 @@
 #include "RFtermServiceSearcher.h"
 #include "RFtermAppUi.h"
 #include "RFtermBt.h"
-#include "RFtermOutput.h"
 #include "RFtermConstants.h"
 #include "RFterm.pan"
 
@@ -26,9 +25,9 @@
 // Two-phased constructor.
 // ----------------------------------------------------------------------------
 //
-CRFtermBt* CRFtermBt::NewL(CRFtermOutput* aOutput)
+CRFtermBt* CRFtermBt::NewL()
 	{
-	CRFtermBt* self = NewLC(aOutput);
+	CRFtermBt* self = NewLC();
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -38,9 +37,9 @@ CRFtermBt* CRFtermBt::NewL(CRFtermOutput* aOutput)
 // Two-phased constructor.
 // ----------------------------------------------------------------------------
 //
-CRFtermBt* CRFtermBt::NewLC(CRFtermOutput* aOutput)
+CRFtermBt* CRFtermBt::NewLC()
 	{
-	CRFtermBt* self = new (ELeave) CRFtermBt(aOutput);
+	CRFtermBt* self = new (ELeave) CRFtermBt();
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
@@ -51,10 +50,9 @@ CRFtermBt* CRFtermBt::NewLC(CRFtermOutput* aOutput)
 // Constructor.
 // ----------------------------------------------------------------------------
 //
-CRFtermBt::CRFtermBt(CRFtermOutput* aOutput) :
+CRFtermBt::CRFtermBt() :
 	CActive(CActive::EPriorityStandard),
 	iState(EWaitingToGetDevice),
-	iRFtermOutput(aOutput),
 	iServerMode(EFalse)
 	{
 	CActiveScheduler::Add(this);
@@ -98,7 +96,8 @@ CRFtermBt::~CRFtermBt()
 //
 void CRFtermBt::ConstructL()
 	{
-	iServiceSearcher = CRFtermServiceSearcher::NewL(iRFtermOutput);
+	iServiceSearcher = CRFtermServiceSearcher::NewL();
+	iServiceSearcher->SetObserver(iObserver);
 	iAdvertiser = CRFtermServiceAdvertiser::NewL();
 	User::LeaveIfError(iSocketServer.Connect());
 	}
@@ -127,7 +126,7 @@ void CRFtermBt::RunL()
 		{
 		// Disconnected
 		HBufC* strDisconnected = StringLoader::LoadLC(R_STR_DISCONNECTED);
-		iRFtermOutput->AppendMessageL(*strDisconnected);
+		NotifyL(*strDisconnected);
 		CleanupStack::PopAndDestroy(strDisconnected);
 		StopL();
 		return;
@@ -136,7 +135,7 @@ void CRFtermBt::RunL()
 	else if (iStatus == KErrAbort)
 		{
 		HBufC* strDisconnected = StringLoader::LoadLC(R_STR_DISCONNECTED);
-		iRFtermOutput->AppendMessageL(*strDisconnected);
+		NotifyL(*strDisconnected);
 		CleanupStack::PopAndDestroy(strDisconnected);
 		StopL();
 		return;
@@ -150,7 +149,7 @@ void CRFtermBt::RunL()
 				if (iStatus == KErrCancel)
 					{
 					textResource = StringLoader::LoadLC(R_ERR_NO_DEVICE_SELECTED);
-					iRFtermOutput->AppendMessageL(*textResource);
+					NotifyL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 					}
 				SetState(EWaitingToGetDevice);
@@ -159,14 +158,14 @@ void CRFtermBt::RunL()
 			case EGettingService:
 			case EGettingConnection:
 				textResource = StringLoader::LoadLC(R_ERR_CONNECTION_ERROR);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EWaitingToGetDevice);
 				break;
 				
 			case EConnected:
 				textResource = StringLoader::LoadLC(R_ERR_LOST_CONNECTION);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				DisconnectFromServerL();
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EDisconnecting);
@@ -174,7 +173,7 @@ void CRFtermBt::RunL()
 				
 			case ESendingMessage:
 				textResource = StringLoader::LoadLC(R_ERR_MESSAGE_FAILED);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				DisconnectFromServerL();
 				SetState(EDisconnecting);
@@ -184,7 +183,7 @@ void CRFtermBt::RunL()
 				if (iStatus == KErrDisconnected)
 					{
 					textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
-					iRFtermOutput->AppendMessageL(*textResource);
+					NotifyL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 
 					StopL();
@@ -193,7 +192,7 @@ void CRFtermBt::RunL()
 				else
 					{
 					textResource = StringLoader::LoadLC(R_ERR_FAILED_TO_DISCONNECT);
-					iRFtermOutput->AppendMessageL(*textResource);
+					NotifyL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 
 					Panic(ERFtermUnableToDisconnect);
@@ -202,7 +201,7 @@ void CRFtermBt::RunL()
 			
 			case EWaitingToGetDevice:
 				textResource = StringLoader::LoadLC(R_STR_DISCONNECTED);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				break;
 				
@@ -218,7 +217,7 @@ void CRFtermBt::RunL()
 			{
 			case EGettingDevice:
 				// found a device now search for a suitable service
-				iRFtermOutput->AppendMessageL(iServiceSearcher->ResponseParams().DeviceName());
+				NotifyL(iServiceSearcher->ResponseParams().DeviceName());
 				SetState(EGettingService);
 				iStatus = KRequestPending;  // this means that the RunL 
 											// can not be called until
@@ -230,7 +229,7 @@ void CRFtermBt::RunL()
 				
 			case EConnecting:
 				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				
 				// do not accept any more connections
@@ -241,7 +240,7 @@ void CRFtermBt::RunL()
 				
 			case EGettingService:
 				textResource = StringLoader::LoadLC(R_STR_FOUND_SERVICE);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EGettingConnection);
 				ConnectToServerL();
@@ -249,7 +248,7 @@ void CRFtermBt::RunL()
 				
 			case EGettingConnection:
 				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
 				SetState(EConnected);
 				RequestData();
@@ -258,7 +257,10 @@ void CRFtermBt::RunL()
 			case EConnected:
 				textResource = HBufC::NewLC(iBuffer.Length());
 				textResource->Des().Copy(iBuffer); // Convert buf8 to buf16
-				iRFtermOutput->AppendTextL(*textResource);
+				if (iObserver)
+					{
+					iObserver->HandleBtDataL(*textResource);
+					}
 				iBuffer.Zero();
 				CleanupStack::PopAndDestroy(textResource);
 				RequestData();
@@ -271,7 +273,7 @@ void CRFtermBt::RunL()
 				
 			case EDisconnecting:
 				textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
-				iRFtermOutput->AppendMessageL(*textResource);
+				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy (textResource);
 				iSocket.Close();
 				SetState(EWaitingToGetDevice);
@@ -391,7 +393,7 @@ void CRFtermBt::ConnectL()
 	else
 		{
 		HBufC* errClientBusy = StringLoader::LoadLC(R_STR_CLIENT_BUSY);
-		iRFtermOutput->AppendMessageL(*errClientBusy);
+		NotifyL(*errClientBusy);
 		CleanupStack::PopAndDestroy(errClientBusy);
 		
 		User::Leave(KErrInUse);
@@ -413,7 +415,7 @@ void CRFtermBt::DisconnectL()
 	else
 		{
 		HBufC* errNoConn = StringLoader::LoadLC(R_ERR_NO_CONN);
-		iRFtermOutput->AppendMessageL(*errNoConn);
+		NotifyL(*errNoConn);
 		CleanupStack::PopAndDestroy(errNoConn);
 		User::Leave(KErrDisconnected);
 		}
@@ -431,7 +433,7 @@ void CRFtermBt::DisconnectFromServerL()
 	Cancel();
 
 	HBufC* strReleasingConn = StringLoader::LoadLC(R_STR_RELEASING_CONN);
-	iRFtermOutput->AppendMessageL(*strReleasingConn);
+	NotifyL(*strReleasingConn);
 	CleanupStack::PopAndDestroy(strReleasingConn);
 	iSocket.Shutdown(RSocket::ENormal, iStatus);
 	SetActive();
@@ -445,7 +447,7 @@ void CRFtermBt::DisconnectFromServerL()
 void CRFtermBt::ConnectToServerL()
 	{
 	HBufC* strConnecting = StringLoader::LoadLC(R_STR_CONNECTING);
-	iRFtermOutput->AppendMessageL(*strConnecting);
+	NotifyL(*strConnecting);
 	CleanupStack::PopAndDestroy(strConnecting);
 
 	User::LeaveIfError(iSocket.Open(iSocketServer, KStrRFCOMM));
@@ -510,9 +512,9 @@ void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 		iMessage->Des().Copy(aText);
 		iMessage->Des().Append(appUi->iSettings->iMessageAddendum);
 
-		if (appUi->iSettings->iEcho)
+		if (appUi->iSettings->iEcho && iObserver)
 			{
-			iRFtermOutput->AppendTextL(aText);
+			iObserver->HandleBtDataL(aText);
 			}
 		}
 	
@@ -606,7 +608,7 @@ void CRFtermBt::SetSecurityWithChannelL(
 
 	// Write Log events
 	HBufC* strWaitingConn = StringLoader::LoadLC(R_STR_WAITING_CONN);
-	iRFtermOutput->AppendMessageL(*strWaitingConn);
+	NotifyL(*strWaitingConn);
 	CleanupStack::PopAndDestroy(strWaitingConn);
 
 	HBufC* strPortNumber = StringLoader::LoadLC(R_STR_PORT_NUMBER);
@@ -615,7 +617,7 @@ void CRFtermBt::SetSecurityWithChannelL(
 	HBufC* portStrWithNumber = HBufC::NewLC(strPortNumber->Length() + channelStr.Length());
 	portStrWithNumber->Des().Copy(*strPortNumber);
 	portStrWithNumber->Des().Append(channelStr);
-	iRFtermOutput->AppendMessageL(*portStrWithNumber);
+	NotifyL(*portStrWithNumber);
 	CleanupStack::PopAndDestroy(2); // strPortNumber, portStrWithNumber
 
 	// Set the security according to.
@@ -673,6 +675,19 @@ void CRFtermBt::RequestData()
 		iActiveSocket->RecvOneOrMore(iBuffer, 0, iStatus, iLen);
 		}
 	SetActive();
+	}
+
+void CRFtermBt::SetObserver(MRFtermBtObserver* aObserver)
+	{
+	iObserver = aObserver;
+	}
+
+void CRFtermBt::NotifyL(const TDesC& aMessage)
+	{
+	if (iObserver)
+		{
+		iObserver->HandleBtNotifyL(aMessage);
+		}
 	}
 
 // End of File

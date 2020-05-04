@@ -15,12 +15,12 @@
 #include <BTextNotifiers.h>
 #include <BtSdp.h>
 
+#include "RFtermBtObserver.h"
 #include "RFtermConstants.h"
 
 // FORWARD DECLARATIONS
 class CRFtermServiceSearcher;
 class CRFtermServiceAdvertiser;
-class CRFtermOutput;
 
 /**
 * TRFtermState
@@ -65,7 +65,7 @@ public: // Constructors and destructor
 	* @param aLog the log to send output to
 	* @return a pointer to the created instance of CRFtermClient
 	*/
-	static CRFtermBt* NewL(CRFtermOutput* aOutput);
+	static CRFtermBt* NewL();
 
 	/**
 	* NewLC()
@@ -73,14 +73,14 @@ public: // Constructors and destructor
 	* @param aLog the log to send output to
 	* @return a pointer to the created instance of CRFtermClient
 	*/
-	static CRFtermBt* NewLC(CRFtermOutput* aOutput);
+	static CRFtermBt* NewLC();
 
 	/**
 	* CRFtermBt()
 	* Constructs this object
 	* @param aLog the log to send output to
 	*/
-	CRFtermBt(CRFtermOutput* aOutput);
+	CRFtermBt();
 
 	/**
 	* ~CRFtermBt()
@@ -177,6 +177,19 @@ public: // New functions
 	*/
 	TBool IsReadyToSendMessage();
 
+	/**
+	 * SetObserver()
+	 * Assing an observer to receive log messages.
+	 */
+	void SetObserver(MRFtermBtObserver* aObserver);
+
+private:
+	/**
+	 * NotifyL()
+	 * Send log message to observer.
+	 */
+	void NotifyL(const TDesC& aMessage);
+
 protected: // from CActive
 
 	/**
@@ -259,11 +272,6 @@ private: // data
 	TRFtermState iState;
 
 	/**
-	* iRFtermOutput the log to send output to
-	*/
-	CRFtermOutput* iRFtermOutput;
-	
-	/**
 	* iServerMode indicates server mode
 	*/
 	TBool iServerMode;
@@ -328,6 +336,11 @@ private: // data
 	* the active socket
 	*/
 	RSocket* iActiveSocket;
+
+	/**
+	* iObserver the handler of log messages
+	*/
+	MRFtermBtObserver* iObserver;
 	};
 
 #endif /* RFTERMBT_H */

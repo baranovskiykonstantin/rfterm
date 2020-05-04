@@ -12,7 +12,6 @@
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermBtServiceSearcher.h"
 #include "RFtermBtServiceSearcher.pan"
-#include "RFtermOutput.h"
 
 // ============================ MEMBER FUNCTIONS ==============================
 
@@ -21,9 +20,8 @@
 // Constructor.
 // ----------------------------------------------------------------------------
 //
-CRFtermBtServiceSearcher::CRFtermBtServiceSearcher(CRFtermOutput* aOutput)
-	: iIsDeviceSelectorConnected(EFalse),
-	iRFtermOutput(aOutput)
+CRFtermBtServiceSearcher::CRFtermBtServiceSearcher()
+	: iIsDeviceSelectorConnected(EFalse)
 	{
 	}
 
@@ -146,7 +144,7 @@ void CRFtermBtServiceSearcher::NextRecordRequestCompleteL(
 		errorStr.Num(aError);
 		HBufC* errNRRC = StringLoader::LoadLC(R_ERR_NRRC_ERROR);
 		HBufC* errFull = HBufC::NewLC(errNRRC->Length() + errorStr.Length());
-		iRFtermOutput->AppendMessageL(*errFull);
+		NotifyL(*errFull);
 		CleanupStack::PopAndDestroy(2); // errNRRC, errFull
 		Finished(aError);
 		return;
@@ -155,7 +153,7 @@ void CRFtermBtServiceSearcher::NextRecordRequestCompleteL(
 	if (aTotalRecordsCount == 0)
 		{
 		HBufC* errNRRCNoRecords = StringLoader::LoadLC(R_ERR_NRRC_NO_RECORDS);
-		iRFtermOutput->AppendMessageL(*errNRRCNoRecords);
+		NotifyL(*errNRRCNoRecords);
 		CleanupStack::PopAndDestroy(errNRRCNoRecords);
 		Finished(KErrNotFound);
 		return;
@@ -239,7 +237,7 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 		TBuf<6> errorStr;
 		errorStr.Num(aError);
 		HBufC* errFull = HBufC::NewLC(errCantGetAttribute->Length() + errorStr.Length());
-		iRFtermOutput->AppendMessageL(*errFull);
+		NotifyL(*errFull);
 		CleanupStack::PopAndDestroy(2); // errCantGetAttribute, errFull
 		}
 	else if (!HasFinishedSearching())
@@ -250,7 +248,7 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 	else
 		{
 		HBufC* errAttrReqCom = StringLoader::LoadLC(R_ERR_ATTR_REQ_COM);
-		iRFtermOutput->AppendMessageL(*errAttrReqCom);
+		NotifyL(*errAttrReqCom);
 		CleanupStack::PopAndDestroy(errAttrReqCom);
 		Finished();
 		}
@@ -309,6 +307,19 @@ const TBTDeviceResponseParams& CRFtermBtServiceSearcher::ResponseParams()
 TBool CRFtermBtServiceSearcher::HasFoundService() const
 	{
 	return iHasFoundService;
+	}
+
+void CRFtermBtServiceSearcher::SetObserver(MRFtermBtObserver* aObserver)
+	{
+	iObserver = aObserver;
+	}
+
+void CRFtermBtServiceSearcher::NotifyL(const TDesC& aMessage)
+	{
+	if (iObserver)
+		{
+		iObserver->HandleBtNotifyL(aMessage);
+		}
 	}
 
 // End of File

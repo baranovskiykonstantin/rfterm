@@ -12,19 +12,18 @@
 
 // INCLUDES
 #include <aknappui.h>
-#include <RFtermSettings.h>
 
-// FORWARD DECLARATIONS
-class CRFtermAppView;
-class CRFtermBt;
+#include "RFtermAppView.h"
+#include "RFtermBt.h"
+#include "RFtermBtObserver.h"
+#include "RFtermSettings.h"
 
-// CLASS DECLARATION
 /**
  * CRFtermAppUi application UI class.
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CRFtermAppUi : public CAknAppUi
+class CRFtermAppUi : public CAknAppUi, public MRFtermBtObserver
 	{
 public:
 	// Constructors and destructor
@@ -90,7 +89,12 @@ private:
 private: // From MEikMenuObserver
 
 	void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
-	
+
+private: // From MRFtermBtObserver
+
+	void HandleBtNotifyL(const TDesC& aMessage);
+	void HandleBtDataL(const TDesC& aData);
+
 private: // New functions
 	
 	void InternalizeSettingsL();

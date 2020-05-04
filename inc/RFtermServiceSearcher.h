@@ -12,10 +12,9 @@
 
 // INCLUDES
 #include <e32base.h>
-#include "RFtermBtServiceSearcher.h"
 
-// CLASS DECLARATIONS
-class CRFtermOutput;
+#include "RFtermBtObserver.h"
+#include "RFtermBtServiceSearcher.h"
 
 /**
 * CRFtermServiceSearcher
@@ -28,20 +27,18 @@ public: // Constructors and destructor
 	/*
 	* NewL()
 	* Create a CRFtermServiceSearcher object
-	* @param aOutput the log to send output to
 	* @return a pointer to the created instance of
 	* CRFtermServiceSearcher
 	*/
-	static CRFtermServiceSearcher* NewL(CRFtermOutput* aOutput);
+	static CRFtermServiceSearcher* NewL();
 
 	/**
 	* NewLC()
 	* Create a CRFtermServiceSearcher object
-	* @param aOutput the log to send output to
 	* @return a pointer to the created instance of
 	* CRFtermServiceSearcher
 	*/
-	static CRFtermServiceSearcher* NewLC(CRFtermOutput* aOutput);
+	static CRFtermServiceSearcher* NewLC();
 
 	/**
 	* ~CMessageServiceSearcher()
@@ -85,9 +82,8 @@ private: // Constructors
 	/**
 	* CRFtermServiceSearcher()
 	* Constructs this object
-	* @param aOutput the log to send output to
 	*/
-	CRFtermServiceSearcher(CRFtermOutput* aOutput);
+	CRFtermServiceSearcher();
 
 	/**
 	* ConstructL()

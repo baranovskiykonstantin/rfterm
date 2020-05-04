@@ -19,9 +19,9 @@
 // Two-phased constructor.
 // ----------------------------------------------------------------------------
 //
-CRFtermServiceSearcher* CRFtermServiceSearcher::NewL(CRFtermOutput* aOutput)
+CRFtermServiceSearcher* CRFtermServiceSearcher::NewL()
 	{
-	CRFtermServiceSearcher* self = CRFtermServiceSearcher::NewLC(aOutput);
+	CRFtermServiceSearcher* self = CRFtermServiceSearcher::NewLC();
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -31,9 +31,9 @@ CRFtermServiceSearcher* CRFtermServiceSearcher::NewL(CRFtermOutput* aOutput)
 // Two-phased constructor.
 // ----------------------------------------------------------------------------
 //
-CRFtermServiceSearcher* CRFtermServiceSearcher::NewLC(CRFtermOutput* aOutput)
+CRFtermServiceSearcher* CRFtermServiceSearcher::NewLC()
 	{
-	CRFtermServiceSearcher* self = new (ELeave) CRFtermServiceSearcher(aOutput);
+	CRFtermServiceSearcher* self = new (ELeave) CRFtermServiceSearcher();
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
@@ -44,8 +44,8 @@ CRFtermServiceSearcher* CRFtermServiceSearcher::NewLC(CRFtermOutput* aOutput)
 // Construcor.
 // ----------------------------------------------------------------------------
 //
-CRFtermServiceSearcher::CRFtermServiceSearcher(CRFtermOutput* aOutput)
-	: CRFtermBtServiceSearcher(aOutput),
+CRFtermServiceSearcher::CRFtermServiceSearcher()
+	: CRFtermBtServiceSearcher(),
 	iServiceClass(KServiceClass),
 	iPort(-1)
 	{

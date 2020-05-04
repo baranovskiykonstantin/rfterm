@@ -15,12 +15,10 @@
 #include <bttypes.h>
 #include <btextnotifiers.h>
 
+#include "RFtermBtObserver.h"
 #include "RFtermSdpAttributeParser.h"
 #include "RFtermSdpAttributeNotifier.h"
 #include "RFtermConstants.h"
-
-// CLASS DECLARATIONS
-class CRFtermOutput;
 
 /**
 * CRFtermBtServiceSearcher
@@ -70,14 +68,26 @@ public: // New functions
 	*/
 	const TBTDeviceResponseParams& ResponseParams();
 
+	/**
+	 * SetObserver()
+	 * Assing an observer to receive log messages.
+	 */
+	void SetObserver(MRFtermBtObserver* aObserver);
+
+private:
+	/**
+	 * NotifyL()
+	 * Send log message to observer.
+	 */
+	void NotifyL(const TDesC& aMessage);
+
 protected: // New functions
 
 	/**
 	* CRFtermBtServiceSearcher()
 	* Constructs this object
-	* @param aOutput the log to send output to
 	*/
-	CRFtermBtServiceSearcher(CRFtermOutput* aOutput);
+	CRFtermBtServiceSearcher();
 
 	/**
 	* Finished()
@@ -240,9 +250,9 @@ private: // data
 	TBool iHasFoundService;
 
 	/**
-	* iRFtermOutput the log to send output to
+	* iObserver the handler of log messages
 	*/
-	CRFtermOutput* iRFtermOutput;
+	MRFtermBtObserver* iObserver;
 	};
 
 #endif // RFTERMTBTSERVICESEARCHER_H
