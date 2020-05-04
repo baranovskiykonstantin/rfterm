@@ -30,9 +30,6 @@
 #include "RFtermConstants.h"
 #include "RFtermSettingsDialog.h"
 
-_LIT(KFileName, "C:\\private\\ae7f53fa\\RFterm.txt");
-_LIT(KText, "Hello World!");
-
 // ============================ MEMBER FUNCTIONS ===============================
 
 
@@ -75,31 +72,6 @@ void CRFtermAppUi::ConstructL()
 		{
 		iBtAvailable = EFalse;
 		}
-
-/*
-	// Create a file to write the text to
-	TInt err = CCoeEnv::Static()->FsSession().MkDirAll(KFileName);
-	if ((KErrNone != err) && (KErrAlreadyExists != err))
-		{
-		return;
-		}
-
-	RFile file;
-	err = file.Replace(CCoeEnv::Static()->FsSession(), KFileName, EFileWrite);
-	CleanupClosePushL(file);
-	if (KErrNone != err)
-		{
-		CleanupStack::PopAndDestroy(1); // file
-		return;
-		}
-
-	RFileWriteStream outputFileStream(file);
-	CleanupClosePushL(outputFileStream);
-	outputFileStream << KText;
-
-	CleanupStack::PopAndDestroy(2); // outputFileStream, file
-*/
-
 	}
 // -----------------------------------------------------------------------------
 // CRFtermAppUi::CRFtermAppUi()
@@ -297,22 +269,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				{
 				iBtClient->ConnectL();
 				}
-/*
-			{
-			// Load a string from the resource file and display it
-			HBufC* textResource = StringLoader::LoadLC(R_MSG_CONNECTED_TEXT);
-			CAknInformationNote* informationNote;
-
-			informationNote = new (ELeave) CAknInformationNote;
-
-			// Show the information Note with
-			// textResource loaded with StringLoader.
-			informationNote->ExecuteLD(*textResource);
-
-			// Pop HBuf from CleanUpStack and Destroy it.
-			CleanupStack::PopAndDestroy(textResource);
-			}
-*/
 			break;
 			}
 
@@ -322,35 +278,9 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				{
 				iBtClient->DisconnectL(); 
 				}
-/*
-			RFile rFile;
-
-			//Open file where the stream text is
-			User::LeaveIfError(
-					rFile.Open(CCoeEnv::Static()->FsSession(), KFileName,
-							EFileStreamText));//EFileShareReadersOnly));// EFileStreamText));
-			CleanupClosePushL(rFile);
-
-			// copy stream from file to RFileStream object
-			RFileReadStream inputFileStream(rFile);
-			CleanupClosePushL(inputFileStream);
-
-			// HBufC descriptor is created from the RFileStream object.
-			HBufC* fileData = HBufC::NewLC(inputFileStream, 32);
-
-			CAknInformationNote* informationNote;
-
-			informationNote = new (ELeave) CAknInformationNote;
-			// Show the information Note
-			informationNote->ExecuteLD(*fileData);
-
-			// Pop loaded resources from the cleanup stack
-			CleanupStack::PopAndDestroy(3); // filedata, inputFileStream, rFile
-			}
-*/
 			break;
 			}
-			
+
 		case EStart:
 			{
 			if (!iBtAvailable)
@@ -363,7 +293,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				}
 			break;
 			}
-			
+
 		case EStop:
 			{
 			if (!iBtAvailable)
