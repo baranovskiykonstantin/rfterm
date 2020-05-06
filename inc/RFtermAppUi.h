@@ -15,7 +15,6 @@
 
 #include "RFtermAppView.h"
 #include "RFtermBt.h"
-#include "RFtermBtObserver.h"
 #include "RFtermSettings.h"
 
 /**
@@ -23,7 +22,7 @@
  * Interacts with the user through the UI and request message processing
  * from the handler class
  */
-class CRFtermAppUi : public CAknAppUi, public MRFtermBtObserver
+class CRFtermAppUi : public CAknAppUi
 	{
 public:
 	// Constructors and destructor
@@ -89,11 +88,6 @@ private:
 private: // From MEikMenuObserver
 
 	void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
-
-private: // From MRFtermBtObserver
-
-	void HandleBtNotifyL(const TDesC& aMessage);
-	void HandleBtDataL(const TDesC& aData);
 
 private: // New functions
 	

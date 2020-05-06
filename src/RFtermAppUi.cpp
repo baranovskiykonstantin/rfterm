@@ -48,7 +48,7 @@ void CRFtermAppUi::ConstructL()
 	AddToStackL(iAppView);
 
 	iBtClient = CRFtermBt::NewL();
-	iBtClient->SetObserver(this);
+	iBtClient->SetObserver(iAppView);
 
 	// check whether BT is available or not
 
@@ -470,32 +470,6 @@ void CRFtermAppUi::ShowBTNotAvailableNoteL()
 
 	// Pop HBuf from CleanUpStack and Destroy it.
 	CleanupStack::PopAndDestroy(textResource);
-	}
-
-// -----------------------------------------------------------------------------
-// CRFtermAppUi::HandleBtNotifyL()
-// Show log message from BT client.
-// -----------------------------------------------------------------------------
-//
-void CRFtermAppUi::HandleBtNotifyL(const TDesC& aMessage)
-	{
-	if (iAppView && iAppView->iRFtermOutput)
-		{
-		iAppView->iRFtermOutput->AppendMessageL(aMessage);
-		}
-	}
-
-// -----------------------------------------------------------------------------
-// CRFtermAppUi::HandleBtDataL()
-// Handle received data from BT client.
-// -----------------------------------------------------------------------------
-//
-void CRFtermAppUi::HandleBtDataL(const TDesC& aData)
-	{
-	if (iAppView && iAppView->iRFtermOutput)
-		{
-		iAppView->iRFtermOutput->AppendTextL(aData);
-		}
 	}
 
 // End of File

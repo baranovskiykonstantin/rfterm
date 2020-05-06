@@ -15,8 +15,12 @@
 #include "RFtermOutput.h"
 #include "RFtermScrollBars.h"
 #include "RFtermSettings.h"
+#include "RFtermBtObserver.h"
 
-class CRFtermAppView : public CCoeControl, public MRFtermSettingsObserver
+class CRFtermAppView
+		: public CCoeControl
+		, public MRFtermSettingsObserver
+		, public MRFtermBtObserver
 	{
 public:
 	// New methods
@@ -149,6 +153,10 @@ private: // Constructors
 
 private: // MRFtermSettingsObserver
 	void HandleSettingsChange(const CRFtermSettings* aSettings);
+
+private: // From MRFtermBtObserver
+	void HandleBtNotifyL(const TDesC& aMessage);
+	void HandleBtDataL(const TDesC& aData);
 
 private:
 

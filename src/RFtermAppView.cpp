@@ -544,4 +544,30 @@ void CRFtermAppView::HandleSettingsChange(const CRFtermSettings* aSettings)
 		}
 	}
 
+// -----------------------------------------------------------------------------
+// CRFtermAppView::HandleBtNotifyL()
+// Show log message from BT client.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::HandleBtNotifyL(const TDesC& aMessage)
+	{
+	if (iRFtermOutput)
+		{
+		iRFtermOutput->AppendMessageL(aMessage);
+		}
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppView::HandleBtDataL()
+// Handle received data from BT client.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::HandleBtDataL(const TDesC& aData)
+	{
+	if (iRFtermOutput)
+		{
+		iRFtermOutput->AppendTextL(aData);
+		}
+	}
+
 // End of File
