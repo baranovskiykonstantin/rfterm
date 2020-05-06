@@ -42,15 +42,6 @@ void CRFtermAppUi::ConstructL()
 	{
 	// Initialise app UI with standard value.
 	BaseConstructL(CAknAppUi::EAknEnableSkin);
-	
-	// Prepare private path
-	RFs& fsSession = iEikonEnv->FsSession();
-	User::LeaveIfError(fsSession.CreatePrivatePath(EDriveC));
-	User::LeaveIfError(fsSession.PrivatePath(iSettingsFileName));
-	iSettingsFileName += KSettingsFile;
-	iSettings = CRFtermSettings::NewL();
-	// Read settings from stream
-	InternalizeSettingsL();
 
 	// Create view object
 	iAppView = CRFtermAppView::NewL(ClientRect());
@@ -73,6 +64,17 @@ void CRFtermAppUi::ConstructL()
 		{
 		iBtAvailable = EFalse;
 		}
+	
+	// Settings
+	// Prepare private path
+	RFs& fsSession = iEikonEnv->FsSession();
+	User::LeaveIfError(fsSession.CreatePrivatePath(EDriveC));
+	User::LeaveIfError(fsSession.PrivatePath(iSettingsFileName));
+	iSettingsFileName += KSettingsFile;
+	iSettings = CRFtermSettings::NewL();
+	iSettings->AddObserver(iAppView);
+	// Read settings from stream
+	InternalizeSettingsL();
 	}
 // -----------------------------------------------------------------------------
 // CRFtermAppUi::CRFtermAppUi()
@@ -97,6 +99,7 @@ CRFtermAppUi::~CRFtermAppUi()
 	if (iAppView)
 		{
 		RemoveFromStack(iAppView);
+		iSettings->RemoveObserver(iAppView);
 		delete iAppView;
 		iAppView = NULL;
 		}
@@ -134,7 +137,6 @@ void CRFtermAppUi::InternalizeSettingsL()
 		User::LeaveIfError(fs.Delete(iSettingsFileName));
 		iSettings->SetDefaultValues();
 		}
-	iSettings->Normalize();
 	}
 
 // -----------------------------------------------------------------------------
@@ -320,7 +322,13 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				TBuf<KRFtermTextBufLength> text;
 				if (iAppView->ShowTextQueryL(KNullDesC, text))
 					{
-					iBtClient->SendMessageL(text);
+					HBufC* message = HBufC::NewLC(text.Length() + iSettings->MessageAddendum().Length());
+					message->Des().Copy(text);
+					message->Des().Append(iSettings->MessageAddendum());
+
+					iBtClient->SendMessageL(*message, iSettings->IsEchoEnabled());
+
+					CleanupStack::PopAndDestroy(message);
 					}
 				else
 					{
@@ -337,7 +345,13 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				TBuf<KRFtermTextBufLength> text;
 				if (iAppView->ShowHistoryQueryL(text))
 					{
-					iBtClient->SendMessageL(text);
+					HBufC* message = HBufC::NewLC(text.Length() + iSettings->MessageAddendum().Length());
+					message->Des().Copy(text);
+					message->Des().Append(iSettings->MessageAddendum());
+
+					iBtClient->SendMessageL(*message, iSettings->IsEchoEnabled());
+
+					CleanupStack::PopAndDestroy(message);
 					}
 				else
 					{
@@ -354,7 +368,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				TBuf<KRFtermTextBufLength> ctrlChar;
 				if (iAppView->ShowCtrlCharQueryL(ctrlChar))
 					{
-					iBtClient->SendMessageL(ctrlChar, ETrue);
+					iBtClient->SendMessageL(ctrlChar);
 					}
 				else
 					{
@@ -373,7 +387,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 		case ESettings:
 			{
 			CRFtermSettingsDialog::RunDlgLD(iSettings);
-			HandleSettingsChange();
 			break;
 			}
 
@@ -482,29 +495,6 @@ void CRFtermAppUi::HandleBtDataL(const TDesC& aData)
 	if (iAppView && iAppView->iRFtermOutput)
 		{
 		iAppView->iRFtermOutput->AppendTextL(aData);
-		}
-	}
-
-// -----------------------------------------------------------------------------
-// CRFtermAppUi::HandleSettingsChange()
-// Update application to new settings.
-// -----------------------------------------------------------------------------
-//
-void CRFtermAppUi::HandleSettingsChange()
-	{
-	// Message history size
-	TInt sizeDiff = iAppView->iMessageHistoryArray->Count() - iSettings->iMessageHistorySize;
-	if (sizeDiff > 0)
-		{
-		iAppView->iMessageHistoryArray->Delete(0, sizeDiff);
-		iAppView->iMessageHistoryArray->Compress();
-		}
-
-	// Output code page
-	if (iAppView->iRFtermOutput)
-		{
-		iAppView->iRFtermOutput->ChangeCodePage(iSettings->iCodePage);
-		iAppView->iRFtermOutput->SetFontSizeL(iSettings->iFontSize);
 		}
 	}
 

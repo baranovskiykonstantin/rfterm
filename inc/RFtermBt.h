@@ -106,10 +106,10 @@ public: // New functions
 	/**
 	* SendMessageL()
 	* Sends a message to a service on a remote machine.
-	* @param aText Text to send
-	* @param aIsCtrlChar send aText as control character
+	* @param aText text to send
+	* @param aDoEcho send aText to observer as received data
 	*/
-	void SendMessageL(TDes& aText, const TBool aIsCtrlChar=EFalse);
+	void SendMessageL(TDesC& aText, const TBool aDoEcho=EFalse);
 
 	/**
 	* StartL()

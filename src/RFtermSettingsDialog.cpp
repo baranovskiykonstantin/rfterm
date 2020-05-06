@@ -104,15 +104,15 @@ void CRFtermSettingsDialog::LoadFormDataL()
 	TInt index;
 
 	// Input
-	if (iSettings->iMessageAddendum.Compare(KCR) == 0)
+	if (iSettings->MessageAddendum().Compare(KCR) == 0)
 		{
 		index = 0;
 		}
-	else if (iSettings->iMessageAddendum.Compare(KLF) == 0)
+	else if (iSettings->MessageAddendum().Compare(KLF) == 0)
 		{
 		index = 1;
 		}
-	else if (iSettings->iMessageAddendum.Compare(KCRLF) == 0)
+	else if (iSettings->MessageAddendum().Compare(KCRLF) == 0)
 		{
 		index = 2;
 		}
@@ -126,9 +126,9 @@ void CRFtermSettingsDialog::LoadFormDataL()
 
 	CEikNumberEditor* historySizeControl = 
 		(CEikNumberEditor*)Control(ESettingHistorySize);
-	historySizeControl->SetNumber(iSettings->iMessageHistorySize);
+	historySizeControl->SetNumber(iSettings->MessageHistorySize());
 
-	index = ((TInt) iSettings->iEcho);
+	index = ((TInt) iSettings->IsEchoEnabled());
 	CAknPopupFieldText* echoControl =
 		(CAknPopupFieldText*)Control(ESettingEcho);
 	echoControl->SetCurrentValueIndex(index);
@@ -136,18 +136,18 @@ void CRFtermSettingsDialog::LoadFormDataL()
 	// Output
 	CAknSlider* fontSizeControl =
 		(CAknSlider*)Control(ESettingFontSize);
-	fontSizeControl->SetValueL(iSettings->iFontSize);
+	fontSizeControl->SetValueL(iSettings->FontSize());
 
 	CAknSlider* tabSizeControl =
 		(CAknSlider*)Control(ESettingTabSize);
-	tabSizeControl->SetValueL(iSettings->iTabSize);
+	tabSizeControl->SetValueL(iSettings->TabSize());
 
-	index = ((TInt) iSettings->iCtrlCharMapping) - 1;
+	index = ((TInt) iSettings->CtrlCharMapping()) - 1;
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);
 	mappingControl->SetCurrentValueIndex(index);
 
-	index = ((TInt) iSettings->iCodePage) - 1;
+	index = ((TInt) iSettings->CodePage()) - 1;
 	CAknPopupFieldText* codePageControl =
 		(CAknPopupFieldText*)Control(ESettingCodePage);
 	codePageControl->SetCurrentValueIndex(index);
@@ -162,49 +162,49 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 		{
 		case 0:
 			{
-			iSettings->iMessageAddendum = KCR;
+			iSettings->SetMessageAddendum(KCR);
 			break;
 			}
 		case 1:
 			{
-			iSettings->iMessageAddendum = KLF;
+			iSettings->SetMessageAddendum(KLF);
 			break;
 			}
 		case 2:
 			{
-			iSettings->iMessageAddendum = KCRLF;
+			iSettings->SetMessageAddendum(KCRLF);
 			break;
 			}
 		default:
 			{
-			iSettings->iMessageAddendum = KNullDesC;
+			iSettings->SetMessageAddendum(KNullDesC);
 			}
 		}
 
 	CEikNumberEditor* historySizeControl = 
 		(CEikNumberEditor*)Control(ESettingHistorySize);
-	iSettings->iMessageHistorySize = historySizeControl->Number();
+	iSettings->SetMessageHistorySize(historySizeControl->Number());
 
 	CAknPopupFieldText* echoControl =
 		(CAknPopupFieldText*)Control(ESettingEcho);
-	iSettings->iEcho = (TBool) (echoControl->CurrentValueIndex());
+	iSettings->EnableEcho(echoControl->CurrentValueIndex());
 
 	// Output
 	CAknSlider* fontSizeControl =
 		(CAknSlider*)Control(ESettingFontSize);
-	iSettings->iFontSize = fontSizeControl->Value();
+	iSettings->SetFontSize(fontSizeControl->Value());
 
 	CAknSlider* tabSizeControl =
 		(CAknSlider*)Control(ESettingTabSize);
-	iSettings->iTabSize = tabSizeControl->Value();
+	iSettings->SetTabSize(tabSizeControl->Value());
 
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);
-	iSettings->iCtrlCharMapping = (TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1);
+	iSettings->SetCtrlCharMapping((TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1));
 
 	CAknPopupFieldText* codePageControl =
 		(CAknPopupFieldText*)Control(ESettingCodePage);
-	iSettings->iCodePage = (TCodePage) (codePageControl->CurrentValueIndex() + 1);
+	iSettings->SetCodePage((TCodePage) (codePageControl->CurrentValueIndex() + 1));
 	
 	return ETrue;
 	}

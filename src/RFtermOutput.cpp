@@ -38,6 +38,16 @@ CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent)
 	return self;
 	}
 
+CRFtermOutput::CRFtermOutput()
+	: iFontSize(120)
+	, iTabSize(4)
+	, iCtrlCharMapping(EMapCRtoCRLF)
+	, iCodePage(KCodePageLatin1)
+	, iLastLineStartPos(0)
+	, iLastLineCursorPos(0)
+	{
+	}
+
 void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	{
 	CEikEdwin::ConstructL(
@@ -74,8 +84,6 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 		{
 		Panic(ERFtermCannotLoadFont);
 		}
-	CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
-	SetFontSizeL(appUi->iSettings->iFontSize);
 
 	SetAknEditorAllowedInputModes(EAknEditorNullInputMode);
 
@@ -86,15 +94,10 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	iOutputCursor.iFlags = 0;
 	iOutputCursor.iColor = KRgbWhite;
 
+	SetFontSizeL(iFontSize); // Default font size
+
 	iBellNote = CAknGlobalNote::NewL();
 	iBellNote->SetTone(EAknNoteDialogWarningTone);
-	}
-
-CRFtermOutput::CRFtermOutput()
-	: iCodePage(KCodePageLatin1)
-	, iLastLineStartPos(0)
-	, iLastLineCursorPos(0)
-	{
 	}
 
 CRFtermOutput::~CRFtermOutput()
@@ -187,6 +190,12 @@ void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
 
 void CRFtermOutput::SetFontSizeL(TInt aFontSize)
 	{
+	if (iFontSize == aFontSize)
+		{
+		return;
+		}
+
+	iFontSize = aFontSize;
 	CCharFormatLayer* pCharFormatLayer = CEikonEnv::NewDefaultCharFormatLayerL();
 	CleanupStack::PushL(pCharFormatLayer);
 //	TCharFormat charFormat;
@@ -388,7 +397,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 		
 		if (specChar.Compare(KCR) == 0)
 			{
-			switch (appUi->iSettings->iCtrlCharMapping)
+			switch (iCtrlCharMapping)
 				{
 				case EMapCRtoLF:
 					{
@@ -409,7 +418,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 			}
 		else if (specChar.Compare(KLF) == 0)
 			{
-			switch (appUi->iSettings->iCtrlCharMapping)
+			switch (iCtrlCharMapping)
 				{
 				case EMapLFtoCR:
 					{
@@ -435,7 +444,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 		else if (specChar.Compare(KTB) == 0)
 			{
 			TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
-			TInt tabLength = appUi->iSettings->iTabSize - (indentLength % appUi->iSettings->iTabSize);
+			TInt tabLength = iTabSize - (indentLength % iTabSize);
 			TInt targetPos = iLastLineCursorPos + tabLength;
 			if (iText->DocumentLength() < targetPos)
 				{

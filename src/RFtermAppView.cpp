@@ -358,30 +358,24 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 		aText = *normalText;
 
 		// add message to history
-		if (normalText->Length())
+		if (normalText->Length() && iMessageHistorySize > 0)
 			{
-			CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
-			TInt historySize = appUi->iSettings->iMessageHistorySize;
-
-			if (historySize > 0)
+			if (iMessageHistorySize > 1)
 				{
-				if (historySize > 1)
+				TInt posOfCopy;
+				if (iMessageHistoryArray->Find(*normalText, posOfCopy) == 0)
 					{
-					TInt posOfCopy;
-					if (iMessageHistoryArray->Find(*normalText, posOfCopy) == 0)
-						{
-						iMessageHistoryArray->Delete(posOfCopy);
-						iMessageHistoryArray->Compress();
-						}
-					}
-
-				if (iMessageHistoryArray->Count() == historySize)
-					{
-					iMessageHistoryArray->Delete(0);
+					iMessageHistoryArray->Delete(posOfCopy);
 					iMessageHistoryArray->Compress();
 					}
-				iMessageHistoryArray->AppendL(*normalText);
 				}
+
+			if (iMessageHistoryArray->Count() == iMessageHistorySize)
+				{
+				iMessageHistoryArray->Delete(0);
+				iMessageHistoryArray->Compress();
+				}
+			iMessageHistoryArray->AppendL(*normalText);
 			}
 
 		CleanupStack::PopAndDestroy(normalText);
@@ -522,6 +516,32 @@ TBool CRFtermAppView::ShowIntQueryL(TInt& aInt)
 		}
 
 	return EFalse;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermAppView::HandleSettingsChange()
+// Update used settings to new values.
+// ----------------------------------------------------------------------------
+//
+void CRFtermAppView::HandleSettingsChange(const CRFtermSettings* aSettings)
+	{
+	iMessageHistorySize = aSettings->MessageHistorySize();
+	// Message history size
+	TInt sizeDiff = iMessageHistoryArray->Count() - iMessageHistorySize;
+	if (sizeDiff > 0)
+		{
+		iMessageHistoryArray->Delete(0, sizeDiff);
+		iMessageHistoryArray->Compress();
+		}
+
+	// Output code page
+	if (iRFtermOutput)
+		{
+		iRFtermOutput->ChangeCodePage(aSettings->CodePage());
+		iRFtermOutput->SetFontSizeL(aSettings->FontSize());
+		iRFtermOutput->SetCtrlCharMapping(aSettings->CtrlCharMapping());
+		iRFtermOutput->SetTabSize(aSettings->TabSize());
+		}
 	}
 
 // End of File

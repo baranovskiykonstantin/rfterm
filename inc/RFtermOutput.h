@@ -26,6 +26,8 @@ public:
 
 	// New functions
 	void SetFontSizeL(TInt aFontSize);
+	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
+	void SetTabSize(TInt aSize);
 	void ChangeCodePage(TCodePage aCodePage);
 	TBool IsEmpty() const;
 	void ClearL();
@@ -79,6 +81,9 @@ private:
 
 private:
 	TInt iRFtermFontID;
+	TInt iFontSize;
+	TInt iTabSize;
+	TCtrlCharMapping iCtrlCharMapping;
 	TPtrC iCodePage;
 	TTextCursor iOutputCursor;
 
@@ -92,10 +97,13 @@ private:
 	TRect iContentRect;
 	/**
 	 * iOutputRect
-	 * Position of the view rect is
-	 * relative to the content rect pos.
+	 * Position of the view rect
+	 * relative to the content rect pos (0, 0).
 	 */
 	TRect iOutputRect;
 	};
+
+inline void CRFtermOutput::SetCtrlCharMapping(TCtrlCharMapping aMapping) { iCtrlCharMapping = aMapping; }
+inline void CRFtermOutput::SetTabSize(TInt aSize) { iTabSize = aSize; }
 
 #endif /* RFTERMOUTPUT_H */

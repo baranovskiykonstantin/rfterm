@@ -27,10 +27,14 @@ CRFtermSettings *CRFtermSettings::NewLC()
 
 CRFtermSettings::~CRFtermSettings()
 	{
+	iObservers.ResetAndDestroy();
 	}
 
 CRFtermSettings::CRFtermSettings()
 	{
+	iSkipNotifications = ETrue;
+	SetDefaultValues();
+	iSkipNotifications = EFalse;
 	}
 
 void CRFtermSettings::SetDefaultValues()
@@ -42,38 +46,94 @@ void CRFtermSettings::SetDefaultValues()
 	iTabSize = 4;
 	iCtrlCharMapping = EMapCRtoCRLF;
 	iCodePage = ECodePageLatin1;
+	Notify();
 	}
 
-void CRFtermSettings::Normalize()
+void CRFtermSettings::SetMessageAddendum(const TDesC& aAddendum)
 	{
-	if (iMessageAddendum != KCR &&
-			iMessageAddendum != KLF &&
-			iMessageAddendum != KCRLF &&
-			iMessageAddendum != KNullDesC)
+	if (aAddendum != KCR &&
+			aAddendum != KLF &&
+			aAddendum != KCRLF &&
+			aAddendum != KNullDesC)
 		{
 		iMessageAddendum = KCRLF;
 		}
-	if (iMessageHistorySize < 0 || iMessageHistorySize > 15)
+	else
+		{
+		iMessageAddendum = aAddendum;
+		}
+	Notify();
+	}
+
+void CRFtermSettings::SetMessageHistorySize(TInt aSize)
+	{
+	if (aSize < 0 || aSize > 15)
 		{
 		iMessageHistorySize = 8;
 		}
-	iEcho = (TBool)iEcho;
-	if (iFontSize < 80 || iFontSize > 160)
+	else
+		{
+		iMessageHistorySize = aSize;
+		}
+	Notify();
+	}
+
+void CRFtermSettings::EnableEcho(TBool aState)
+	{
+	iEcho = (TBool)aState;
+	Notify();
+	}
+
+void CRFtermSettings::SetFontSize(TInt aSize)
+	{
+	if (aSize < 80 || aSize > 160)
 		{
 		iFontSize = 120;
 		}
-	if (iTabSize < 1 || iTabSize > 8)
+	else
+		{
+		iFontSize = aSize;
+		}
+	Notify();
+	}
+
+void CRFtermSettings::SetTabSize(TInt aSize)
+	{
+	if (aSize < 1 || aSize > 8)
 		{
 		iTabSize = 4;
 		}
-	if (iCtrlCharMapping < EMapCRtoLF || iCtrlCharMapping > EMapNone)
+	else
+		{
+		iTabSize = aSize;
+		}
+	Notify();
+	}
+
+void CRFtermSettings::SetCtrlCharMapping(TCtrlCharMapping aMapping)
+	{
+	if (aMapping < EMapCRtoLF || aMapping > EMapNone)
 		{
 		iCtrlCharMapping = EMapCRtoCRLF;
 		}
-	if (iCodePage < ECodePageLatin1 || iCodePage > ECodePageKOI8)
+	else
+		{
+		iCtrlCharMapping = aMapping;
+		}
+	Notify();
+	}
+
+void CRFtermSettings::SetCodePage(TCodePage aCodePage)
+	{
+	if (aCodePage < ECodePageLatin1 || aCodePage > ECodePageKOI8)
 		{
 		iCodePage = ECodePageLatin1;
 		}
+	else
+		{
+		iCodePage = aCodePage;
+		}
+	Notify();
 	}
 
 void CRFtermSettings::ConstructL()
@@ -83,13 +143,17 @@ void CRFtermSettings::ConstructL()
 // Reading setting data from stream void
 void CRFtermSettings::LoadL(RReadStream& aStream)
 	{
+	iSkipNotifications = ETrue;
 	aStream >> iMessageAddendum;
-	iMessageHistorySize = aStream.ReadInt32L();
-	iEcho = aStream.ReadInt8L();
-	iFontSize = aStream.ReadInt32L();
-	iTabSize = aStream.ReadInt32L();
-	iCtrlCharMapping = (TCtrlCharMapping) aStream.ReadInt32L();
-	iCodePage = (TCodePage) aStream.ReadInt32L();
+	SetMessageAddendum(iMessageAddendum);
+	SetMessageHistorySize(aStream.ReadInt32L());
+	EnableEcho(aStream.ReadInt8L());
+	SetFontSize(aStream.ReadInt32L());
+	SetTabSize(aStream.ReadInt32L());
+	SetCtrlCharMapping((TCtrlCharMapping) aStream.ReadInt32L());
+	SetCodePage((TCodePage) aStream.ReadInt32L());
+	iSkipNotifications = EFalse;
+	Notify();
 	}
 
 // Storing setting data into stream void
@@ -102,5 +166,33 @@ void CRFtermSettings::SaveL(RWriteStream& aStream) const
 	aStream.WriteInt32L(iTabSize);
 	aStream.WriteInt32L((TInt)iCtrlCharMapping);
 	aStream.WriteInt32L((TInt)iCodePage);
+	}
+
+void CRFtermSettings::AddObserver(MRFtermSettingsObserver* aObserver)
+	{
+	iObservers.Append(aObserver);
+	}
+
+void CRFtermSettings::RemoveObserver(MRFtermSettingsObserver* aObserver)
+	{
+	TInt id = iObservers.Find(aObserver);
+	if (id != KErrNotFound)
+		{
+		iObservers.Remove(id);
+		}
+	}
+
+void CRFtermSettings::Notify()
+	{
+	if (iSkipNotifications)
+		{
+		return;
+		}
+
+	for (TInt i = iObservers.Count(); i > 0; i--)
+		{
+		MRFtermSettingsObserver* observer = iObservers[i - 1];
+		observer->HandleSettingsChange(this);
+		}
 	}
 

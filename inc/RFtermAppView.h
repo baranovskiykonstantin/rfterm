@@ -10,14 +10,13 @@
 #ifndef RFTERMAPPVIEW_H
 #define RFTERMAPPVIEW_H
 
-// INCLUDES
 #include <coecntrl.h>
 
 #include "RFtermOutput.h"
 #include "RFtermScrollBars.h"
+#include "RFtermSettings.h"
 
-// CLASS DECLARATION
-class CRFtermAppView : public CCoeControl
+class CRFtermAppView : public CCoeControl, public MRFtermSettingsObserver
 	{
 public:
 	// New methods
@@ -131,8 +130,7 @@ public: // New functions
 	*/
 	TBool ShowIntQueryL(TInt& aInt);
 
-private:
-	// Constructors
+private: // Constructors
 
 	/**
 	 * ConstructL
@@ -148,13 +146,21 @@ private:
 	 * C++ default constructor.
 	 */
 	CRFtermAppView();
-	
+
+private: // MRFtermSettingsObserver
+	void HandleSettingsChange(const CRFtermSettings* aSettings);
+
 private:
 
 	/**
 	 * iDownPointerPos
 	 */
 	TPoint iDownPointerPos;
+
+	/**
+	 * iHistorySize
+	 */
+	TInt iMessageHistorySize;
 
 public:
 

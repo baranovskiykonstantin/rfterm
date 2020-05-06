@@ -474,7 +474,7 @@ void CRFtermBt::ConnectToServerL()
 // Send a message to a service on a remote machine.
 // ----------------------------------------------------------------------------
 //
-void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
+void CRFtermBt::SendMessageL(TDesC& aText, const TBool aDoEcho)
 	{
 	if (State() != EConnected)
 		{
@@ -493,31 +493,16 @@ void CRFtermBt::SendMessageL(TDes& aText, const TBool aIsCtrlChar)
 		}
 	SetState(ESendingMessage);
 
-	if (iMessage)
+	// convert 16-bit to 8-bit data
+	delete iMessage;
+	iMessage = HBufC8::NewL(aText.Length());
+	iMessage->Des().Copy(aText);
+
+	if (aDoEcho && iObserver)
 		{
-		delete iMessage;
+		iObserver->HandleBtDataL(aText);
 		}
 
-	if (aIsCtrlChar)
-		{
-		iMessage = HBufC8::NewL(aText.Length());
-		iMessage->Des().Copy(aText);
-		}
-	else
-		{
-		CRFtermAppUi* appUi = (CRFtermAppUi*)CEikonEnv::Static()->EikAppUi();
-		iMessage = HBufC8::NewL(
-			aText.Length() + appUi->iSettings->iMessageAddendum.Length()
-		);
-		iMessage->Des().Copy(aText);
-		iMessage->Des().Append(appUi->iSettings->iMessageAddendum);
-
-		if (appUi->iSettings->iEcho && iObserver)
-			{
-			iObserver->HandleBtDataL(aText);
-			}
-		}
-	
 	if (iActiveSocket)
 		{
 		iActiveSocket->Write(*iMessage, iStatus);

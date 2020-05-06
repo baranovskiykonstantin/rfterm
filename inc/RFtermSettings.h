@@ -11,6 +11,7 @@
 #define RFTERMSETTINGS_H
 
 #include <e32base.h>
+#include <e32cmn.h>
 #include <s32strm.h>
 
 enum TCtrlCharMapping {
@@ -32,6 +33,14 @@ enum TCodePage {
 	ECodePageKOI8,
 };
 
+class CRFtermSettings;
+
+class MRFtermSettingsObserver
+	{
+public:
+	virtual void HandleSettingsChange(const CRFtermSettings* aSettings) = 0;
+	};
+
 class CRFtermSettings : public CBase
 	{
 public:
@@ -48,14 +57,37 @@ public:
 	// Using default values.
 	void SetDefaultValues();
 
-	// Move values into correct ranges.
-	void Normalize();
+	// Getters
+	const TDesC& MessageAddendum() const;
+	TInt MessageHistorySize() const;
+	TBool IsEchoEnabled() const;
+	TInt FontSize() const;
+	TInt TabSize() const;
+	TCtrlCharMapping CtrlCharMapping() const;
+	TCodePage CodePage() const;
 
-private:
+	// Setters
+	void SetMessageAddendum(const TDesC& aAddendum);
+	void SetMessageHistorySize(TInt aSize);
+	void EnableEcho(TBool aState);
+	void SetFontSize(TInt aSize);
+	void SetTabSize(TInt aSize);
+	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
+	void SetCodePage(TCodePage aCodePage);
+
+	// MRFtermSettingsObserver
+	void AddObserver(MRFtermSettingsObserver* aObserver);
+	void RemoveObserver(MRFtermSettingsObserver* aObserver);
+
+private: // Constructors
 	CRFtermSettings();
 	void ConstructL();
 
-public:
+private: // MRFtermSettingsObserver
+	// Send messages to observers.
+	void Notify();
+
+private: // Data
 	// Finish a message with iMessageAddendum on sending.
 	TBuf<2> iMessageAddendum;
 	
@@ -76,6 +108,18 @@ public:
 	
 	// Output code page
 	TCodePage iCodePage;
+
+private: // Observers
+	RPointerArray<MRFtermSettingsObserver> iObservers;
+	TBool iSkipNotifications;
 	};
+
+inline const TDesC& CRFtermSettings::MessageAddendum() const { return iMessageAddendum; }
+inline TInt CRFtermSettings::MessageHistorySize() const { return iMessageHistorySize; }
+inline TBool CRFtermSettings::IsEchoEnabled() const { return iEcho; }
+inline TInt CRFtermSettings::FontSize() const { return iFontSize; }
+inline TInt CRFtermSettings::TabSize() const { return iTabSize; }
+inline TCtrlCharMapping CRFtermSettings::CtrlCharMapping() const { return iCtrlCharMapping; }
+inline TCodePage CRFtermSettings::CodePage() const { return iCodePage; }
 
 #endif /* RFTERMSETTINGS_H */
