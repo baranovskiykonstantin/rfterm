@@ -17,6 +17,12 @@
 #include "RFtermSettings.h"
 #include "RFtermBtObserver.h"
 
+enum TRFtermAppViewControls
+	{
+	ERFtermAppViewScrollBars,
+	ERFtermAppViewOutput
+	};
+
 class CRFtermAppView
 		: public CCoeControl
 		, public MRFtermSettingsObserver
@@ -50,8 +56,7 @@ public:
 	 */
 	virtual ~CRFtermAppView();
 
-public:
-	// Functions from base classes
+public: // from CCoeControl
 
 	/**
 	 * From CCoeControl, Draw
@@ -74,9 +79,6 @@ public:
 	 * @param aPointerEvent the information about this event
 	 */
 	virtual void HandlePointerEventL(const TPointerEvent& aPointerEvent);
-
-	
-public: // from CCoeControl
 
 	/**
 	* OfferKeyEventL()
@@ -103,8 +105,13 @@ public: // from CCoeControl
 	* @return the specified component control
 	*/
 	CCoeControl* ComponentControl(TInt aIndex) const;
-	
+
+protected: // from CCoeControl
+
+	void FocusChanged(TDrawNow aDrawNow);
+
 public: // New functions
+
 	/**
 	* ShowTextQueryL()
 	* Show text query.
@@ -151,7 +158,7 @@ private: // Constructors
 	 */
 	CRFtermAppView();
 
-private: // MRFtermSettingsObserver
+private: // From MRFtermSettingsObserver
 	void HandleSettingsChange(const CRFtermSettings* aSettings);
 
 private: // From MRFtermBtObserver
@@ -170,8 +177,6 @@ private:
 	 */
 	TInt iMessageHistorySize;
 
-public:
-
 	/**
 	 * iRFtermScrollBars
 	 */
@@ -182,6 +187,7 @@ public:
 	 */
 	CRFtermOutput* iRFtermOutput;
 
+public:
 	/**
 	 * iMessageHistoryArray
 	 */

@@ -200,7 +200,9 @@ void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 			{
 			aMenuPane->SetItemDimmed(ESend, ETrue);
 			}
-		if (iAppView->iRFtermOutput->IsEmpty())
+		CRFtermOutput* output = static_cast<CRFtermOutput*>(
+				iAppView->ComponentControl(ERFtermAppViewOutput));
+		if (output->IsEmpty())
 			{
 			aMenuPane->SetItemDimmed(EClear, ETrue);
 			}
@@ -330,10 +332,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 					CleanupStack::PopAndDestroy(message);
 					}
-				else
-					{
-					iAppView->iRFtermOutput->SetFocus(ETrue);
-					}
 				}
 			break;
 			}
@@ -353,10 +351,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 					CleanupStack::PopAndDestroy(message);
 					}
-				else
-					{
-					iAppView->iRFtermOutput->SetFocus(ETrue);
-					}
 				}
 			break;
 			}
@@ -370,17 +364,15 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 					{
 					iBtClient->SendMessageL(ctrlChar);
 					}
-				else
-					{
-					iAppView->iRFtermOutput->SetFocus(ETrue);
-					}
 				}
 			break;
 			}
 
 		case EClear:
 			{
-			iAppView->iRFtermOutput->ClearL();
+			CRFtermOutput* output = static_cast<CRFtermOutput*>(
+					iAppView->ComponentControl(ERFtermAppViewOutput));
+			output->ClearL();
 			break;
 			}
 
@@ -413,10 +405,12 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ETest:
 			{
-			iAppView->iRFtermOutput->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
-			iAppView->iRFtermOutput->AppendMessageL(_L("0123456789"));
-			iAppView->iRFtermOutput->AppendTextL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"));
-			iAppView->iRFtermOutput->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
+			CRFtermOutput* output = static_cast<CRFtermOutput*>(
+					iAppView->ComponentControl(ERFtermAppViewOutput));
+			output->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
+			output->AppendMessageL(_L("0123456789"));
+			output->AppendTextL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"));
+			output->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
 			break;
 			}
 

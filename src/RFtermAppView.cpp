@@ -60,6 +60,7 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 
 	iRFtermScrollBars = new (ELeave) CRFtermScrollBars(this);
 	iRFtermScrollBars->SetPosition(TPoint(0, 0));
+	iRFtermScrollBars->SetFocusing(EFalse);
 
 	iRFtermOutput = CRFtermOutput::NewL(this);
 	iRFtermOutput->SetPosition(TPoint(0, 0));
@@ -143,11 +144,11 @@ CCoeControl* CRFtermAppView::ComponentControl(TInt aIndex) const
 	{
 	switch (aIndex)
 		{
-		case 0:
+		case ERFtermAppViewScrollBars:
 			{
 			return iRFtermScrollBars;
 			}
-		case 1:
+		case ERFtermAppViewOutput:
 			{
 			return iRFtermOutput;
 			}
@@ -216,6 +217,19 @@ void CRFtermAppView::SizeChanged()
 		}
 
 	DrawNow();
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppView::FocusChanged()
+// Called by framework when the focus of the view is changed.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::FocusChanged(TDrawNow aDrawNow)
+	{
+	if (IsFocused())
+		{
+		iRFtermOutput->SetFocus(ETrue, aDrawNow);
+		}
 	}
 
 // -----------------------------------------------------------------------------
