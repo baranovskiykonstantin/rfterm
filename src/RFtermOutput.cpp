@@ -145,7 +145,7 @@ void CRFtermOutput::UpdateCursorL()
 	{
 	TPoint outputCursorPos;
 	iLayout->DocPosToXyPosL(iLastLineCursorPos, outputCursorPos);
-	outputCursorPos.iX += iOutputCursor.iWidth / 2;
+	outputCursorPos.iX += iOutputCursor.iWidth / 6; // Tiny position correction is needed
 	outputCursorPos.iX -= iOutputRect.iTl.iX;
 	
 	if (iTextView->ViewRect().Contains(outputCursorPos))
@@ -214,6 +214,7 @@ void CRFtermOutput::SetFontSizeL(TInt aFontSize)
 
 	iOutputCursor.iWidth = aFontSize / 12;
 
+	DrawDeferred();
 	ScrollToCursorPosL(ETrue);
 	}
 
@@ -380,8 +381,6 @@ void CRFtermOutput::AppendLFL()
 
 void CRFtermOutput::AppendTextL(const TDesC& aText)
 	{
-	CRFtermAppUi* appUi = (CRFtermAppUi*)iCoeEnv->AppUi();
-
 	HBufC* tempText = HBufC::NewLC(aText.Length());
 	tempText->Des().Copy(aText);
 	
@@ -448,6 +447,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 			TInt targetPos = iLastLineCursorPos + tabLength;
 			if (iText->DocumentLength() < targetPos)
 				{
+				iLastLineCursorPos = iText->DocumentLength();
 				tabLength = targetPos - iText->DocumentLength();
 				TChar space(0x20);
 				HBufC* tab = HBufC::NewLC(tabLength);
@@ -456,7 +456,10 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 				AppendRawTextL(*tab);
 				CleanupStack::PopAndDestroy(tab);
 				}
-			iLastLineCursorPos = targetPos;
+			else
+				{
+				iLastLineCursorPos = targetPos;
+				}
 			}
 		else if (specChar.Compare(KBS) == 0)
 			{
@@ -514,7 +517,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 void CRFtermOutput::AppendMessageL(const TDesC& aMessage)
 	{
 	TInt indentLength = iLastLineCursorPos - iLastLineStartPos;
-	if (indentLength)
+	if (indentLength || iText->DocumentLength() > iLastLineCursorPos)
 		{
 		AppendNewLineL();
 		}
