@@ -236,8 +236,12 @@ void CRFtermAppView::FocusChanged(TDrawNow aDrawNow)
 	{
 	if (IsFocused())
 		{
-		iRFtermOutput->SetFocus(ETrue, aDrawNow);
-		SetNavigationLabelL(KNullDesC);
+		SetNavigationLabelL(KNullDesC); // Update navi pane
+		}
+
+	if (iRFtermOutput)
+		{
+		iRFtermOutput->SetFocus(IsFocused(), aDrawNow);
 		}
 	}
 
