@@ -416,25 +416,22 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 //
 TBool CRFtermAppView::ShowHistoryQueryL(TDes& aText)
 	{
+	TBool result(EFalse);
 	TInt chosenItem;
 	CAknListQueryDialog* dlg = new(ELeave) CAknListQueryDialog(&chosenItem);
 	dlg->PrepareLC(R_DIALOG_HISTORY_QUERY);
 	dlg->SetItemTextArray(iMessageHistoryArray);
 	dlg->SetOwnershipType(ELbmDoesNotOwnItemArray);
 	TInt answer = dlg->RunLD(); 
-	
+
 	if (EAknSoftkeyOk == answer)
 		{
-		aText = iMessageHistoryArray->MdcaPoint(chosenItem);
-
-		// Move the selected item to the end
-		iMessageHistoryArray->Delete(chosenItem);
-		iMessageHistoryArray->Compress();
-		iMessageHistoryArray->AppendL(aText);
-
-		return ETrue;
+		TBuf<KRFtermTextBufLength> messageFromHistory;
+		messageFromHistory = iMessageHistoryArray->MdcaPoint(chosenItem);
+		result = ShowTextQueryL(messageFromHistory, aText);
 		}
-	return EFalse;
+
+	return result;
 	}
 
 // ----------------------------------------------------------------------------
