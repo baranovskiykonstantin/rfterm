@@ -80,7 +80,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	TInt fontLoadingError; 
 	fontLoadingError = CEikonEnv::Static()->ScreenDevice()->AddFile(
 		KRFtermFontPath, iRFtermFontID);
-	if (KErrNone != fontLoadingError)
+	if (fontLoadingError != KErrNone)
 		{
 		Panic(ERFtermCannotLoadFont);
 		}
@@ -94,7 +94,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	iOutputCursor.iFlags = 0;
 	iOutputCursor.iColor = KRgbWhite;
 
-	SetFontSizeL(iFontSize); // Default font size
+	SetFontSizeL(iFontSize); // Create with default font size
 
 	iBellNote = CAknGlobalNote::NewL();
 	iBellNote->SetTone(EAknNoteDialogWarningTone);
@@ -135,7 +135,7 @@ void CRFtermOutput::ClearL()
 	iText->DeleteL(0, iText->DocumentLength());
 	iTextView->HandleGlobalChangeL();
 	iTextView->FinishBackgroundFormattingL();
-	iLastLineStartPos = iText->DocumentLength();
+	iLastLineStartPos = 0;
 	iLastLineCursorPos = iLastLineStartPos;
 	NotifyViewRectChangedL();
 	UpdateCursorL();
@@ -338,7 +338,7 @@ TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& 
 		TBufC<1> specChar;
 		specChar = KCtrlChars().Mid(i, 1);
 		pos = subText.Find(specChar);
-		if (KErrNotFound != pos)
+		if (pos != KErrNotFound)
 			{
 			aPos = pos;
 			aCtrlChar = specChar;
@@ -347,7 +347,7 @@ TBool CRFtermOutput::TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& 
 			}
 		}
 
-	if (KErrNotFound == aPos)
+	if (aPos == KErrNotFound)
 		{
 		return EFalse;
 		}
@@ -478,7 +478,7 @@ void CRFtermOutput::AppendTextL(const TDesC& aText)
 		else if (specChar.Compare(KFF) == 0)
 			{
 			iText->DeleteL(0, iText->DocumentLength());
-			iLastLineStartPos = iText->DocumentLength();
+			iLastLineStartPos = 0;
 			iLastLineCursorPos = iLastLineStartPos;
 			}
 		else if (specChar.Compare(KNL) == 0)

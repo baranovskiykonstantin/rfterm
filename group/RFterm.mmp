@@ -54,7 +54,9 @@ LIBRARY			apparc.lib
 LIBRARY			avkon.lib
 LIBRARY			bafl.lib
 LIBRARY			bluetooth.lib 
+LIBRARY			btdevice.lib
 LIBRARY			btextnotifiers.lib
+LIBRARY			btmanclient.lib
 LIBRARY			commonengine.lib
 LIBRARY			cone.lib
 LIBRARY			efsrv.lib 

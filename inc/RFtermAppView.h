@@ -11,6 +11,7 @@
 #define RFTERMAPPVIEW_H
 
 #include <coecntrl.h>
+#include <aknnavide.h>
 
 #include "RFtermOutput.h"
 #include "RFtermScrollBars.h"
@@ -28,8 +29,7 @@ class CRFtermAppView
 		, public MRFtermSettingsObserver
 		, public MRFtermBtObserver
 	{
-public:
-	// New methods
+public: // New methods
 
 	/**
 	 * NewL.
@@ -55,6 +55,35 @@ public:
 	 * Virtual Destructor.
 	 */
 	virtual ~CRFtermAppView();
+
+	/**
+	* ShowTextQueryL()
+	* Show text query.
+	* @param aInitialText for inial value
+	* @param aText text of the query
+	*/
+	TBool ShowTextQueryL(const TDesC& aInitialText, TDes& aText);
+
+	/**
+	* ShowHistoryQueryL()
+	* Show history query.
+	* @param aText chosen text from history
+	*/
+	TBool ShowHistoryQueryL(TDes& aText);
+
+	/**
+	* ShowCtrlCharQueryL()
+	* Show control character query.
+	* @param aText chosen control character as text
+	*/
+	TBool ShowCtrlCharQueryL(TDes& aText);
+
+	/**
+	* ShowIntQueryL()
+	* Show integer query.
+	* @param aInt integer of the query
+	*/
+	TBool ShowIntQueryL(TInt& aInt);
 
 public: // from CCoeControl
 
@@ -110,37 +139,6 @@ protected: // from CCoeControl
 
 	void FocusChanged(TDrawNow aDrawNow);
 
-public: // New functions
-
-	/**
-	* ShowTextQueryL()
-	* Show text query.
-	* @param aInitialText for inial value
-	* @param aText text of the query
-	*/
-	TBool ShowTextQueryL(const TDesC& aInitialText, TDes& aText);
-
-	/**
-	* ShowHistoryQueryL()
-	* Show history query.
-	* @param aText chosen text from history
-	*/
-	TBool ShowHistoryQueryL(TDes& aText);
-
-	/**
-	* ShowCtrlCharQueryL()
-	* Show control character query.
-	* @param aText chosen control character as text
-	*/
-	TBool ShowCtrlCharQueryL(TDes& aText);
-
-	/**
-	* ShowIntQueryL()
-	* Show integer query.
-	* @param aInt integer of the query
-	*/
-	TBool ShowIntQueryL(TInt& aInt);
-
 private: // Constructors
 
 	/**
@@ -158,10 +156,15 @@ private: // Constructors
 	 */
 	CRFtermAppView();
 
+private: // New functions
+	// Push KNullDesC to update only.
+	void SetNavigationLabelL(const TDesC& aText);
+
 private: // From MRFtermSettingsObserver
 	void HandleSettingsChange(const CRFtermSettings* aSettings);
 
 private: // From MRFtermBtObserver
+	void HandleBtDeviceChangeL(CBTDevice* aRemoteDevice);
 	void HandleBtNotifyL(const TDesC& aMessage);
 	void HandleBtDataL(const TDesC& aData);
 
@@ -186,6 +189,12 @@ private:
 	 * iRFtermOutput
 	 */
 	CRFtermOutput* iRFtermOutput;
+
+	/**
+	 * iNaviDecorator
+	 * Decorator for status bar label.
+	 */
+	CAknNavigationDecorator* iNaviDecorator;
 
 public:
 	/**

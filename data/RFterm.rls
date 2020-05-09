@@ -44,6 +44,9 @@
 
 #define qtn_about_dialog_text "RFterm v1.0\n\nAuthor:\nKonstantin Baranovskiy\n\nbaranovskiykonstantin@gmail.com"
 
+// Navigation pane
+#define qtn_str_navi_disconnected "disconnected"
+
 // Bluetooth
 #define qtn_rfterm_service_name "Serial Port"
 #define qtn_rfterm_service_description "RFterm application"
@@ -107,6 +110,7 @@
 #define qtn_str_bell "RFterm: BELL"
 //#define qtn_str_
 
+#define qtn_err_no_bt "Bluetooth unavailable."
 #define qtn_err_no_device_selected "No device selected"
 #define qtn_err_connection_error "Connection error"
 #define qtn_err_lost_connection "Lost connection"
@@ -117,7 +121,7 @@
 #define qtn_err_nrrc_no_records "NRRC No records"
 #define qtn_err_cant_get_attribute "Can't get attribute "
 #define qtn_err_attr_req_com "AttrReqCom"
-#define qtn_err_no_bt "Bluetooth unavailable."
+#define qtn_err_registry "Unknown device"
 //#define qtn_err_
 
 // End of File

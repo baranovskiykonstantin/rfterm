@@ -14,6 +14,8 @@
 #include <bt_sock.h>
 #include <BTextNotifiers.h>
 #include <BtSdp.h>
+#include <btmanclient.h>
+#include <btdevice.h>
 
 #include "RFtermBtObserver.h"
 #include "RFtermConstants.h"
@@ -30,6 +32,8 @@ class CRFtermServiceAdvertiser;
 * EGettingDevice searching for a device
 * EGettingService searching for a service
 * EGettingConnection connecting to a service on a remote machine
+* EScanningRegistry creating a view on database of BT devices
+* EGettingRegistryResponse extracting devices information from the view
 * EConnected connected to a service on a remote machine
 * ESendingMessage sending a message to the remote machine
 * EWaitingForMessage wainting for message from remote machine
@@ -43,6 +47,8 @@ enum TRFtermState
 	EGettingDevice,
 	EGettingService,
 	EGettingConnection,
+	EScanningRegistry,
+	EGettingRegistryResponse,
 	EConnected,
 	EDisconnected,
 	ESendingMessage,
@@ -264,6 +270,20 @@ private: // New private functions
 		TInt aChannel
 	);
 
+	/**
+	 * StartScanningRegistry()
+	 * find information about connected remote BT device
+	 * in BT registry.
+	 */
+	void StartScanningRegistryL();
+
+	/**
+	 * GetRegistryResponse()
+	 * extract information about connected BT device
+	 * found in registry.
+	 */
+	void GetRegistryResponseL();
+
 private: // data
 
 	/**
@@ -336,6 +356,31 @@ private: // data
 	* the active socket
 	*/
 	RSocket* iActiveSocket;
+
+	/**
+	 * iRegistryServer
+	 * session to BT registry is used to get
+	 * the name of connected remote device
+	 */
+	RBTRegServ iRegistryServer;
+
+	/**
+	 * iRegistry
+	 * access to BT registry of remote devices
+	 */
+	RBTRegistry iRegistry;
+
+	/**
+	 * iRegistryResponse
+	 * response from BT registry
+	 */
+	CBTRegistryResponse* iRegistryResponse;
+
+	/**
+	 * iRemoteDevice
+	 * information about remote BT device
+	 */
+	CBTDevice* iRemoteDevice;
 
 	/**
 	* iObserver the handler of log messages

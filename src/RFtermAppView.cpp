@@ -13,6 +13,7 @@
 #include <stringloader.h>
 #include <aknquerydialog.h>
 #include <aknlistquerydialog.h>
+#include <eikspane.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
@@ -86,6 +87,10 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	ActivateL();
 
 	iRFtermOutput->ClearL();
+
+	HBufC* naviLabel = StringLoader::LoadLC(R_STR_NAVI_DISCONNECTED);
+	SetNavigationLabelL(*naviLabel);
+	CleanupStack::PopAndDestroy(naviLabel);
 	}
 
 // -----------------------------------------------------------------------------
@@ -123,6 +128,9 @@ CRFtermAppView::~CRFtermAppView()
 	
 	delete iRFtermScrollBars;
 	iRFtermScrollBars = NULL;
+
+	delete iNaviDecorator;
+	iNaviDecorator = NULL;
 	}
 
 // ----------------------------------------------------------------------------
@@ -229,6 +237,7 @@ void CRFtermAppView::FocusChanged(TDrawNow aDrawNow)
 	if (IsFocused())
 		{
 		iRFtermOutput->SetFocus(ETrue, aDrawNow);
+		SetNavigationLabelL(KNullDesC);
 		}
 	}
 
@@ -329,7 +338,7 @@ TBool CRFtermAppView::ShowTextQueryL(const TDesC& aInitialText, TDes& aText)
 			else
 				{
 				TInt pos = codePage.Locate(ch);
-				if (KErrNotFound != pos)
+				if (pos != KErrNotFound)
 					{
 					// Extended ASCII (code page)
 					TChar chNormal(0x80 + pos);
@@ -559,6 +568,47 @@ void CRFtermAppView::HandleSettingsChange(const CRFtermSettings* aSettings)
 	}
 
 // -----------------------------------------------------------------------------
+// CRFtermAppView::HandleBtDeviceChangeL()
+// Update the information about connected BT device on navigation pane.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::HandleBtDeviceChangeL(CBTDevice* aRemoteDevice)
+	{
+	_LIT(KPrepend, " (");
+	_LIT(KByteSeparator, ":");
+	_LIT(KAppend, ")");
+
+	if (aRemoteDevice)
+		{
+		if (aRemoteDevice->DeviceName().Length())
+			{
+			TBuf<20> addr;
+			aRemoteDevice->BDAddr().GetReadable(addr, KPrepend, KByteSeparator, KAppend);
+			addr.UpperCase();
+
+			HBufC* label = HBufC::NewLC(aRemoteDevice->DeviceName().Length() + addr.Length());
+			label->Des().Copy(aRemoteDevice->DeviceName());
+			label->Des().Append(addr);
+			SetNavigationLabelL(*label);
+			CleanupStack::PopAndDestroy(label);
+			}
+		else
+			{
+			TBuf<20> addr;
+			aRemoteDevice->BDAddr().GetReadable(addr, KNullDesC, KByteSeparator, KNullDesC);
+			addr.UpperCase();
+			SetNavigationLabelL(addr);
+			}
+		}
+	else
+		{
+		HBufC* label = StringLoader::LoadLC(R_STR_NAVI_DISCONNECTED);
+		SetNavigationLabelL(*label);
+		CleanupStack::PopAndDestroy(label);
+		}
+	}
+
+// -----------------------------------------------------------------------------
 // CRFtermAppView::HandleBtNotifyL()
 // Show log message from BT client.
 // -----------------------------------------------------------------------------
@@ -583,5 +633,35 @@ void CRFtermAppView::HandleBtDataL(const TDesC& aData)
 		iRFtermOutput->AppendTextL(aData);
 		}
 	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppView::SetNavigationLabelL()
+// Update navigation pane on status bar.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::SetNavigationLabelL(const TDesC& aText)
+{
+	TUid naviPaneUid = TUid::Uid(EEikStatusPaneUidNavi);
+	CEikStatusPane* statusPane = iEikonEnv->AppUiFactory()->StatusPane();
+	CEikStatusPaneBase::TPaneCapabilities naviPaneCap = statusPane->PaneCapabilities(naviPaneUid);
+	if (naviPaneCap.IsPresent() && naviPaneCap.IsAppOwned())
+		{
+		CAknNavigationControlContainer* naviPane =
+				static_cast<CAknNavigationControlContainer*> (statusPane->ControlL(naviPaneUid));
+
+		if (aText != KNullDesC)
+			{
+			delete iNaviDecorator;
+			iNaviDecorator = NULL;
+			}
+
+		if (!iNaviDecorator)
+			{
+			iNaviDecorator = naviPane->CreateNavigationLabelL(aText);
+			}
+
+		naviPane->PushL(*iNaviDecorator);
+		}
+}
 
 // End of File

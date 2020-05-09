@@ -79,14 +79,23 @@ CRFtermBt::~CRFtermBt()
 	iAcceptedSocket.Close();
 	iSocketServer.Close();
 
+	iRegistry.Close();
+	iRegistryServer.Close();
+
 	delete iMessage;
 	iMessage = NULL;
 
 	delete iServiceSearcher;
 	iServiceSearcher = NULL;
-	
+
 	delete iAdvertiser;
 	iAdvertiser = NULL;
+
+	delete iRegistryResponse;
+	iRegistryResponse = NULL;
+
+	delete iRemoteDevice;
+	iRemoteDevice = NULL;
 	}
 
 // ----------------------------------------------------------------------------
@@ -100,6 +109,9 @@ void CRFtermBt::ConstructL()
 	iServiceSearcher->SetObserver(iObserver);
 	iAdvertiser = CRFtermServiceAdvertiser::NewL();
 	User::LeaveIfError(iSocketServer.Connect());
+
+	User::LeaveIfError(iRegistryServer.Connect());
+	User::LeaveIfError(iRegistry.Open(iRegistryServer));
 	}
 
 // ----------------------------------------------------------------------------
@@ -163,6 +175,39 @@ void CRFtermBt::RunL()
 				SetState(EWaitingToGetDevice);
 				break;
 				
+			case EScanningRegistry:
+				// the iStatus now contains an error,
+				// or the number of results in the view
+				if (iStatus.Int() > 0)
+					{
+					SetState(EGettingRegistryResponse);
+					GetRegistryResponseL();
+					break;
+					}
+				// else - fall down
+				// iStatus contains error, skip getting response
+
+			case EGettingRegistryResponse:
+				textResource = StringLoader::LoadLC(R_ERR_REGISTRY);
+				NotifyL(*textResource);
+				CleanupStack::PopAndDestroy(textResource);
+				if (iActiveSocket && iObserver)
+					{
+					TSockAddr sockAddr;
+					iActiveSocket->RemoteName(sockAddr);
+					TBTDevAddr remoteDevAddr = static_cast<TBTSockAddr>(sockAddr).BTAddr();
+					delete iRemoteDevice;
+					iRemoteDevice = CBTDevice::NewL(remoteDevAddr);
+					// The only thing that is known is the address
+					iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+					}
+
+				// the error is related to BT registry searching
+				// but connection is OK
+				SetState(EConnected);
+				RequestData();
+				break;
+
 			case EConnected:
 				textResource = StringLoader::LoadLC(R_ERR_LOST_CONNECTION);
 				NotifyL(*textResource);
@@ -231,12 +276,54 @@ void CRFtermBt::RunL()
 				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
 				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
-				
+
 				// do not accept any more connections
 				iAdvertiser->UpdateAvailabilityL(EFalse);
-				RequestData();
-				SetState(EConnected);
+				// At this moment the connection is established
+				// but before setting iState to EConnected
+				// the attempt of getting device info from registry will be made.
+				SetState(EScanningRegistry);
+				StartScanningRegistryL();
 				break;
+				
+			case EScanningRegistry:
+				{
+				// iStatus == KErrNone == 0 -> found zero results, skip getting response
+				textResource = StringLoader::LoadLC(R_ERR_REGISTRY);
+				NotifyL(*textResource);
+				CleanupStack::PopAndDestroy(textResource);
+
+				TSockAddr sockAddr;
+				iActiveSocket->RemoteName(sockAddr);
+				TBTDevAddr remoteDevAddr = static_cast<TBTSockAddr>(sockAddr).BTAddr();
+				delete iRemoteDevice;
+				iRemoteDevice = CBTDevice::NewL(remoteDevAddr);
+				if (iObserver)
+					{
+					// The only thing that is known is the address
+					iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+					}
+
+				SetState(EConnected);
+				RequestData();
+				break;
+				}
+				
+			case EGettingRegistryResponse:
+				{
+				// At this point there is at least one result
+				RBTDeviceArray results = iRegistryResponse->Results();
+				delete iRemoteDevice;
+				iRemoteDevice = results[0]->CopyL();
+				if (iObserver)
+					{
+					iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+					}
+
+				SetState(EConnected);
+				RequestData();
+				break;
+				}
 				
 			case EGettingService:
 				textResource = StringLoader::LoadLC(R_STR_FOUND_SERVICE);
@@ -250,8 +337,12 @@ void CRFtermBt::RunL()
 				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
 				NotifyL(*textResource);
 				CleanupStack::PopAndDestroy(textResource);
-				SetState(EConnected);
-				RequestData();
+
+				// At this moment the connection is established
+				// but before setting iState to EConnected
+				// the attempt of getting device info from registry will be made.
+				SetState(EScanningRegistry);
+				StartScanningRegistryL();
 				break;
 				
 			case EConnected:
@@ -386,6 +477,7 @@ void CRFtermBt::ConnectL()
 	{
 	if (State() == EWaitingToGetDevice && !IsActive())
 		{
+		SetServer(EFalse);
 		SetState(EGettingDevice);
 		iServiceSearcher->SelectDeviceByDiscoveryL(iStatus);
 		SetActive();
@@ -431,6 +523,13 @@ void CRFtermBt::DisconnectFromServerL()
 	// Terminate all operations
 	iSocket.CancelAll();
 	Cancel();
+
+	delete iRemoteDevice;
+	iRemoteDevice = NULL;
+	if (iObserver)
+		{
+		iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+		}
 
 	HBufC* strReleasingConn = StringLoader::LoadLC(R_STR_RELEASING_CONN);
 	NotifyL(*strReleasingConn);
@@ -531,7 +630,6 @@ void CRFtermBt::StartL()
 		User::Leave(result); 
 		}
 
-
 	// 
 	// Set the Socket's security with parameters, 
 	// Authentication, Encryption, Authorisation and Denied
@@ -541,9 +639,8 @@ void CRFtermBt::StartL()
 
 	iAdvertiser->StartAdvertisingL(channel);
 	iAdvertiser->UpdateAvailabilityL(ETrue);
-	
-	SetServer(ETrue);
 
+	SetServer(ETrue);
 	}
 
 // ----------------------------------------------------------------------------
@@ -579,7 +676,7 @@ void CRFtermBt::SetSecurityWithChannelL(
 	iAcceptedSocket.Close();
 
 	// Open abstract socket
-	User::LeaveIfError(iAcceptedSocket.Open(iSocketServer));  
+	User::LeaveIfError(iAcceptedSocket.Open(iSocketServer));
 
 	// Set the Active Object's State to Connecting indicated.
 	SetState(EConnecting);
@@ -607,10 +704,10 @@ void CRFtermBt::SetSecurityWithChannelL(
 
 	// Set the security according to.
 	TBTServiceSecurity serviceSecurity;
-	serviceSecurity.SetUid (KUidRFtermApp);
-	serviceSecurity.SetAuthentication (aAuthentication);
-	serviceSecurity.SetEncryption (aEncryption);
-	serviceSecurity.SetAuthorisation (aAuthorisation);
+	serviceSecurity.SetUid(KUidRFtermApp);
+	serviceSecurity.SetAuthentication(aAuthentication);
+	serviceSecurity.SetEncryption(aEncryption);
+	serviceSecurity.SetAuthorisation(aAuthorisation);
 	serviceSecurity.SetDenied(aDenied);
 
 	// Attach the security settings.
@@ -644,6 +741,13 @@ void CRFtermBt::StopL()
 			}
 		iAcceptedSocket.Close();
 		iSocket.Close();
+
+		delete iRemoteDevice;
+		iRemoteDevice = NULL;
+		if (iObserver)
+			{
+			iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+			}
 		}
 		SetState(EWaitingToGetDevice);
 	}
@@ -662,11 +766,54 @@ void CRFtermBt::RequestData()
 	SetActive();
 	}
 
+// ----------------------------------------------------------------------------
+// CRFtermBt::StartScanningRegistryL()
+// find information about connected remote BT device
+// in BT registry.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::StartScanningRegistryL()
+	{
+	iRegistry.CloseView();
+	TSockAddr sockAddr;
+	iActiveSocket->RemoteName(sockAddr);
+	TBTDevAddr remoteDevAddr = static_cast<TBTSockAddr>(sockAddr).BTAddr();
+	TBTRegistrySearch searchPattern;
+	searchPattern.FindBonded();
+	searchPattern.FindAddress(remoteDevAddr);
+	iRegistry.CreateView(searchPattern, iStatus);
+	SetActive();
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::GetRegistryResponseL()
+// extract information about connected BT device
+// found in registry.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::GetRegistryResponseL()
+	{
+	delete iRegistryResponse;
+	iRegistryResponse = CBTRegistryResponse::NewL(iRegistry);
+	iRegistryResponse->Start(iStatus);
+	SetActive();
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::SetObserver()
+// Connect an observer for notifications.
+// ----------------------------------------------------------------------------
+//
 void CRFtermBt::SetObserver(MRFtermBtObserver* aObserver)
 	{
 	iObserver = aObserver;
 	}
 
+// ----------------------------------------------------------------------------
+// CRFtermBt::NotifyL()
+// Send to observer a log message.
+// ----------------------------------------------------------------------------
+//
 void CRFtermBt::NotifyL(const TDesC& aMessage)
 	{
 	if (iObserver)
