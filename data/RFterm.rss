@@ -229,6 +229,7 @@ RESOURCE TBUF r_str_bell { buf=qtn_str_bell; }
 
 RESOURCE TBUF r_err_no_bt { buf=qtn_err_no_bt; }
 RESOURCE TBUF r_err_no_device_selected { buf=qtn_err_no_device_selected; }
+RESOURCE TBUF r_err_cant_get_device_list { buf=qtn_err_cant_get_device_list; }
 RESOURCE TBUF r_err_connection_error { buf=qtn_err_connection_error; }
 RESOURCE TBUF r_err_lost_connection { buf=qtn_err_lost_connection; }
 RESOURCE TBUF r_err_message_failed { buf=qtn_err_message_failed; }

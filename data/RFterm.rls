@@ -112,6 +112,7 @@
 
 #define qtn_err_no_bt "Bluetooth unavailable."
 #define qtn_err_no_device_selected "No device selected"
+#define qtn_err_cant_get_device_list "Can't get device list"
 #define qtn_err_connection_error "Connection error"
 #define qtn_err_lost_connection "Lost connection"
 #define qtn_err_message_failed "Message Failed"

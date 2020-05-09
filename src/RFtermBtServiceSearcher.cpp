@@ -52,12 +52,15 @@ CRFtermBtServiceSearcher::~CRFtermBtServiceSearcher()
 void CRFtermBtServiceSearcher::SelectDeviceByDiscoveryL(
 	TRequestStatus& aObserverRequestStatus)
 	{
-	if (! iIsDeviceSelectorConnected)
+	if (iIsDeviceSelectorConnected)
+		{
+		iDeviceSelector.CancelNotifier(KDeviceSelectionNotifierUid);
+		}
+	else
 		{
 		User::LeaveIfError(iDeviceSelector.Connect());
 		iIsDeviceSelectorConnected = ETrue;
 		}
-
 
 	iSelectionFilter().SetUUID(ServiceClass());
 
@@ -309,11 +312,21 @@ TBool CRFtermBtServiceSearcher::HasFoundService() const
 	return iHasFoundService;
 	}
 
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::SetObserver()
+// Connect an observer for notifications.
+// ----------------------------------------------------------------------------
+//
 void CRFtermBtServiceSearcher::SetObserver(MRFtermBtObserver* aObserver)
 	{
 	iObserver = aObserver;
 	}
 
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::NotifyL()
+// Send to observer a log message.
+// ----------------------------------------------------------------------------
+//
 void CRFtermBtServiceSearcher::NotifyL(const TDesC& aMessage)
 	{
 	if (iObserver)

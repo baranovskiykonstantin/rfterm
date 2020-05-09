@@ -164,6 +164,12 @@ void CRFtermBt::RunL()
 					NotifyL(*textResource);
 					CleanupStack::PopAndDestroy(textResource);
 					}
+				else
+					{
+					textResource = StringLoader::LoadLC(R_ERR_CANT_GET_DEVICE_LIST);
+					NotifyL(*textResource);
+					CleanupStack::PopAndDestroy(textResource);
+					}
 				SetState(EWaitingToGetDevice);
 				break;
 				
