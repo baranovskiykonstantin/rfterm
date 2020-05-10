@@ -14,6 +14,7 @@
 #include <aknquerydialog.h>
 #include <aknlistquerydialog.h>
 #include <eikspane.h>
+#include <aknnavilabel.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
@@ -80,6 +81,19 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 
 	iMessageHistoryArray = new (ELeave) CDesCArraySeg(4);
 
+	TUid naviPaneUid = TUid::Uid(EEikStatusPaneUidNavi);
+	CEikStatusPane* statusPane = iEikonEnv->AppUiFactory()->StatusPane();
+	CEikStatusPaneBase::TPaneCapabilities naviPaneCap = statusPane->PaneCapabilities(naviPaneUid);
+	if (naviPaneCap.IsPresent() && naviPaneCap.IsAppOwned())
+		{
+		CAknNavigationControlContainer* naviPane =
+				static_cast<CAknNavigationControlContainer*> (statusPane->ControlL(naviPaneUid));
+		HBufC* naviLabel = StringLoader::LoadLC(R_STR_NAVI_DISCONNECTED);
+		iNaviDecorator = naviPane->CreateNavigationLabelL(*naviLabel);
+		naviPane->PushL(*iNaviDecorator);
+		CleanupStack::PopAndDestroy(naviLabel);
+		}
+
 	// Set the windows size
 	SetRect(aRect);
 
@@ -87,10 +101,6 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 	ActivateL();
 
 	iRFtermOutput->ClearL();
-
-	HBufC* naviLabel = StringLoader::LoadLC(R_STR_NAVI_DISCONNECTED);
-	SetNavigationLabelL(*naviLabel);
-	CleanupStack::PopAndDestroy(naviLabel);
 	}
 
 // -----------------------------------------------------------------------------
@@ -234,11 +244,6 @@ void CRFtermAppView::SizeChanged()
 //
 void CRFtermAppView::FocusChanged(TDrawNow aDrawNow)
 	{
-	if (IsFocused())
-		{
-		SetNavigationLabelL(KNullDesC); // Update navi pane
-		}
-
 	if (iRFtermOutput)
 		{
 		iRFtermOutput->SetFocus(IsFocused(), aDrawNow);
@@ -641,28 +646,13 @@ void CRFtermAppView::HandleBtDataL(const TDesC& aData)
 // -----------------------------------------------------------------------------
 //
 void CRFtermAppView::SetNavigationLabelL(const TDesC& aText)
-{
-	TUid naviPaneUid = TUid::Uid(EEikStatusPaneUidNavi);
-	CEikStatusPane* statusPane = iEikonEnv->AppUiFactory()->StatusPane();
-	CEikStatusPaneBase::TPaneCapabilities naviPaneCap = statusPane->PaneCapabilities(naviPaneUid);
-	if (naviPaneCap.IsPresent() && naviPaneCap.IsAppOwned())
+	{
+	if (iNaviDecorator)
 		{
-		CAknNavigationControlContainer* naviPane =
-				static_cast<CAknNavigationControlContainer*> (statusPane->ControlL(naviPaneUid));
-
-		if (aText != KNullDesC)
-			{
-			delete iNaviDecorator;
-			iNaviDecorator = NULL;
-			}
-
-		if (!iNaviDecorator)
-			{
-			iNaviDecorator = naviPane->CreateNavigationLabelL(aText);
-			}
-
-		naviPane->PushL(*iNaviDecorator);
+		CAknNaviLabel* naviLabel = (CAknNaviLabel*)iNaviDecorator->DecoratedControl();
+		naviLabel->SetTextL(aText);
+		iNaviDecorator->DrawDeferred();
 		}
-}
+	}
 
 // End of File
