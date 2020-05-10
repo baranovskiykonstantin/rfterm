@@ -153,6 +153,29 @@ void CRFtermBt::RunL()
 		return;
 		}
 
+	else if (iStatus == KErrHCILinkDisconnection)
+		// this error happens if connected server
+		// sudently loses link (powered down for example)
+		{
+		textResource = StringLoader::LoadLC(R_ERR_LOST_CONNECTION);
+		NotifyL(*textResource);
+		CleanupStack::PopAndDestroy(textResource);
+		if (State() != EDisconnected)
+			{
+			iSocket.CancelAll();
+			iSocket.Close();
+			
+			delete iRemoteDevice;
+			iRemoteDevice = NULL;
+			if (iObserver)
+				{
+				iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+				}
+			}
+		SetState(EWaitingToGetDevice);
+		return;
+		}
+
 	else if (iStatus != KErrNone)
 		{
 		switch (State())
@@ -755,7 +778,8 @@ void CRFtermBt::StopL()
 			iObserver->HandleBtDeviceChangeL(iRemoteDevice);
 			}
 		}
-		SetState(EWaitingToGetDevice);
+
+	SetState(EWaitingToGetDevice);
 	}
 
 // ----------------------------------------------------------------------------
