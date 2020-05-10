@@ -524,7 +524,6 @@ void CRFtermOutput::AppendMessageL(const TDesC& aMessage)
 	AppendRawTextL(KRFtermOutputMessageMark);
 	AppendRawTextL(aMessage);
 	AppendNewLineL();
-	AppendIndentL(indentLength);
 
 	iTextView->HandleGlobalChangeL();
 	iTextView->FinishBackgroundFormattingL();
