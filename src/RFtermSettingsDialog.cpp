@@ -12,6 +12,9 @@
 #include <eikmfne.h>
 #include <aknslider.h>
 #include <aknpopupfieldtext.h> 
+#include <eikspane.h>
+#include <aknnavide.h>
+#include <akntabgrp.h>
 #include <RFterm_0xae7f53fa.rsg>
 
 #include "RFtermSettingsDialog.h"
@@ -212,5 +215,22 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 void CRFtermSettingsDialog::DoNotSaveFormDataL()
 	{
 	LoadFormDataL();
+	}
+
+void CRFtermSettingsDialog::ActivateL()
+	{
+	CAknForm::ActivateL();
+
+	TUid naviPaneUid = TUid::Uid(EEikStatusPaneUidNavi);
+	CEikStatusPane* statusPane = iEikonEnv->AppUiFactory()->StatusPane();
+	CEikStatusPaneBase::TPaneCapabilities naviPaneCap = statusPane->PaneCapabilities(naviPaneUid);
+	if (naviPaneCap.IsPresent() && naviPaneCap.IsAppOwned())
+		{
+		CAknNavigationControlContainer* naviPane =
+				static_cast<CAknNavigationControlContainer*> (statusPane->ControlL(naviPaneUid));
+		CAknNavigationDecorator* naviDecorator = naviPane->Top();
+		CAknTabGroup* tabs = (CAknTabGroup*)naviDecorator->DecoratedControl();
+		tabs->SetTabFixedWidthL(KTabWidthWithTwoTabs);
+		}
 	}
 

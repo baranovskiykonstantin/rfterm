@@ -595,7 +595,7 @@ void CRFtermAppView::HandleBtDeviceChangeL(CBTDevice* aRemoteDevice)
 			HBufC* label = HBufC::NewLC(aRemoteDevice->DeviceName().Length() + addr.Length());
 			label->Des().Copy(aRemoteDevice->DeviceName());
 			label->Des().Append(addr);
-			SetNavigationLabelL(*label);
+			SetNaviLabelL(*label);
 			CleanupStack::PopAndDestroy(label);
 			}
 		else
@@ -603,13 +603,13 @@ void CRFtermAppView::HandleBtDeviceChangeL(CBTDevice* aRemoteDevice)
 			TBuf<20> addr;
 			aRemoteDevice->BDAddr().GetReadable(addr, KNullDesC, KByteSeparator, KNullDesC);
 			addr.UpperCase();
-			SetNavigationLabelL(addr);
+			SetNaviLabelL(addr);
 			}
 		}
 	else
 		{
 		HBufC* label = StringLoader::LoadLC(R_STR_NAVI_DISCONNECTED);
-		SetNavigationLabelL(*label);
+		SetNaviLabelL(*label);
 		CleanupStack::PopAndDestroy(label);
 		}
 	}
@@ -641,17 +641,31 @@ void CRFtermAppView::HandleBtDataL(const TDesC& aData)
 	}
 
 // -----------------------------------------------------------------------------
-// CRFtermAppView::SetNavigationLabelL()
-// Update navigation pane on status bar.
+// CRFtermAppView::SetNaviLabelL()
+// Set label text on navigation pane of status bar.
 // -----------------------------------------------------------------------------
 //
-void CRFtermAppView::SetNavigationLabelL(const TDesC& aText)
+void CRFtermAppView::SetNaviLabelL(const TDesC& aText)
 	{
 	if (iNaviDecorator)
 		{
 		CAknNaviLabel* naviLabel = (CAknNaviLabel*)iNaviDecorator->DecoratedControl();
 		naviLabel->SetTextL(aText);
 		iNaviDecorator->DrawDeferred();
+		}
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppView::MakeNaviLabelVisible()
+// Show or hide the label on navigation pane.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::MakeNaviLabelVisible(TBool aVisible)
+	{
+	if (iNaviDecorator)
+		{
+		CAknNaviLabel* naviLabel = (CAknNaviLabel*)iNaviDecorator->DecoratedControl();
+		naviLabel->MakeVisible(aVisible);
 		}
 	}
 

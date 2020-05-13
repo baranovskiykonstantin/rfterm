@@ -378,7 +378,9 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ESettings:
 			{
+			iAppView->MakeNaviLabelVisible(EFalse);
 			CRFtermSettingsDialog::RunDlgLD(iSettings);
+			iAppView->MakeNaviLabelVisible(ETrue);
 			break;
 			}
 

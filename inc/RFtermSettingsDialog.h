@@ -37,6 +37,9 @@ public: // from CAknForm
 private: // from CAknForm
 	void LoadFormDataL();
 
+private: // from CCoeControl
+	void ActivateL();
+
 private: // data
 	// Not owning pointer to application settings
 	CRFtermSettings* iSettings;

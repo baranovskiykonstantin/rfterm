@@ -157,8 +157,10 @@ private: // Constructors
 	CRFtermAppView();
 
 private: // New functions
-	// Push KNullDesC to update only.
-	void SetNavigationLabelL(const TDesC& aText);
+	void SetNaviLabelL(const TDesC& aText);
+
+public:
+	void MakeNaviLabelVisible(TBool aVisible);
 
 private: // From MRFtermSettingsObserver
 	void HandleSettingsChange(const CRFtermSettings* aSettings);
