@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMSCROLLBARS_H
-#define RFTERMSCROLLBARS_H
+#ifndef __RFTERMSCROLLBARS_H__
+#define __RFTERMSCROLLBARS_H__
 
 #include <coecntrl.h>
 #include "RFtermConstants.h"
@@ -18,12 +18,14 @@
 
 class CRFtermScrollBars : public CCoeControl, public MRFtermOutputObserver
 	{
-public:
-	// Constructor, destructor
+
+public: // Constructor, destructor
+
 	CRFtermScrollBars(const CCoeControl *aParent);
 	~CRFtermScrollBars();
 	
-	// New functions
+public: // New functions
+
 	void SetVModel(const TRFtermScrollBarModel& aModel);
 	void SetHModel(const TRFtermScrollBarModel& aModel);
 	void SetVisibility(TBool aVertical, TBool aHorizontal);
@@ -35,11 +37,11 @@ public:
 	void DrawHScrollBarNow() const;
 	void DrawCornerNow() const;
 
-	// MRFtermScrollBarsObserver
+public: // From MRFtermScrollBarsObserver
 	void SetObserver(MRFtermScrollBarsObserver* aObserver);
 
-private:
-	// New functions
+private: // New functions
+
 	void SetModel(TRFtermScrollBarModel& aTarget, const TRFtermScrollBarModel& aModel);
 	void DrawVScrollBar(CWindowGc& aGc) const;
 	void DrawHScrollBar(CWindowGc& aGc) const;
@@ -47,11 +49,12 @@ private:
 	void Draw(const TRect& aRect) const;
 	void HandleViewRectChangedL(const TRect& aContentRect, const TRect& aViewRect);
 
-	// CCoeControl
+private: // From CCoeControl
 	void SizeChanged();
 	void HandlePointerEventL(const TPointerEvent& aPointerEvent);
 
-private:
+private: // Data
+
 	struct TRFtermScrollBarModel iVModel;
 	TBool iVIsVisible;
 	TRect iVThumbRect;
@@ -70,6 +73,7 @@ private:
 
 	// Non owning pointer to observer
 	MRFtermScrollBarsObserver* iObserver;
+
 	};
 
 inline TBool CRFtermScrollBars::IsVScrollBarVisible() const
@@ -78,4 +82,6 @@ inline TBool CRFtermScrollBars::IsVScrollBarVisible() const
 inline TBool CRFtermScrollBars::IsHScrollBarVisible() const
 	{ return iHIsVisible; }
 
-#endif /* RFTERMSCROLLBARS_H */
+#endif /* __RFTERMSCROLLBARS_H__ */
+
+// End of File

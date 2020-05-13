@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMBTSERVICEADVERTISER_H
-#define RFTERMBTSERVICEADVERTISER_H
+#ifndef __RFTERMBTSERVICEADVERTISER_H__
+#define __RFTERMBTSERVICEADVERTISER_H__
 
 #include <e32base.h>
 #include <btsdp.h>
@@ -20,6 +20,7 @@
 */
 class CRFtermBtServiceAdvertiser : public CBase
 	{
+
 public: // Constructors and destructor
 
 	/**
@@ -47,6 +48,7 @@ public: // Constructors and destructor
 	virtual ~CRFtermBtServiceAdvertiser();
 
 public: // New functions
+
 	/**
 	* StartAdvertisingL
 	* Start the advertising of this service
@@ -76,6 +78,7 @@ public: // New functions
 	void UpdateAvailabilityL(TBool aIsAvailable);
 
 protected: // New functions
+
 	/**
 	* ConnectL
 	* Connect to the SDP database
@@ -168,8 +171,9 @@ private: // data
 	* Owned by CRFtermBtServiceAdvertiser
 	*/
 	HBufC* iServiceDescription;
+
 	};
 
-#endif // RFTERMBTSERVICEADVERTISER_H
+#endif // __RFTERMBTSERVICEADVERTISER_H__
 
 // End of File

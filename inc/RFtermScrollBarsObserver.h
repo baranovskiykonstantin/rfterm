@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMSCROLLBARSOBSERVER_H
-#define RFTERMSCROLLBARSOBSERVER_H
+#ifndef __RFTERMSCROLLBARSOBSERVER_H__
+#define __RFTERMSCROLLBARSOBSERVER_H__
 
 #include "RFtermScrollBarModel.h"
 
@@ -20,7 +20,9 @@ enum TRFtermScrollBarType
 
 class MRFtermScrollBarsObserver
 	{
+
 public:
+
 	virtual void HandleScrollEventL(
 		TRFtermScrollBarType aScrollBarType,
 		const TRFtermScrollBarModel& aModel) = 0;
@@ -28,6 +30,9 @@ public:
 	virtual void HandleScrollBarVisibilityChangeL(
 		TBool aVScrollBarIsVisible,
 		TBool aHScrollBarIsVisible) = 0;
+
 	};
 
-#endif /* RFTERMSCROLLBARSOBSERVER_H */
+#endif /* __RFTERMSCROLLBARSOBSERVER_H__ */
+
+// End of File

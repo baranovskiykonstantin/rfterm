@@ -7,13 +7,11 @@
  ============================================================================
  */
 
-#ifndef RFTERMSDPATTRIBUTENOTIFIER_H
-#define RFTERMSDPATTRIBUTENOTIFIER_H
+#ifndef __RFTERMSDPATTRIBUTENOTIFIER_H__
+#define __RFTERMSDPATTRIBUTENOTIFIER_H__
 
-// FORWARD DECLARATIONS
 class CSdpAttrValue;
 
-// CLASS DECLARATIONS
 /**
 * MRFtermSdpAttributeNotifier
 * An instance of MRFtermSdpAttributeNotifier is used to read selected SDP Attribute
@@ -21,6 +19,7 @@ class CSdpAttrValue;
 */
 class MRFtermSdpAttributeNotifier
 	{
+
 public: // New functions
 
 	/**
@@ -30,8 +29,9 @@ public: // New functions
 	* @param aValue the data element
 	*/
 	virtual void FoundElementL(TInt aKey, CSdpAttrValue& aValue) = 0;
+
 	};
 
-#endif // RFTERMSDPATTRIBUTENOTIFIER_H
+#endif // __RFTERMSDPATTRIBUTENOTIFIER_H__
 
 // End of File

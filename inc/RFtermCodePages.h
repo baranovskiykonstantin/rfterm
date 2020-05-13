@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMCODEPAGES_H
-#define RFTERMCODEPAGES_H
+#ifndef __RFTERMCODEPAGES_H__
+#define __RFTERMCODEPAGES_H__
 
 const TUint KCodePageSize = 256;
 
@@ -172,4 +172,6 @@ _LIT(KCodePageKOI8,
 "\u041f\u042f\u0420\u0421\u0422\u0423\u0416\u0412\u042c\u042b\u0417\u0428\u042d\u0429\u0427\x0020"
 );
 
-#endif /* RFTERMCODEPAGES_H */
+#endif /* __RFTERMCODEPAGES_H__ */
+
+// End of File

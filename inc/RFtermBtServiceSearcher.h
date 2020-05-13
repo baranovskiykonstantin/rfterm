@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMTBTSERVICESEARCHER_H
-#define RFTERMTBTSERVICESEARCHER_H
+#ifndef __RFTERMTBTSERVICESEARCHER_H__
+#define __RFTERMTBTSERVICESEARCHER_H__
 
 #include <e32base.h>
 #include <bttypes.h>
@@ -23,9 +23,10 @@
 * Searches for a service on a remote machine
 */
 
-class CRFtermBtServiceSearcher : public CBase,
-		public MSdpAgentNotifier,
-		public MRFtermSdpAttributeNotifier
+class CRFtermBtServiceSearcher
+		: public CBase
+		, public MSdpAgentNotifier
+		, public MRFtermSdpAttributeNotifier
 	{
 
 public: // Constructors and destructor
@@ -97,6 +98,7 @@ public: // New functions
 	void SetObserver(MRFtermBtObserver* aObserver);
 
 protected: // New functions
+
 	/**
 	* Finished()
 	* The search has finished. Notify the observer
@@ -152,6 +154,7 @@ private: // Constructors
 	void ConstructL();
 
 private: // New functions
+
 	/**
 	 * NotifyL()
 	 * Send log message to observer.
@@ -296,8 +299,9 @@ private: // data
 	* iObserver the handler of log messages
 	*/
 	MRFtermBtObserver* iObserver;
+
 	};
 
-#endif // RFTERMTBTSERVICESEARCHER_H
+#endif // __RFTERMTBTSERVICESEARCHER_H__
 
 // End of File

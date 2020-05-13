@@ -7,13 +7,18 @@
  ============================================================================
  */
 
-#ifndef RFTERMOUTPUTOBSERVER_H
-#define RFTERMOUTPUTOBSERVER_H
+#ifndef __RFTERMOUTPUTOBSERVER_H__
+#define __RFTERMOUTPUTOBSERVER_H__
 
 class MRFtermOutputObserver
 	{
+
 public:
+
 	virtual void HandleViewRectChangedL(const TRect& aContentRect, const TRect& aViewRect) = 0;
+
 	};
 
-#endif /* RFTERMOUTPUTOBSERVER_H */
+#endif /* __RFTERMOUTPUTOBSERVER_H__ */
+
+// End of File

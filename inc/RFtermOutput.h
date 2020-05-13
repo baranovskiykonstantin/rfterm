@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMOUTPUT_H
-#define RFTERMOUTPUT_H
+#ifndef __RFTERMOUTPUT_H__
+#define __RFTERMOUTPUT_H__
 
 #include <eikedwin.h>
 #include <aknglobalnote.h> 
@@ -18,13 +18,15 @@
 
 class CRFtermOutput : public CEikEdwin , public MRFtermScrollBarsObserver
 	{
-public:
-	// Constructor, destructor
+
+public: // Constructor, destructor
+
 	static CRFtermOutput* NewL(const CCoeControl *aParent);
 	static CRFtermOutput* NewLC(const CCoeControl *aParent);
 	virtual ~CRFtermOutput();
 
-	// New functions
+public: // New functions
+
 	void SetFontSizeL(TInt aFontSize);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetTabSize(TInt aSize);
@@ -38,23 +40,23 @@ public:
 	void UpdateRect(const TRect& aNewRect);
 	void GetCurrentCodePage(TPtrC& aCodePage);
 
-	// CEikEdwin
-	void FocusChanged(TDrawNow aDrawNow);
+public: // CEikEdwin
+	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent,TEventCode aType);
 
-	// MRFtermOutputObserver
+public: // From MRFtermOutputObserver
 	void SetObserver(MRFtermOutputObserver* aObserver);
 	void NotifyViewRectChangedL();
 
-private:
-	// Constructor
-	void ConstructL(const CCoeControl *aParent);
+private: // Constructors
+
+	void ConstructL(const CCoeControl* aParent);
 	CRFtermOutput();
 
-	// CEikEdwin
-	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
+private: // CEikEdwin
+	void FocusChanged(TDrawNow aDrawNow);
 
-	// New functions
+private: // New functions
 	void AppendNewLineL();
 	void AppendRawTextL(const TDesC& aBuf);
 	void AppendCRL();
@@ -71,7 +73,8 @@ private:
 	 */
 	TBool TextHasCtrlChar(const TDesC& aText, TDes& aCtrlChar, TInt& aPos);
 
-	// MRFtermScrollBarsObserver
+private: // From MRFtermScrollBarsObserver
+
 	void HandleScrollEventL(
 		TRFtermScrollBarType aScrollBarType,
 		const TRFtermScrollBarModel& aModel);
@@ -79,7 +82,8 @@ private:
 		TBool aVScrollBarIsVisible,
 		TBool aHScrollBarIsVisible);
 
-private:
+private: // Data
+
 	TInt iRFtermFontID;
 	TInt iFontSize;
 	TInt iTabSize;
@@ -92,7 +96,7 @@ private:
 
 	CAknGlobalNote* iBellNote;
 	TInt iBellNoteID;
-	
+
 	MRFtermOutputObserver* iObserver;
 	TRect iContentRect;
 	/**
@@ -101,9 +105,12 @@ private:
 	 * relative to the content rect pos (0, 0).
 	 */
 	TRect iOutputRect;
+
 	};
 
 inline void CRFtermOutput::SetCtrlCharMapping(TCtrlCharMapping aMapping) { iCtrlCharMapping = aMapping; }
 inline void CRFtermOutput::SetTabSize(TInt aSize) { iTabSize = aSize; }
 
-#endif /* RFTERMOUTPUT_H */
+#endif /* __RFTERMOUTPUT_H__ */
+
+// End of File

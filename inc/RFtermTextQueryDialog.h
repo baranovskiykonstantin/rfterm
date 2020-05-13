@@ -7,22 +7,29 @@
  ============================================================================
  */
 
-#ifndef RFTERMTEXTQUERYDIALOG_H
-#define RFTERMTEXTQUERYDIALOG_H
+#ifndef __RFTERMTEXTQUERYDIALOG_H__
+#define __RFTERMTEXTQUERYDIALOG_H__
 
 #include <AknQueryDialog.h>
 
 class CRFtermTextQueryDialog: public CAknTextQueryDialog
 	{
+
 public:
+
 	static CRFtermTextQueryDialog* NewL(TDes &aDataText);
-	
+
 protected:
+
 	virtual void UpdateLeftSoftKeyL();
-	
+
 private:
+
 	CRFtermTextQueryDialog(TDes &aDataText);
 	~CRFtermTextQueryDialog();
+
 	};
 
-#endif /* RFTERMTEXTQUERYDIALOG_H */
+#endif /* __RFTERMTEXTQUERYDIALOG_H__ */
+
+// End of File

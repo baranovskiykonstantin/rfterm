@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMSETTINGS_H
-#define RFTERMSETTINGS_H
+#ifndef __RFTERMSETTINGS_H__
+#define __RFTERMSETTINGS_H__
 
 #include <e32base.h>
 #include <e32cmn.h>
@@ -37,16 +37,22 @@ class CRFtermSettings;
 
 class MRFtermSettingsObserver
 	{
+
 public:
+
 	virtual void HandleSettingsChange(const CRFtermSettings* aSettings) = 0;
+
 	};
 
 class CRFtermSettings : public CBase
 	{
-public:
+
+public: // Constructors, destructor
 	static CRFtermSettings* NewL();
 	static CRFtermSettings* NewLC();
 	virtual ~CRFtermSettings();
+
+public: // New functions
 
 	// Loads settings from stream.
 	void LoadL(RReadStream& aStream);
@@ -80,38 +86,43 @@ public:
 	void RemoveObserver(MRFtermSettingsObserver* aObserver);
 
 private: // Constructors
+
 	CRFtermSettings();
 	void ConstructL();
 
 private: // MRFtermSettingsObserver
+
 	// Send messages to observers.
 	void Notify();
 
 private: // Data
+
 	// Finish a message with iMessageAddendum on sending.
 	TBuf<2> iMessageAddendum;
-	
+
 	// Size of the message history.
 	TInt iMessageHistorySize;
-	
+
 	// Output sent message
 	TBool iEcho;
-	
+
 	// Size of the output font.
 	TInt iFontSize;
-	
+
 	// Size of the tabulation step.
 	TInt iTabSize;
 
 	// Map one control character with another.
 	TCtrlCharMapping iCtrlCharMapping;
-	
+
 	// Output code page
 	TCodePage iCodePage;
 
 private: // Observers
+
 	RPointerArray<MRFtermSettingsObserver> iObservers;
 	TBool iSkipNotifications;
+
 	};
 
 inline const TDesC& CRFtermSettings::MessageAddendum() const { return iMessageAddendum; }
@@ -122,4 +133,6 @@ inline TInt CRFtermSettings::TabSize() const { return iTabSize; }
 inline TCtrlCharMapping CRFtermSettings::CtrlCharMapping() const { return iCtrlCharMapping; }
 inline TCodePage CRFtermSettings::CodePage() const { return iCodePage; }
 
-#endif /* RFTERMSETTINGS_H */
+#endif /* __RFTERMSETTINGS_H__ */
+
+// End of File

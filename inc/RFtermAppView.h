@@ -7,17 +7,19 @@
  ============================================================================
  */
 
-#ifndef RFTERMAPPVIEW_H
-#define RFTERMAPPVIEW_H
+#ifndef __RFTERMAPPVIEW_H__
+#define __RFTERMAPPVIEW_H__
 
 #include <coecntrl.h>
 #include <aknnavide.h>
-
 #include "RFtermOutput.h"
 #include "RFtermScrollBars.h"
 #include "RFtermSettings.h"
 #include "RFtermBtObserver.h"
 
+/**
+ * Controls of main view
+ */
 enum TRFtermAppViewControls
 	{
 	ERFtermAppViewScrollBars,
@@ -29,6 +31,7 @@ class CRFtermAppView
 		, public MRFtermSettingsObserver
 		, public MRFtermBtObserver
 	{
+
 public: // New methods
 
 	/**
@@ -157,20 +160,24 @@ private: // Constructors
 	CRFtermAppView();
 
 private: // New functions
+
 	void SetNaviLabelL(const TDesC& aText);
 
 public:
+
 	void MakeNaviLabelVisible(TBool aVisible);
 
 private: // From MRFtermSettingsObserver
+
 	void HandleSettingsChange(const CRFtermSettings* aSettings);
 
 private: // From MRFtermBtObserver
+
 	void HandleBtDeviceChangeL(CBTDevice* aRemoteDevice);
 	void HandleBtNotifyL(const TDesC& aMessage);
 	void HandleBtDataL(const TDesC& aData);
 
-private:
+private: // Data
 
 	/**
 	 * iDownPointerPos
@@ -199,6 +206,7 @@ private:
 	CAknNavigationDecorator* iNaviDecorator;
 
 public:
+
 	/**
 	 * iMessageHistoryArray
 	 */
@@ -206,5 +214,5 @@ public:
 
 	};
 
-#endif // RFTERMAPPVIEW_H
+#endif // __RFTERMAPPVIEW_H__
 // End of File

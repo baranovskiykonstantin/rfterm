@@ -7,17 +7,13 @@
  ============================================================================
  */
 
-#ifndef RFTERMDOCUMENT_H
-#define RFTERMDOCUMENT_H
+#ifndef __RFTERMDOCUMENT_H__
+#define __RFTERMDOCUMENT_H__
 
-// INCLUDES
 #include <akndoc.h>
 
-// FORWARD DECLARATIONS
 class CRFtermAppUi;
 class CEikApplication;
-
-// CLASS DECLARATION
 
 /**
  * CRFtermDocument application class.
@@ -26,8 +22,8 @@ class CEikApplication;
  */
 class CRFtermDocument : public CAknDocument
 	{
-public:
-	// Constructors and destructor
+
+public: // Constructors and destructor
 
 	/**
 	 * NewL.
@@ -57,8 +53,7 @@ public:
 	 */
 	virtual ~CRFtermDocument();
 
-public:
-	// Functions from base classes
+public: // Functions from base classes
 
 	/**
 	 * CreateAppUiL
@@ -69,8 +64,7 @@ public:
 	 */
 	CEikAppUi* CreateAppUiL();
 
-private:
-	// Constructors
+private: // Constructors
 
 	/**
 	 * ConstructL
@@ -87,5 +81,6 @@ private:
 
 	};
 
-#endif // RFTERMDOCUMENT_H
+#endif // __RFTERMDOCUMENT_H__
+
 // End of File

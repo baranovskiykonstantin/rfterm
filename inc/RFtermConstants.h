@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMCONSTANTS_H
-#define RFTERMCONSTANTS_H
+#ifndef __RFTERMCONSTANTS_H__
+#define __RFTERMCONSTANTS_H__
 
 #include <bt_sock.h>
 #include "RFterm.hrh"
@@ -51,4 +51,6 @@ _LIT(KDL, "\x007f"); // Delete
 const TInt KRFtermScrollBarBreadth = 5;
 const TInt KRFtermScrollBarSensorBreadth = 30;
 
-#endif /* RFTERMCONSTANTS_H */
+#endif /* __RFTERMCONSTANTS_H__ */
+
+// End of File

@@ -7,14 +7,11 @@
  ============================================================================
  */
 
-#ifndef RFTERMAPPLICATION_H
-#define RFTERMAPPLICATION_H
+#ifndef __RFTERMAPPLICATION_H__
+#define __RFTERMAPPLICATION_H__
 
-// INCLUDES
 #include <aknapp.h>
 #include "RFtermConstants.h"
-
-// CLASS DECLARATION
 
 /**
  * CRFtermApplication application class.
@@ -24,8 +21,8 @@
  */
 class CRFtermApplication : public CAknApplication
 	{
-public:
-	// Functions from base classes
+
+public: // Functions from base classes
 
 	/**
 	 * From CApaApplication, AppDllUid.
@@ -33,8 +30,7 @@ public:
 	 */
 	TUid AppDllUid() const;
 
-protected:
-	// Functions from base classes
+protected: // Functions from base classes
 
 	/**
 	 * From CApaApplication, CreateDocumentL.
@@ -45,5 +41,6 @@ protected:
 	CApaDocument* CreateDocumentL();
 	};
 
-#endif // RFTERMAPPLICATION_H
+#endif // __RFTERMAPPLICATION_H__
+
 // End of File

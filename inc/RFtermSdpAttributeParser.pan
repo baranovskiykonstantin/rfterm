@@ -7,8 +7,8 @@
  ============================================================================
  */
 
-#ifndef RFTERMSDPATTRIBUTEPARSER_PAN
-#define RFTERMSDPATTRIBUTEPARSER_PAN
+#ifndef __RFTERMSDPATTRIBUTEPARSER_PAN__
+#define __RFTERMSDPATTRIBUTEPARSER_PAN__
 
 #include <e32std.h>
 
@@ -29,6 +29,6 @@ inline void Panic(TRFtermSdpAttributeParserPanics aReason)
 	User::Panic(KPanicSAP, aReason);
 	}
 
-#endif // RFTERMSDPATTRIBUTEPARSER_PAN
+#endif // __RFTERMSDPATTRIBUTEPARSER_PAN__
 
 // End of File

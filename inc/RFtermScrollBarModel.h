@@ -7,15 +7,20 @@
  ============================================================================
  */
 
-#ifndef RFTERMSCROLLBARMODEL_H
-#define RFTERMSCROLLBARMODEL_H
+#ifndef __RFTERMSCROLLBARMODEL_H__
+#define __RFTERMSCROLLBARMODEL_H__
 
 struct TRFtermScrollBarModel
 	{
+
 	TRFtermScrollBarModel() : iTotal(1), iVisible(1), iPos(0) {}
+
 	TInt iTotal;
 	TInt iVisible;
 	TInt iPos;
+
 	};
 
-#endif /* RFTERMSCROLLBARMODEL_H */
+#endif /* __RFTERMSCROLLBARMODEL_H__ */
+
+// End of File

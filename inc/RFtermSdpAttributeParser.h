@@ -7,16 +7,13 @@
  ============================================================================
  */
 
-#ifndef RFTERMSDPATTRIBUTEPARSER_H
-#define RFTERMSDPATTRIBUTEPARSER_H
+#ifndef __RFTERMSDPATTRIBUTEPARSER_H__
+#define __RFTERMSDPATTRIBUTEPARSER_H__
 
-// INCLUDES
 #include <btsdp.h>
 
-// FORWARD DECLARATIONS
 class MRFtermSdpAttributeNotifier;
 
-// CLASS DECLARATIONS
 /**
 * TRFtermSdpAttributeParser
 * An instance of TRFtermSdpAttributeParser is used to check an SDP
@@ -24,6 +21,7 @@ class MRFtermSdpAttributeNotifier;
 */
 class TRFtermSdpAttributeParser : public MSdpAttributeValueVisitor
 	{
+
 public: // Enumerations
 
 	/**
@@ -53,6 +51,7 @@ public: // Enumerations
 	*/
 	class TRFtermSdpAttributeNode
 		{
+
 	public:
 
 		/**
@@ -130,6 +129,7 @@ public: // Enumerations
 		* passed to the observer for EReadValue
 		*/
 		TInt iValue;
+
 	};
 
 
@@ -233,8 +233,9 @@ private: // data
 	* iCurrentNode the current node
 	*/
 	TRFtermSdpAttributeNode iCurrentNode;
+
 	};
 
-#endif // RFTERMSDPATTRIBUTEPARSER_H
+#endif // __RFTERMSDPATTRIBUTEPARSER_H__
 
 // End of File

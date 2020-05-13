@@ -7,21 +7,19 @@
  ============================================================================
  */
 
-#ifndef RFTERMBT_H
-#define RFTERMBT_H
+#ifndef __RFTERMBT_H__
+#define __RFTERMBT_H__
 
 #include <es_sock.h>
 #include <bt_sock.h>
-#include <BTextNotifiers.h>
-#include <BtSdp.h>
+#include <btextnotifiers.h>
+#include <btsdp.h>
 #include <btmanclient.h>
 #include <btdevice.h>
-
+#include "RFtermBtServiceSearcher.h"
+#include "RFtermBtServiceAdvertiser.h"
 #include "RFtermBtObserver.h"
 #include "RFtermConstants.h"
-
-class CRFtermBtServiceSearcher;
-class CRFtermBtServiceAdvertiser;
 
 /**
 * TRFtermState
@@ -62,6 +60,7 @@ enum TRFtermState
 */
 class CRFtermBt : public CActive
 	{
+
 public: // Constructors and destructor
 
 	/**
@@ -187,13 +186,6 @@ public: // New functions
 	 */
 	void SetObserver(MRFtermBtObserver* aObserver);
 
-private:
-	/**
-	 * NotifyL()
-	 * Send log message to observer.
-	 */
-	void NotifyL(const TDesC& aMessage);
-
 protected: // from CActive
 
 	/**
@@ -215,7 +207,7 @@ private: // Functions from base classes
 	* Performs second phase construction of this object
 	*/
 	void ConstructL();
-	
+
 private: // New private functions
 
 	/**
@@ -281,6 +273,12 @@ private: // New private functions
 	 * found in registry.
 	 */
 	void GetRegistryResponseL();
+
+	/**
+	 * NotifyL()
+	 * Send log message to observer.
+	 */
+	void NotifyL(const TDesC& aMessage);
 
 private: // data
 
@@ -384,6 +382,9 @@ private: // data
 	* iObserver the handler of log messages
 	*/
 	MRFtermBtObserver* iObserver;
+
 	};
 
-#endif /* RFTERMBT_H */
+#endif /* __RFTERMBT_H__ */
+
+// End of File

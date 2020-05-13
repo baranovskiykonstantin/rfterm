@@ -36,3 +36,5 @@ inline void Panic(TRFtermPanics aReason)
 	}
 
 #endif // __RFTERM_PAN__
+
+// End of File

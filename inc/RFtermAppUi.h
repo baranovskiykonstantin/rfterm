@@ -7,12 +7,10 @@
  ============================================================================
  */
 
-#ifndef RFTERMAPPUI_H
-#define RFTERMAPPUI_H
+#ifndef __RFTERMAPPUI_H__
+#define __RFTERMAPPUI_H__
 
-// INCLUDES
 #include <aknappui.h>
-
 #include "RFtermAppView.h"
 #include "RFtermBt.h"
 #include "RFtermSettings.h"
@@ -24,8 +22,8 @@
  */
 class CRFtermAppUi : public CAknAppUi
 	{
-public:
-	// Constructors and destructor
+
+public: // Constructors and destructor
 
 	/**
 	 * ConstructL.
@@ -46,8 +44,7 @@ public:
 	 */
 	virtual ~CRFtermAppUi();
 
-private:
-	// Functions from base classes
+private: // Functions from base classes
 
 	/**
 	* From CEikAppUi, handles key events.
@@ -66,38 +63,37 @@ private:
 	void HandleCommandL(TInt aCommand);
 
 	/**
-	 *  HandleStatusPaneSizeChange.
-	 *  Called by the framework when the application status pane
-	 *  size is changed.
+	 * HandleStatusPaneSizeChange.
+	 * Called by the framework when the application status pane
+	 * size is changed.
 	 */
 	void HandleStatusPaneSizeChange();
 
 	/**
-	 *  From CCoeAppUi, HelpContextL.
-	 *  Provides help context for the application.
-	 *  size is changed.
+	 * From CCoeAppUi, HelpContextL.
+	 * Provides help context for the application.
+	 * size is changed.
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
-	
+
 	/**
-	*  ShowBTNotAvailableNoteL.
-	*  Show note if BT is not available
+	* ShowBTNotAvailableNoteL.
+	* Show note if BT is not available
 	*/
 	void ShowBTNotAvailableNoteL();
 
 private: // From MEikMenuObserver
 
-	void DynInitMenuPaneL(TInt aResourceId,CEikMenuPane* aMenuPane);
+	void DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane);
 
 private: // New functions
-	
+
 	void InternalizeSettingsL();
 	void ExternalizeSettingsL() const;
-	
+
 	void HandleSettingsChange();
 
-private:
-	// Data
+private: // Data
 
 	/**
 	 * The application view
@@ -116,19 +112,20 @@ private:
 	* iBtAvailable, ETrue if an SDP session can be opened, EFalse otherwise.
 	*/
 	TBool iBtAvailable;
-	
+
 	/**
 	 * iSettingsFileName - name of the file with stored settings.
 	 */
 	TFileName iSettingsFileName;
-	
+
 public:
-	
+
 	/**
 	 * iSettings - application settings.
 	 */
 	CRFtermSettings* iSettings;
 	};
 
-#endif // RFTERMAPPUI_H
+#endif // __RFTERMAPPUI_H__
+
 // End of File
