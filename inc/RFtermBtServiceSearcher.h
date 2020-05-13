@@ -10,11 +10,9 @@
 #ifndef RFTERMTBTSERVICESEARCHER_H
 #define RFTERMTBTSERVICESEARCHER_H
 
-// INCLUDES
 #include <e32base.h>
 #include <bttypes.h>
 #include <btextnotifiers.h>
-
 #include "RFtermBtObserver.h"
 #include "RFtermSdpAttributeParser.h"
 #include "RFtermSdpAttributeNotifier.h"
@@ -29,7 +27,24 @@ class CRFtermBtServiceSearcher : public CBase,
 		public MSdpAgentNotifier,
 		public MRFtermSdpAttributeNotifier
 	{
-public: // Destructor
+
+public: // Constructors and destructor
+
+	/*
+	* NewL()
+	* Create a CRFtermBtServiceSearcher object
+	* @return a pointer to the created instance of
+	* CRFtermBtServiceSearcher
+	*/
+	static CRFtermBtServiceSearcher* NewL();
+
+	/**
+	* NewLC()
+	* Create a CRFtermBtServiceSearcher object
+	* @return a pointer to the created instance of
+	* CRFtermBtServiceSearcher
+	*/
+	static CRFtermBtServiceSearcher* NewLC();
 
 	/**
 	* ~CRFtermBtServiceSearcher()
@@ -69,26 +84,19 @@ public: // New functions
 	const TBTDeviceResponseParams& ResponseParams();
 
 	/**
+	* Port()
+	* Retrieve the port on which the service is installed
+	* @return the port number
+	*/
+	TInt Port();
+
+	/**
 	 * SetObserver()
 	 * Assing an observer to receive log messages.
 	 */
 	void SetObserver(MRFtermBtObserver* aObserver);
 
-private:
-	/**
-	 * NotifyL()
-	 * Send log message to observer.
-	 */
-	void NotifyL(const TDesC& aMessage);
-
 protected: // New functions
-
-	/**
-	* CRFtermBtServiceSearcher()
-	* Constructs this object
-	*/
-	CRFtermBtServiceSearcher();
-
 	/**
 	* Finished()
 	* The search has finished. Notify the observer
@@ -109,21 +117,11 @@ protected: // New functions
 	*/
 	TBool HasFoundService() const;
 
-protected: // abstract methods
-
-	/**
-	* ProtocolList()
-	* The list of Protocols required by the service.
-	*/
-	virtual RArray <TRFtermSdpAttributeParser::TRFtermSdpAttributeNode>&
-		ProtocolList() = 0;
-
 	/**
 	* ServiceClass()
-	* The service class to search for
-	* @return the service class UUID
+	* @return the service class uid.
 	*/
-	virtual const TUUID& ServiceClass() const = 0;
+	const TUUID& ServiceClass() const;
 
 	/**
 	* FoundElementL()
@@ -131,7 +129,34 @@ protected: // abstract methods
 	* @param aKey a key that identifies the element
 	* @param aValue the data element
 	*/
-	virtual void FoundElementL(TInt aKey, CSdpAttrValue& aValue) = 0;
+	virtual void FoundElementL(TInt aKey, CSdpAttrValue& aValue);
+
+	/**
+	* ProtocolList()
+	* @return the attribute list.
+	*/
+	RArray<TRFtermSdpAttributeParser::TRFtermSdpAttributeNode>& ProtocolList();
+
+private: // Constructors
+
+	/**
+	* CRFtermBtServiceSearcher()
+	* Constructs this object
+	*/
+	CRFtermBtServiceSearcher();
+
+	/**
+	* ConstructL()
+	* Performs second phase construction of this object
+	*/
+	void ConstructL();
+
+private: // New functions
+	/**
+	 * NotifyL()
+	 * Send log message to observer.
+	 */
+	void NotifyL(const TDesC& aMessage);
 
 public: // from MSdpAgentNotifier
 
@@ -248,6 +273,24 @@ private: // data
 	* iHasFoundService has the service been found ?
 	*/
 	TBool iHasFoundService;
+
+	/**
+	* iServiceClass
+	* the service class UUID to search for
+	*/
+	TUUID iServiceClass;
+
+	/**
+	* iPort
+	* the port number that the remote service is installed
+	*/
+	TInt iPort;
+
+	/**
+	* iProtocolArray
+	* the attribute list
+	*/
+	RArray<TRFtermSdpAttributeParser::TRFtermSdpAttributeNode> iProtocolArray;
 
 	/**
 	* iObserver the handler of log messages

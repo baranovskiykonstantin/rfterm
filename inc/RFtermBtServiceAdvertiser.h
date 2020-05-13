@@ -10,14 +10,9 @@
 #ifndef RFTERMBTSERVICEADVERTISER_H
 #define RFTERMBTSERVICEADVERTISER_H
 
-// INCLUDES
 #include <e32base.h>
 #include <btsdp.h>
 #include <StringLoader.h>
-
-#include "RFtermBtServiceAdvertiser.h"
-
-// CLASS DECLARATIONS
 
 /**
 * CRFtermBtServiceAdvertiser
@@ -25,7 +20,24 @@
 */
 class CRFtermBtServiceAdvertiser : public CBase
 	{
-public: // Destructor
+public: // Constructors and destructor
+
+	/**
+	* NewL()
+	* Create a CRFtermBtServiceAdvertiser object
+	* @return a pointer to the created instance of
+	* CRFtermBtServiceAdvertiser
+	*/
+	static CRFtermBtServiceAdvertiser* NewL();
+
+	/**
+	* NewLC()
+	* Create a CRFtermBtServiceAdvertiser object, which will
+	* draw itself to aRect.
+	* @return a pointer to the created instance of
+	* CRFtermBtServiceAdvertiser
+	*/
+	static CRFtermBtServiceAdvertiser* NewLC();
 
 	/**
 	* ~CRFtermBtServiceAdvertiser
@@ -64,12 +76,13 @@ public: // New functions
 	void UpdateAvailabilityL(TBool aIsAvailable);
 
 protected: // New functions
-
 	/**
-	* CRFtermBtServiceAdvertiser
-	* Construct this object
+	* ConnectL
+	* Connect to the SDP database
+	* CRFtermBtServiceAdvertiser()
+	* Constructs this object^M
 	*/
-	CRFtermBtServiceAdvertiser();
+	void ConnectL();
 
 	/**
 	* BuildProtocolDescriptionL
@@ -77,34 +90,40 @@ protected: // New functions
 	* @param aProtocolDescriptor the protocol descriptor
 	* @param aPort the service port
 	*/
-	virtual void BuildProtocolDescriptionL(
-		CSdpAttrValueDES* aProtocolDescriptor, TInt aPort) = 0;
+	void BuildProtocolDescriptionL(
+		CSdpAttrValueDES* aProtocolDescriptor, TInt aPort);
 
 	/**
 	* ServiceClass
 	* @return the service class
 	*/
-	virtual TInt ServiceClass() = 0;
+	TInt ServiceClass();
 
 	/**
 	* ServiceName
 	* @return the service name
 	*/
-	virtual const TDesC& ServiceName() = 0;
+	const TDesC& ServiceName();
 
 	/**
 	* ServiceDescription
 	* @return the service description
 	*/
-	virtual const TDesC& ServiceDescription() = 0;
+	const TDesC& ServiceDescription();
 
-private: // Function from base classes
+private: // Constructors
 
 	/**
-	* ConnectL
-	* Connect to the SDP database
+	* CRFtermBtServiceAdvertiser()
+	* Constructs this object
 	*/
-	void ConnectL();
+	CRFtermBtServiceAdvertiser();
+
+	/**
+	* ConstructL()
+	* 2nd phase construction of this object
+	*/
+	void ConstructL();
 
 private: // data
 
@@ -137,6 +156,18 @@ private: // data
 	* has a connection been made to the SDP Database
 	*/
 	TBool iIsConnected;
+
+	/**
+	* iServiceName
+	* Owned by CRFtermBtServiceAdvertiser
+	*/
+	HBufC* iServiceName;
+
+	/**
+	* iServiceDescription
+	* Owned by CRFtermBtServiceAdvertiser
+	*/
+	HBufC* iServiceDescription;
 	};
 
 #endif // RFTERMBTSERVICEADVERTISER_H

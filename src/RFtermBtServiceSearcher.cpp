@@ -7,7 +7,7 @@
  ============================================================================
  */
 
-// INCLUDE FILES
+#include <bt_sock.h>
 #include <StringLoader.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermBtServiceSearcher.h"
@@ -16,12 +16,39 @@
 // ============================ MEMBER FUNCTIONS ==============================
 
 // ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::NewL()
+// Two-phased constructor.
+// ----------------------------------------------------------------------------
+//
+CRFtermBtServiceSearcher* CRFtermBtServiceSearcher::NewL()
+	{
+	CRFtermBtServiceSearcher* self = CRFtermBtServiceSearcher::NewLC();
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::NewLC()
+// Two-phased constructor.
+// ----------------------------------------------------------------------------
+//
+CRFtermBtServiceSearcher* CRFtermBtServiceSearcher::NewLC()
+	{
+	CRFtermBtServiceSearcher* self = new (ELeave) CRFtermBtServiceSearcher();
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
+
+// ----------------------------------------------------------------------------
 // CRFtermBtServiceSearcher::CRFtermBtServiceSearcher()
 // Constructor.
 // ----------------------------------------------------------------------------
 //
 CRFtermBtServiceSearcher::CRFtermBtServiceSearcher()
-	: iIsDeviceSelectorConnected(EFalse)
+	: iIsDeviceSelectorConnected(EFalse),
+	iServiceClass(KServiceClass),
+	iPort(-1)
 	{
 	}
 
@@ -32,6 +59,8 @@ CRFtermBtServiceSearcher::CRFtermBtServiceSearcher()
 //
 CRFtermBtServiceSearcher::~CRFtermBtServiceSearcher()
 	{
+	iProtocolArray.Close();
+
 	if (iIsDeviceSelectorConnected)
 		{
 		iDeviceSelector.CancelNotifier(KDeviceSelectionNotifierUid);
@@ -42,6 +71,16 @@ CRFtermBtServiceSearcher::~CRFtermBtServiceSearcher()
 
 	delete iAgent;
 	iAgent = NULL;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::ConstructL()
+// Symbian 2nd phase constructor can leave.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBtServiceSearcher::ConstructL()
+	{
+	// no implementation required
 	}
 
 // ----------------------------------------------------------------------------
@@ -310,6 +349,89 @@ const TBTDeviceResponseParams& CRFtermBtServiceSearcher::ResponseParams()
 TBool CRFtermBtServiceSearcher::HasFoundService() const
 	{
 	return iHasFoundService;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::ServiceClass()
+// The service class to search.
+// ----------------------------------------------------------------------------
+//
+const TUUID& CRFtermBtServiceSearcher::ServiceClass() const
+	{
+	return iServiceClass;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::ProtocolList()
+// The list of Protocols required by the service.
+// ----------------------------------------------------------------------------
+//
+ RArray <TRFtermSdpAttributeParser::TRFtermSdpAttributeNode>& CRFtermBtServiceSearcher
+::ProtocolList()
+	{
+	TRFtermSdpAttributeParser::TRFtermSdpAttributeNode attrib;
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckType);
+	attrib.SetType(ETypeDES);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckType);
+	attrib.SetType(ETypeDES);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckValue);
+	attrib.SetType(ETypeUUID);
+	attrib.SetValue(KL2CAP);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckEnd);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckType);
+	attrib.SetType(ETypeDES);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckValue);
+	attrib.SetType(ETypeUUID);
+	attrib.SetValue(KRFCOMM);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::EReadValue);
+	attrib.SetType(ETypeUint);
+	attrib.SetValue(KRfcommChannel);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckEnd);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::ECheckEnd);
+	iProtocolArray.Append(attrib);
+
+	attrib.SetCommand(TRFtermSdpAttributeParser::EFinished);
+	iProtocolArray.Append(attrib);
+
+	return iProtocolArray;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::FoundElementL()
+// Read the data element.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBtServiceSearcher::FoundElementL(TInt aKey, CSdpAttrValue& aValue)
+	{
+	__ASSERT_ALWAYS(aKey == static_cast<TInt>(KRfcommChannel),
+		Panic(ERFtermBtServiceSearcherProtocolRead));
+	iPort = aValue.Uint();
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceSearcher::Port()
+// Port connection on the remote machine.
+// ----------------------------------------------------------------------------
+//
+TInt CRFtermBtServiceSearcher::Port()
+	{
+	return iPort;
 	}
 
 // ----------------------------------------------------------------------------

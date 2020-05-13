@@ -11,8 +11,8 @@
 #include <StringLoader.h>
 #include <coemain.h>
 #include <RFterm_0xae7f53fa.rsg>
-#include "RFtermServiceAdvertiser.h"
-#include "RFtermServiceSearcher.h"
+#include "RFtermBtServiceAdvertiser.h"
+#include "RFtermBtServiceSearcher.h"
 #include "RFtermAppUi.h"
 #include "RFtermBt.h"
 #include "RFtermConstants.h"
@@ -105,9 +105,9 @@ CRFtermBt::~CRFtermBt()
 //
 void CRFtermBt::ConstructL()
 	{
-	iServiceSearcher = CRFtermServiceSearcher::NewL();
+	iServiceSearcher = CRFtermBtServiceSearcher::NewL();
 	iServiceSearcher->SetObserver(iObserver);
-	iAdvertiser = CRFtermServiceAdvertiser::NewL();
+	iAdvertiser = CRFtermBtServiceAdvertiser::NewL();
 	User::LeaveIfError(iSocketServer.Connect());
 
 	User::LeaveIfError(iRegistryServer.Connect());

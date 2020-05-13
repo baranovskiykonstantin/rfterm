@@ -20,9 +20,8 @@
 #include "RFtermBtObserver.h"
 #include "RFtermConstants.h"
 
-// FORWARD DECLARATIONS
-class CRFtermServiceSearcher;
-class CRFtermServiceAdvertiser;
+class CRFtermBtServiceSearcher;
+class CRFtermBtServiceAdvertiser;
 
 /**
 * TRFtermState
@@ -175,7 +174,6 @@ public: // New functions
 	* @return ETrue if the client is connected.
 	*/
 	TBool IsSendingMessage();
-	
 
 	/**
 	* IsReadyToSendMessage()
@@ -301,7 +299,7 @@ private: // data
 	* client can connect to.
 	* Owned by CRFtermBt
 	*/
-	CRFtermServiceSearcher* iServiceSearcher;
+	CRFtermBtServiceSearcher* iServiceSearcher;
 
 	/**
 	* iMessage a copy of the message to send
@@ -337,7 +335,7 @@ private: // data
 	* iAdvertiser used to advertise this service
 	* Owned by CRFtermServer
 	*/
-	CRFtermServiceAdvertiser* iAdvertiser;
+	CRFtermBtServiceAdvertiser* iAdvertiser;
 
 	/**
 	* iAcceptedSocket

@@ -7,12 +7,37 @@
  ============================================================================
  */
 
-// INCLUDE FILES
 #include <bt_sock.h>
+#include <StringLoader.h>
+#include <RFterm_0xae7f53fa.rsg>
 #include "RFtermBtServiceAdvertiser.h"
 #include "RFterm.pan"
+#include "RFtermConstants.h"
 
-// ============================ MEMBER FUNCTIONS ==============================
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::NewL()
+// Two-phased constructor.
+// ----------------------------------------------------------------------------
+//
+CRFtermBtServiceAdvertiser* CRFtermBtServiceAdvertiser::NewL()
+	{
+	CRFtermBtServiceAdvertiser* self = CRFtermBtServiceAdvertiser::NewLC();
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::NewLC()
+// Two-phased constructor.
+// ----------------------------------------------------------------------------
+//
+CRFtermBtServiceAdvertiser* CRFtermBtServiceAdvertiser::NewLC()
+	{
+	CRFtermBtServiceAdvertiser* self = new (ELeave) CRFtermBtServiceAdvertiser();
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	return self;
+	}
 
 // ----------------------------------------------------------------------------
 // CRFtermBtServiceAdvertiser::CRFtermBtServiceAdvertiser()
@@ -44,6 +69,20 @@ CRFtermBtServiceAdvertiser::~CRFtermBtServiceAdvertiser()
 
 	iSdpDatabase.Close();
 	iSdpSession.Close();
+
+	delete iServiceName;
+	delete iServiceDescription;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::ConstructL()
+// Perform second phase construction of this object.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBtServiceAdvertiser::ConstructL()
+	{
+	iServiceName = StringLoader::LoadL (R_RFTERM_SERVICE_NAME);
+	iServiceDescription = StringLoader::LoadL (R_RFTERM_SERVICE_DESCRIPTION);
 	}
 
 // ----------------------------------------------------------------------------
@@ -154,6 +193,59 @@ void CRFtermBtServiceAdvertiser::StopAdvertisingL()
 TBool CRFtermBtServiceAdvertiser::IsAdvertising()
 	{
 	return iRecord != 0;
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::BuildProtocolDescriptionL()
+// Builds the protocol description.
+// -----------------------------------------------------------------------------
+//
+void CRFtermBtServiceAdvertiser
+::BuildProtocolDescriptionL(CSdpAttrValueDES* aProtocolDescriptor, TInt aPort)
+	{
+	TBuf8<1> channel;
+	channel.Append((TChar)aPort);
+
+	aProtocolDescriptor
+		->StartListL()
+			->BuildDESL()
+			->StartListL() // Details of lowest level protocol
+				->BuildUUIDL(KL2CAP)
+			->EndListL()
+
+			->BuildDESL()
+			->StartListL()
+				->BuildUUIDL(KRFCOMM)
+				->BuildUintL(channel)
+			->EndListL()
+		->EndListL();
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::ServiceName()
+// ----------------------------------------------------------------------------
+//
+const TDesC& CRFtermBtServiceAdvertiser::ServiceName()
+	{
+	return *iServiceName;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::ServiceDescription()
+// ----------------------------------------------------------------------------
+//
+const TDesC& CRFtermBtServiceAdvertiser::ServiceDescription()
+	{
+	return *iServiceDescription;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBtServiceAdvertiser::ServiceClass()
+// ----------------------------------------------------------------------------
+//
+TInt CRFtermBtServiceAdvertiser::ServiceClass()
+	{
+	return KServiceClass;
 	}
 
 // End of File

@@ -24,8 +24,6 @@ SOURCE			RFtermBt.cpp
 SOURCE			RFtermBtServiceAdvertiser.cpp
 SOURCE			RFtermBtServiceSearcher.cpp
 SOURCE			RFtermSdpAttributeParser.cpp
-SOURCE			RFtermServiceAdvertiser.cpp
-SOURCE			RFtermServiceSearcher.cpp
 SOURCE			RFtermTextQueryDialog.cpp
 SOURCE			RFtermSettings.cpp
 SOURCE			RFtermSettingsDialog.cpp
