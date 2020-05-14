@@ -26,6 +26,10 @@ enum TRFtermAppViewControls
 	ERFtermAppViewOutput
 	};
 
+/**
+ * CRFtermAppView class.
+ * Main view of RFterm application.
+ */
 class CRFtermAppView
 		: public CCoeControl
 		, public MRFtermSettingsObserver

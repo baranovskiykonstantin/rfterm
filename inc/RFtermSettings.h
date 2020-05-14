@@ -14,6 +14,10 @@
 #include <e32cmn.h>
 #include <s32strm.h>
 
+/**
+ * Enum TCtrlCharMapping.
+ * Range of values of the CtrlCharMapping setting.
+ */
 enum TCtrlCharMapping {
 	EMapCRtoLF = 1,
 	EMapCRtoCRLF,
@@ -22,6 +26,10 @@ enum TCtrlCharMapping {
 	EMapNone
 };
 
+/**
+ * Enum TCodePage.
+ * List of supported code pages.
+ */
 enum TCodePage {
 	ECodePageLatin1 = 1,
 	ECodePageLatin2,
@@ -35,15 +43,31 @@ enum TCodePage {
 
 class CRFtermSettings;
 
+/**
+ * MRFtermSettingsObserver mixin.
+ * Interface for objects that wish to receive
+ * notifications of settings changes.
+ */
 class MRFtermSettingsObserver
 	{
 
 public:
 
+	/**
+	 * HandleSettingsChange()
+	 * 
+	 * Derived classes provide the implementation.
+	 * 
+	 * @param aSettings Pointer to observed settings that have been changed.
+	 */
 	virtual void HandleSettingsChange(const CRFtermSettings* aSettings) = 0;
 
 	};
 
+/**
+ * CRFtermSettings class.
+ * Contains and provides access to settings of RFterm applications.
+ */
 class CRFtermSettings : public CBase
 	{
 
@@ -90,37 +114,58 @@ private: // Constructors
 	CRFtermSettings();
 	void ConstructL();
 
-private: // MRFtermSettingsObserver
+private: // For MRFtermSettingsObserver
 
 	// Send messages to observers.
 	void Notify();
 
 private: // Data
 
-	// Finish a message with iMessageAddendum on sending.
+	/**
+	 * Finish a message with iMessageAddendum on sending.
+	 */
 	TBuf<2> iMessageAddendum;
 
-	// Size of the message history.
+	/**
+	 * Size of the message history.
+	 */
 	TInt iMessageHistorySize;
 
-	// Output sent message
+	/**
+	 * Output sent message
+	 */
 	TBool iEcho;
 
-	// Size of the output font.
+	/**
+	 * Size of the output font.
+	 */
 	TInt iFontSize;
 
-	// Size of the tabulation step.
+	/**
+	 * Size of the tabulation step.
+	 */
 	TInt iTabSize;
 
-	// Map one control character with another.
+	/**
+	 * Map one control character with another.
+	 */
 	TCtrlCharMapping iCtrlCharMapping;
 
-	// Output code page
+	/**
+	 * Output code page
+	 */
 	TCodePage iCodePage;
 
 private: // Observers
 
+	/**
+	 * Array of non ownign pointers to settings observers.
+	 */
 	RPointerArray<MRFtermSettingsObserver> iObservers;
+	
+	/**
+	 * Flag to pause observer notification.
+	 */
 	TBool iSkipNotifications;
 
 	};

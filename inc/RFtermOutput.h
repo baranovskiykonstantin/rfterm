@@ -16,6 +16,10 @@
 #include "RFtermOutputObserver.h"
 #include "RFtermScrollBarsObserver.h"
 
+/**
+ * CRFtermOutput class.
+ * The control to represent textual data.
+ */
 class CRFtermOutput : public CEikEdwin , public MRFtermScrollBarsObserver
 	{
 
@@ -27,6 +31,7 @@ public: // Constructor, destructor
 
 public: // New functions
 
+	// Font size in twips.
 	void SetFontSizeL(TInt aFontSize);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetTabSize(TInt aSize);
@@ -41,12 +46,14 @@ public: // New functions
 	void GetCurrentCodePage(TPtrC& aCodePage);
 
 public: // CEikEdwin
+
 	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent,TEventCode aType);
 
 public: // From MRFtermOutputObserver
-	void SetObserver(MRFtermOutputObserver* aObserver);
+
 	void NotifyViewRectChangedL();
+	void SetObserver(MRFtermOutputObserver* aObserver);
 
 private: // Constructors
 
@@ -54,9 +61,11 @@ private: // Constructors
 	CRFtermOutput();
 
 private: // CEikEdwin
+
 	void FocusChanged(TDrawNow aDrawNow);
 
 private: // New functions
+
 	void AppendNewLineL();
 	void AppendRawTextL(const TDesC& aBuf);
 	void AppendCRL();
@@ -101,7 +110,7 @@ private: // Data
 	TRect iContentRect;
 	/**
 	 * iOutputRect
-	 * Position of the view rect
+	 * Position and size of the view rect
 	 * relative to the content rect pos (0, 0).
 	 */
 	TRect iOutputRect;

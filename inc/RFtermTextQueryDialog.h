@@ -12,18 +12,24 @@
 
 #include <AknQueryDialog.h>
 
+/**
+ * CRFtermTextQueryDialog class.
+ * This class is inherited from CAknTextQueryDialog to override
+ * the UpdateLeftSoftKey method that hides OK button if query is empty.
+ * Overrided method allows to accept emty text input.
+ */
 class CRFtermTextQueryDialog: public CAknTextQueryDialog
 	{
 
-public:
+public: // Static constructor
 
 	static CRFtermTextQueryDialog* NewL(TDes &aDataText);
 
-protected:
+protected: // From CAknTextQueryDialog
 
 	virtual void UpdateLeftSoftKeyL();
 
-private:
+private: // Constructor, destructor
 
 	CRFtermTextQueryDialog(TDes &aDataText);
 	~CRFtermTextQueryDialog();

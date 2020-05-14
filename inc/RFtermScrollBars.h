@@ -16,6 +16,14 @@
 #include "RFtermScrollBarsObserver.h"
 #include "RFtermOutputObserver.h"
 
+/**
+ * CRFtermScrollBars class.
+ * The scrollbars control occupies all client area.
+ * The related container control is placed over
+ * the scrollbars control at the same position (0, 0).
+ * To make vertical/horizontal scrollbar visible
+ * the related container control has to shrink its right/bottom edge.
+ */
 class CRFtermScrollBars : public CCoeControl, public MRFtermOutputObserver
 	{
 
@@ -32,12 +40,16 @@ public: // New functions
 	inline TBool IsVScrollBarVisible() const;
 	inline TBool IsHScrollBarVisible() const;
 	void Update(TBool aDrawNow);
+	/**
+	 * Area that can be occupied by the container control.
+	 */
 	void GetFreeRect(TRect& aRect) const;
 	void DrawVScrollBarNow() const;
 	void DrawHScrollBarNow() const;
 	void DrawCornerNow() const;
 
-public: // From MRFtermScrollBarsObserver
+public: // For MRFtermScrollBarsObserver
+
 	void SetObserver(MRFtermScrollBarsObserver* aObserver);
 
 private: // New functions
@@ -47,9 +59,13 @@ private: // New functions
 	void DrawHScrollBar(CWindowGc& aGc) const;
 	void DrawCorner(CWindowGc& aGc) const;
 	void Draw(const TRect& aRect) const;
+	
+private: // From MRFtermOutputObserver
+
 	void HandleViewRectChangedL(const TRect& aContentRect, const TRect& aViewRect);
 
 private: // From CCoeControl
+
 	void SizeChanged();
 	void HandlePointerEventL(const TPointerEvent& aPointerEvent);
 
@@ -65,6 +81,7 @@ private: // Data
 	TRect iHThumbRect;
 	TRect iHBackgroundRect;
 
+	// Bottom right corner between vertical and horizontal scrollbars.
 	TRect iCornerBackgroundRect;
 
 	TPoint iPrevPointerPos;

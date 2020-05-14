@@ -13,6 +13,10 @@
 #include <aknform.h>
 #include "RFtermSettings.h"
 
+/**
+ * CRFtermSettingsDialog class.
+ * Dialog to edit settings of RFterm application.
+ */
 class CRFtermSettingsDialog: public CAknForm
 	{
 
@@ -25,7 +29,7 @@ private: // Constructor, destructor
 	CRFtermSettingsDialog(CRFtermSettings* aSettings);
 	~CRFtermSettingsDialog();
 
-public: // from CAknForm
+public: // From CAknForm
 
 	TBool OkToExitL(TInt aButtonId);
 	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
@@ -33,20 +37,20 @@ public: // from CAknForm
 	void DoNotSaveFormDataL();
 	void PreLayoutDynInitL();
 
-private: // from CAknForm
+private: // From CAknForm
 
 	void LoadFormDataL();
 
-private: // from CCoeControl
+private: // From CCoeControl
 
 	void ActivateL();
 
-private: // data
+private: // Data
 
 	// Not owning pointer to application settings
 	CRFtermSettings* iSettings;
 
-	// Pointer position on down event
+	// Pointer position at down event
 	TPoint iDownPointerPos;
 
 	};
