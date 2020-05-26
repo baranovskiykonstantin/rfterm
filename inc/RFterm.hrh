@@ -25,9 +25,7 @@ enum TRFtermCommandIds
 	ECtrlChar,
 	EClear,
 	ESettings,
-	EHelp,
-	EAbout,
-	ETest
+	EHelp
 	};
 
 // Identifiers of settings dialog pages

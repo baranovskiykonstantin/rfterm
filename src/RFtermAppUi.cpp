@@ -9,7 +9,6 @@
 
 // INCLUDE FILES
 #include <avkon.hrh>
-#include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <stringloader.h>
 #include <f32file.h>
@@ -391,31 +390,6 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EAbout:
-			{
-			CAknMessageQueryDialog* dlg = new (ELeave) CAknMessageQueryDialog();
-			dlg->PrepareLC(R_ABOUT_QUERY_DIALOG);
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
-			dlg->QueryHeading()->SetTextL(*title);
-			CleanupStack::PopAndDestroy(); //title
-			HBufC* msg = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TEXT);
-			dlg->SetMessageTextL(*msg);
-			CleanupStack::PopAndDestroy(); //msg
-			dlg->RunLD();
-			break;
-			}
-
-		case ETest:
-			{
-			CRFtermOutput* output = static_cast<CRFtermOutput*>(
-					iAppView->ComponentControl(ERFtermAppViewOutput));
-			output->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
-			output->AppendMessageL(_L("0123456789"));
-			output->AppendTextL(_L("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"));
-			output->AppendTextL(_L("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"));
-			break;
-			}
-
 		default:
 			{
 			Panic(ERFtermUi);
@@ -439,7 +413,7 @@ CArrayFix<TCoeHelpContext>* CRFtermAppUi::HelpContextL() const
 #ifdef _HELP_AVAILABLE_
 	CArrayFixFlat<TCoeHelpContext>* array = new(ELeave)CArrayFixFlat<TCoeHelpContext>(1);
 	CleanupStack::PushL(array);
-	array->AppendL(TCoeHelpContext(KUidRFtermApp, KGeneral_Information));
+	array->AppendL(TCoeHelpContext(KUidRFtermApp, KAbout));
 	CleanupStack::Pop(array);
 	return array;
 #else

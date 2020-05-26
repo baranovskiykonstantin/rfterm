@@ -31,7 +31,6 @@
 #define qtn_settings "Settings"
 
 #define qtn_help "Help"
-#define qtn_about "About"
 
 #define qtn_exit "Exit"
 
@@ -39,10 +38,6 @@
 #define qtn_msg_connected "Connection has been established successfully."
 
 #define qtn_loc_resource_file_1 "\\resource\\apps\\RFterm_0xae7f53fa"
-
-#define qtn_about_dialog_title "About"
-
-#define qtn_about_dialog_text "RFterm v1.0\n\nAuthor:\nKonstantin Baranovskiy\n\nbaranovskiykonstantin@gmail.com"
 
 // Navigation pane
 #define qtn_str_navi_disconnected "disconnected"

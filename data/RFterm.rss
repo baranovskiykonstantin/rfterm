@@ -125,18 +125,8 @@ RESOURCE MENU_PANE r_menu
 				},
 		MENU_ITEM
 				{
-				command = EAbout;
-				txt = qtn_about;
-				},
-		MENU_ITEM
-				{
 				command = EAknSoftkeyExit;
 				txt = qtn_exit;
-				},
-		MENU_ITEM
-				{
-				command = ETest;
-				txt = "Test";
 				}
 		};
 	}
@@ -163,38 +153,6 @@ RESOURCE MENU_PANE r_send_menu
 		};
 	}
 
-// -----------------------------------------------------------------------------
-//
-// About dialog resource.
-//
-// -----------------------------------------------------------------------------
-//
-RESOURCE DIALOG r_about_query_dialog
-	{
-	flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
-	buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
-	items=
-		{
-		DLG_LINE 
-			{
-			type = EAknCtPopupHeadingPane;
-			id = EAknMessageQueryHeaderId;
-			itemflags = EEikDlgItemNonFocusing;
-			control = AVKON_HEADING
-				{
-				};
-			},
-		DLG_LINE
-			{
-			type = EAknCtMessageQuery;
-			id = EAknMessageQueryContentId;
-			control = AVKON_MESSAGE_QUERY
-				{
-				};
-			}
-		};
-	}
-
 
 // -----------------------------------------------------------------------------
 //
@@ -203,8 +161,6 @@ RESOURCE DIALOG r_about_query_dialog
 // -----------------------------------------------------------------------------
 //
 RESOURCE TBUF32 r_caption_string { buf=qtn_caption_string; }
-RESOURCE TBUF32 r_about_dialog_title { buf=qtn_about_dialog_title; }
-RESOURCE TBUF r_about_dialog_text { buf=qtn_about_dialog_text; }
 RESOURCE TBUF r_msg_connected_text { buf=qtn_msg_connected; }
 
 RESOURCE TBUF r_rfterm_service_name { buf=qtn_rfterm_service_name; }
@@ -682,7 +638,5 @@ RESOURCE ARRAY setting_codepage_items
 		LBUF { txt = qtn_str_setting_codepage_item7; }
 		};
 	}
-
-//#include "RFtermSpecCharTables.rh"
 
 // End of File

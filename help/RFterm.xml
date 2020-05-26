@@ -3,11 +3,15 @@
 <?xml:stylesheet href="/epoc32/tools/cshlpcmp/xsl/asptml.xsl" title="asptml" type="text/xsl"?>
 <asptml>
 <uid value="0xae7f53fa"/>
-<topic><category>RFterm</category><topictitle>General Information</topictitle>
-<synonyms>General Information</synonyms>
-<context contextUID="General_Information"/>
-<index>General Information</index>
-<p>Insert your help here.</p>
-<p></p>
+<topic><category>RFterm</category><topictitle>About</topictitle>
+<synonyms>About</synonyms>
+<context contextUID="About"/>
+<index>About</index>
+<p><b>RFterm</b> version 1.0</p>
+<p>The application allows to exchange data over Bluetooth using RFCOMM protocol. 
+RFterm can be used as a server and get connections from other bluetooth devices, 
+or it can be connected as a client.</p>
+<p>Author: Konstantin Baranovskiy</p>
+<p>E-mail: baranovskiykonstantin@gmail.com</p>
 </topic>
 </asptml>

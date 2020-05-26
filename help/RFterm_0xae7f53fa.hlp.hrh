@@ -10,6 +10,6 @@
 #define __RFTERM_0XAE7F53FA_HLP_HRH__
 
 
-_LIT(KGeneral_Information,"General_Information");
+_LIT(KAbout,"About");
 
 #endif
