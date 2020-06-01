@@ -16,6 +16,9 @@
 #include <coemain.h>
 #include <eiksbfrm.h>
 #include <gulutil.h>
+#include <caknmemoryselectiondialogmultidrive.h>
+#include <caknfileselectiondialog.h>
+#include <caknfilenamepromptdialog.h> 
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFterm.pan"
 #include "RFtermAppUi.h"
@@ -272,6 +275,38 @@ void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)
 void CRFtermOutput::GetCurrentCodePage(TPtrC& aCodePage)
 	{
 	aCodePage.Set(iCodePage);
+	}
+
+void CRFtermOutput::SaveOutputAsTextL()
+	{
+	_LIT(KDefaultOutputPath, "C:\\data\\");
+	_LIT(KDefaultOutputFileName, "RFtermOutput.txt");
+
+	TDriveNumber drive = EDriveC;
+	TPath path(KDefaultOutputPath);
+	TFileName fileName(KDefaultOutputFileName);
+
+	CAknMemorySelectionDialogMultiDrive* dlgDrive = CAknMemorySelectionDialogMultiDrive::NewL(ECFDDialogTypeSave, ETrue);
+	CleanupStack::PushL(dlgDrive);
+	TBool result = dlgDrive->ExecuteL(drive, &path, NULL);
+	if (result)
+		{
+		CAknFileSelectionDialog* dlgFolder = CAknFileSelectionDialog::NewL(ECFDDialogTypeSave);
+		CleanupStack::PushL(dlgFolder);
+		result = dlgFolder->ExecuteL(path);
+		if(result)
+			{
+			CAknFileNamePromptDialog* dlgFileName = CAknFileNamePromptDialog::NewL();
+			result = dlgFileName->RunDlgLD(fileName, path);
+			if(result)
+				{
+				path.Append(fileName);
+				iText->ExportAsTextL(path, CPlainText::EOrganiseByLine, KMaxTInt);
+				}
+			}
+		CleanupStack::PopAndDestroy(dlgFolder);
+		}
+	CleanupStack::PopAndDestroy(dlgDrive);
 	}
 
 void CRFtermOutput::AppendNewLineL()

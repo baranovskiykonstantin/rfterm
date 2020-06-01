@@ -28,6 +28,8 @@
 
 #define qtn_clear "Clear"
 
+#define qtn_save "Save"
+
 #define qtn_settings "Settings"
 
 #define qtn_help "Help"

@@ -189,7 +189,7 @@ TKeyResponse CRFtermAppView
 	if (aType == EEventKey && aKeyEvent.iScanCode == EStdKeyDevice3)
 		{
 		// Press directional rocker to send
-		iAvkonAppUi->HandleCommandL(EMessage);
+		iAvkonAppUi->HandleCommandL(ERFtermMessage);
 		}
 	return iRFtermOutput->OfferKeyEventL(aKeyEvent, aType);
 	}
@@ -302,7 +302,7 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 		if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
 			{
 			// Tap output to send
-			iAvkonAppUi->HandleCommandL(EMessage);
+			iAvkonAppUi->HandleCommandL(ERFtermMessage);
 			return;
 			}
 		}

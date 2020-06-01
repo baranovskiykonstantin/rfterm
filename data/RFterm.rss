@@ -84,43 +84,48 @@ RESOURCE MENU_PANE r_menu
 		// added the new Options menu command here
 		MENU_ITEM
 				{
-				command = ESend;
+				command = ERFtermSend;
 				cascade = r_send_menu;
 				txt = qtn_send;
 				},
 		MENU_ITEM
 				{
-				command = EClear;
+				command = ERFtermClear;
 				txt = qtn_clear;
 				},
 		MENU_ITEM
 				{
-				command = EConnect;
+				command = ERFtermSave;
+				txt = qtn_save;
+				},
+		MENU_ITEM
+				{
+				command = ERFtermConnect;
 				txt = qtn_connect;
 				},
 		MENU_ITEM
 				{
-				command = EDisconnect;
+				command = ERFtermDisconnect;
 				txt = qtn_disconnect;
 				},
 		MENU_ITEM
 				{
-				command = EStart;
+				command = ERFtermStart;
 				txt = qtn_start;
 				},
 		MENU_ITEM
 				{
-				command = EStop;
+				command = ERFtermStop;
 				txt = qtn_stop;
 				},
 		MENU_ITEM
 				{
-				command = ESettings;
+				command = ERFtermSettings;
 				txt = qtn_settings;
 				},
 		MENU_ITEM
 				{
-				command = EHelp;
+				command = ERFtermHelp;
 				txt = qtn_help;
 				},
 		MENU_ITEM
@@ -137,17 +142,17 @@ RESOURCE MENU_PANE r_send_menu
 		{
 		MENU_ITEM
 				{
-				command = EMessage;
+				command = ERFtermMessage;
 				txt = qtn_message;
 				},
 		MENU_ITEM
 				{
-				command = EHistory;
+				command = ERFtermHistory;
 				txt = qtn_history;
 				},
 		MENU_ITEM
 				{
-				command = ECtrlChar;
+				command = ERFtermCtrlChar;
 				txt = qtn_ctrl_char;
 				}
 		};

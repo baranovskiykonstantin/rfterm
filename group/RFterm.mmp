@@ -55,6 +55,7 @@ LIBRARY			bluetooth.lib
 LIBRARY			btdevice.lib
 LIBRARY			btextnotifiers.lib
 LIBRARY			btmanclient.lib
+LIBRARY			commondialogs.lib
 LIBRARY			commonengine.lib
 LIBRARY			cone.lib
 LIBRARY			efsrv.lib 

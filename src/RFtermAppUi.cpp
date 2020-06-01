@@ -175,7 +175,7 @@ TKeyResponse CRFtermAppUi::HandleKeyEventL(
 		switch (aKeyEvent.iScanCode)
 			{
 			case EStdKeyEnter:
-				HandleCommandL(ESend);
+				HandleCommandL(ERFtermMessage);
 				break;
 			}
 		}
@@ -197,31 +197,32 @@ void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 		{
 		if (!iBtClient->IsReadyToSendMessage())
 			{
-			aMenuPane->SetItemDimmed(ESend, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermSend, ETrue);
 			}
 		CRFtermOutput* output = static_cast<CRFtermOutput*>(
 				iAppView->ComponentControl(ERFtermAppViewOutput));
 		if (output->IsEmpty())
 			{
-			aMenuPane->SetItemDimmed(EClear, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermClear, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermSave, ETrue);
 			}
 		if (iBtClient->IsConnected() || iBtClient->IsConnecting())
 			{
-			aMenuPane->SetItemDimmed(EConnect, ETrue);
-			aMenuPane->SetItemDimmed(EStart, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermConnect, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermStart, ETrue);
 			if (iBtClient->Server())
 				{
-				aMenuPane->SetItemDimmed(EDisconnect, ETrue);
+				aMenuPane->SetItemDimmed(ERFtermDisconnect, ETrue);
 				}
 			else
 				{
-				aMenuPane->SetItemDimmed(EStop, ETrue);
+				aMenuPane->SetItemDimmed(ERFtermStop, ETrue);
 				}
 			}
 		else
 			{
-			aMenuPane->SetItemDimmed(EDisconnect, ETrue);
-			aMenuPane->SetItemDimmed(EStop, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermDisconnect, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermStop, ETrue);
 			}
 		}
 
@@ -229,7 +230,7 @@ void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 		{
 		if (iAppView->iMessageHistoryArray->Count() == 0)
 			{
-			aMenuPane->SetItemDimmed(EHistory, ETrue);
+			aMenuPane->SetItemDimmed(ERFtermHistory, ETrue);
 			}
 		}
 	}
@@ -263,7 +264,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EConnect:
+		case ERFtermConnect:
 			{
 			if (!iBtAvailable)
 				{
@@ -276,7 +277,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EDisconnect:
+		case ERFtermDisconnect:
 			{
 			if (iBtClient->IsConnected())
 				{
@@ -285,7 +286,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EStart:
+		case ERFtermStart:
 			{
 			if (!iBtAvailable)
 				{
@@ -298,7 +299,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EStop:
+		case ERFtermStop:
 			{
 			if (!iBtAvailable)
 				{
@@ -311,12 +312,12 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case ESend:
+		case ERFtermSend:
 			{
 			break;
 			}
 
-		case EMessage:
+		case ERFtermMessage:
 			{
 			if(iBtClient->IsConnected())
 				{
@@ -335,7 +336,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EHistory:
+		case ERFtermHistory:
 			{
 			if(iBtClient->IsConnected())
 				{
@@ -354,7 +355,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case ECtrlChar:
+		case ERFtermCtrlChar:
 			{
 			if(iBtClient->IsConnected())
 				{
@@ -367,7 +368,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EClear:
+		case ERFtermClear:
 			{
 			CRFtermOutput* output = static_cast<CRFtermOutput*>(
 					iAppView->ComponentControl(ERFtermAppViewOutput));
@@ -375,7 +376,15 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case ESettings:
+		case ERFtermSave:
+			{
+			CRFtermOutput* output = static_cast<CRFtermOutput*>(
+					iAppView->ComponentControl(ERFtermAppViewOutput));
+			output->SaveOutputAsTextL();
+			break;
+			}
+
+		case ERFtermSettings:
 			{
 			iAppView->MakeNaviLabelVisible(EFalse);
 			CRFtermSettingsDialog::RunDlgLD(iSettings);
@@ -383,7 +392,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			break;
 			}
 
-		case EHelp:
+		case ERFtermHelp:
 			{
 			CArrayFix < TCoeHelpContext > *buf = CCoeAppUi::AppHelpContextL();
 			HlpLauncher::LaunchHelpApplicationL(iEikonEnv->WsSession(), buf);
