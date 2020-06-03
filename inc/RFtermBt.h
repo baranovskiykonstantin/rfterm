@@ -33,6 +33,7 @@
 * EGettingRegistryResponse extracting devices information from the view
 * EConnected connected to a service on a remote machine
 * ESendingMessage sending a message to the remote machine
+* ESendingFile sending content of a file to the remote machine
 * EWaitingForMessage wainting for message from remote machine
 * EConnecting connecting to remote machine
 * EDisconnecting disconnecting from remote machine
@@ -49,6 +50,7 @@ enum TRFtermState
 	EConnected,
 	EDisconnected,
 	ESendingMessage,
+	ESendingFile,
 	EWaitingForMessage,
 	EConnecting,
 	EDisconnecting
@@ -116,6 +118,14 @@ public: // New functions
 	void SendMessageL(TDesC& aText, const TBool aDoEcho=EFalse);
 
 	/**
+	* SendFileL()
+	* Sends a file to a service on a remote machine.
+	* @param aFileName name of the file to send
+	* @param aDoEcho to send content of file to observer as received data
+	*/
+	void SendFileL(const TDesC& aFileName, const TBool aDoEcho=EFalse);
+
+	/**
 	* StartL()
 	* Start server and waiting for connection.
 	*/
@@ -169,16 +179,10 @@ public: // New functions
 	TBool IsConnecting();
 
 	/**
-	* IsConnected()
-	* @return ETrue if the client is connected.
+	* IsReadyToSend()
+	* @return ETrue if the client can send a message or a file.
 	*/
-	TBool IsSendingMessage();
-
-	/**
-	* IsReadyToSendMessage()
-	* @return ETrue if the client can send a message.
-	*/
-	TBool IsReadyToSendMessage();
+	TBool IsReadyToSend();
 
 	/**
 	 * SetObserver()
@@ -304,6 +308,31 @@ private: // data
 	* Owned by CRFtermBt
 	*/
 	HBufC8* iMessage;
+
+	/**
+	 * iFileSession
+	 * file session for file reading
+	 */
+	RFs iFileSession;
+
+	/**
+	 * iFile
+	 * file to send
+	 */
+	RFile iFile;
+
+	/**
+	 * iFileIsOpenned
+	 * flag to know is iFile opened or not
+	 */
+	TBool iFileIsOpenned;
+
+	/**
+	 * iDoFileEcho
+	 * variable for storing aDoEcho setting of SendFile()
+	 * while sending the file chunks.
+	 */
+	TBool iDoFileEcho;
 
 	/**
 	* iSocketServer

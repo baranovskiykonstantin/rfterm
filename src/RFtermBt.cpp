@@ -53,7 +53,8 @@ CRFtermBt* CRFtermBt::NewLC()
 CRFtermBt::CRFtermBt() :
 	CActive(CActive::EPriorityStandard),
 	iState(EWaitingToGetDevice),
-	iServerMode(EFalse)
+	iServerMode(EFalse),
+	iFileIsOpenned(EFalse)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -74,6 +75,13 @@ CRFtermBt::~CRFtermBt()
 			}
 		}
 	Cancel();
+
+	if (iFileIsOpenned)
+		{
+		iFile.Close();
+		iFileSession.Close();
+		iFileIsOpenned = EFalse;
+		}
 
 	iSocket.Close();
 	iAcceptedSocket.Close();
@@ -253,6 +261,14 @@ void CRFtermBt::RunL()
 				SetState(EDisconnecting);
 				break;
 				
+			case ESendingFile:
+				textResource = StringLoader::LoadLC(R_ERR_FILE_SENDING_FAILED);
+				NotifyL(*textResource);
+				CleanupStack::PopAndDestroy(textResource);
+				DisconnectFromServerL();
+				SetState(EDisconnecting);
+				break;
+				
 			case EDisconnecting:
 				if (iStatus == KErrDisconnected)
 					{
@@ -391,6 +407,10 @@ void CRFtermBt::RunL()
 				RequestData();
 				break;
 				
+			case ESendingFile:
+				SendFileL(KNullDesC, iDoFileEcho);
+				break;
+				
 			case EDisconnecting:
 				textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
 				NotifyL(*textResource);
@@ -451,23 +471,26 @@ TInt CRFtermBt::State()
 	}
 
 // ----------------------------------------------------------------------------
-// CRFtermBt::IsReadyToSendMessage()
-// True if the client can send a message.
+// CRFtermBt::IsReadyToSend()
+// True if the client can send a message or a file.
 // ----------------------------------------------------------------------------
 //
-TBool CRFtermBt::IsReadyToSendMessage()
+TBool CRFtermBt::IsReadyToSend()
 	{
 	return (State() == EConnected);
 	}
 
 // ----------------------------------------------------------------------------
 // CRFtermBt::IsConnected()
-// True if the client can send a message.
+// ETrue if the client is fully connected to the server.
 // ----------------------------------------------------------------------------
 //
 TBool CRFtermBt::IsConnected()
 	{
-	return ((State() == EConnected )||(State() == ESendingMessage));
+	return ((State() == EConnected)
+		||(State() == ESendingMessage)
+		||(State() == ESendingFile)
+		);
 	}
 
 // ----------------------------------------------------------------------------
@@ -485,16 +508,6 @@ TBool CRFtermBt::IsConnecting()
 		|| 
 		(State() == EConnecting)
 		);
-	}
-
-// ----------------------------------------------------------------------------
-// CRFtermBt::IsSendingMessage()
-// True if the client is connected.
-// ----------------------------------------------------------------------------
-//
-TBool CRFtermBt::IsSendingMessage()
-	{
-	return (State() == ESendingMessage);
 	}
 
 // ----------------------------------------------------------------------------
@@ -549,6 +562,13 @@ void CRFtermBt::DisconnectL()
 //
 void CRFtermBt::DisconnectFromServerL()
 	{
+	if (iFileIsOpenned)
+		{
+		iFile.Close();
+		iFileSession.Close();
+		iFileIsOpenned = EFalse;
+		}
+
 	// Terminate all operations
 	iSocket.CancelAll();
 	Cancel();
@@ -596,7 +616,6 @@ void CRFtermBt::ConnectToServerL()
 	SetActive();
 	}
 
-
 // ----------------------------------------------------------------------------
 // CRFtermBt::SendMessageL()
 // Send a message to a service on a remote machine.
@@ -629,6 +648,77 @@ void CRFtermBt::SendMessageL(TDesC& aText, const TBool aDoEcho)
 	if (aDoEcho && iObserver)
 		{
 		iObserver->HandleBtDataL(aText);
+		}
+
+	if (iActiveSocket)
+		{
+		iActiveSocket->Write(*iMessage, iStatus);
+		}
+
+	SetActive();
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::SendFileL()
+// Send a file to a service on a remote machine.
+// The file is being sent by chunks of KRFtermTextBufLength size.
+// While sending the file name is not used (KNullDesC value is passed).
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::SendFileL(const TDesC& aFileName, const TBool aDoEcho)
+	{
+	if (State() != ESendingFile)
+		{
+		if (State() != EConnected)
+			{
+			User::Leave(KErrDisconnected);
+			}
+		
+		User::LeaveIfError(iFileSession.Connect());
+		TInt result = iFile.Open(iFileSession, aFileName, EFileRead);
+		if (result != KErrNone)
+			{
+			HBufC* errFileOpening = StringLoader::LoadLC(R_ERR_FILE_OPENING);
+			NotifyL(*errFileOpening);
+			iFileSession.Close();
+			return;
+			}
+		iFileIsOpenned = ETrue;
+		iDoFileEcho = aDoEcho;
+		SetState(ESendingFile);
+		}
+
+	// stop reading socket
+	if (iActiveSocket)
+		{
+		iActiveSocket->CancelRead();
+		}
+
+	if (IsActive())
+		{
+		Cancel();
+		}
+
+	delete iMessage;
+	iMessage = HBufC8::NewL(KRFtermTextBufLength);
+	TPtr8 messagePtr(iMessage->Des());
+
+	iFile.Read(messagePtr, KRFtermTextBufLength);
+	if (!iMessage->Length())
+		{
+		// Nothing to read from file
+		iFile.Close();
+		iFileSession.Close();
+		iFileIsOpenned = EFalse;
+		SetState(EConnected);
+		return;
+		}
+
+	if (aDoEcho && iObserver)
+		{
+		TBuf16<KRFtermTextBufLength> textBuf16;
+		textBuf16.Copy(*iMessage); // convert 8-bit to 16-bit data
+		iObserver->HandleBtDataL(textBuf16);
 		}
 
 	if (iActiveSocket)

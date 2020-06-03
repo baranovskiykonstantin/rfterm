@@ -22,9 +22,10 @@
 #define qtn_stop "Stop"
 
 #define qtn_send "Send"
-#define qtn_message "Message"
-#define qtn_history "Message from history"
-#define qtn_ctrl_char "Control character"
+#define qtn_send_message "Message"
+#define qtn_send_history "Message from history"
+#define qtn_send_ctrl_char "Control character"
+#define qtn_send_file "File"
 
 #define qtn_clear "Clear"
 
@@ -113,6 +114,7 @@
 #define qtn_err_connection_error "Connection error"
 #define qtn_err_lost_connection "Lost connection"
 #define qtn_err_message_failed "Message Failed"
+#define qtn_err_file_sending_failed "File sending Failed"
 #define qtn_err_failed_to_disconnect "Failed to disconnect"
 #define qtn_err_no_conn "No connection!"
 #define qtn_err_nrrc_error "NRRC error"
@@ -120,6 +122,7 @@
 #define qtn_err_cant_get_attribute "Can't get attribute "
 #define qtn_err_attr_req_com "AttrReqCom"
 #define qtn_err_registry "Unknown device"
+#define qtn_err_file_opening "File opening error"
 //#define qtn_err_
 
 // End of File

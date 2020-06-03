@@ -14,6 +14,8 @@
 #include <f32file.h>
 #include <s32file.h>
 #include <hlplch.h>
+#include <caknmemoryselectiondialogmultidrive.h>
+#include <caknfileselectiondialog.h>
 
 #include <RFterm_0xae7f53fa.rsg>
 
@@ -195,7 +197,7 @@ void CRFtermAppUi::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 	{
 	if (aResourceId == R_MENU)
 		{
-		if (!iBtClient->IsReadyToSendMessage())
+		if (!iBtClient->IsReadyToSend())
 			{
 			aMenuPane->SetItemDimmed(ERFtermSend, ETrue);
 			}
@@ -319,7 +321,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ERFtermMessage:
 			{
-			if(iBtClient->IsConnected())
+			if(iBtClient->IsReadyToSend())
 				{
 				TBuf<KRFtermTextBufLength> text;
 				if (iAppView->ShowTextQueryL(KNullDesC, text))
@@ -338,7 +340,7 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ERFtermHistory:
 			{
-			if(iBtClient->IsConnected())
+			if(iBtClient->IsReadyToSend())
 				{
 				TBuf<KRFtermTextBufLength> text;
 				if (iAppView->ShowHistoryQueryL(text))
@@ -357,13 +359,39 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 
 		case ERFtermCtrlChar:
 			{
-			if(iBtClient->IsConnected())
+			if(iBtClient->IsReadyToSend())
 				{
 				TBuf<KRFtermTextBufLength> ctrlChar;
 				if (iAppView->ShowCtrlCharQueryL(ctrlChar))
 					{
 					iBtClient->SendMessageL(ctrlChar);
 					}
+				}
+			break;
+			}
+
+		case ERFtermFile:
+			{
+			if(iBtClient->IsReadyToSend())
+				{
+				TDriveNumber drive = EDriveC;
+				TFileName fileName;
+
+				CAknMemorySelectionDialogMultiDrive* dlgDrive = CAknMemorySelectionDialogMultiDrive::NewL(ECFDDialogTypeSelect, ETrue);
+				CleanupStack::PushL(dlgDrive);
+				TBool result = dlgDrive->ExecuteL(drive, &fileName, NULL);
+				if (result)
+					{
+					CAknFileSelectionDialog* dlgFile = CAknFileSelectionDialog::NewL(ECFDDialogTypeSelect);
+					CleanupStack::PushL(dlgFile);
+					result = dlgFile->ExecuteL(fileName);
+					if(result)
+						{
+						iBtClient->SendFileL(fileName, iSettings->IsEchoEnabled());
+						}
+					CleanupStack::PopAndDestroy(dlgFile);
+					}
+				CleanupStack::PopAndDestroy(dlgDrive);
 				}
 			break;
 			}
