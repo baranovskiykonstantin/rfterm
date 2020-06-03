@@ -19,6 +19,7 @@
 #include <caknmemoryselectiondialogmultidrive.h>
 #include <caknfileselectiondialog.h>
 #include <caknfilenamepromptdialog.h> 
+#include <utf.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFterm.pan"
 #include "RFtermAppUi.h"
@@ -300,8 +301,65 @@ void CRFtermOutput::SaveOutputAsTextL()
 			result = dlgFileName->RunDlgLD(fileName, path);
 			if(result)
 				{
+				RFs fileSession;
+				User::LeaveIfError(fileSession.Connect());
+				CleanupClosePushL(fileSession);
+				RFile outputFile;
 				path.Append(fileName);
-				iText->ExportAsTextL(path, CPlainText::EOrganiseByLine, KMaxTInt);
+				result = outputFile.Replace(fileSession, path, EFileWrite);
+				if (result != KErrNone)
+					{
+					HBufC* errFileOpening = StringLoader::LoadLC(R_ERR_FILE_OPENING);
+					AppendMessageL(*errFileOpening);
+					CleanupStack::PopAndDestroy(errFileOpening);
+					}
+				else
+					{
+					CleanupClosePushL(outputFile);
+					TPtrC outputText(iText->Read(0));
+					TBuf8 <2> outputChar;
+					for (TInt i = 0; i < outputText.Length(); i++)
+						{
+						TChar ch = outputText[i];
+						outputChar.Zero();
+						if ((TUint)ch == CEditableText::EParagraphDelimiter)
+							{
+							// skip paragraph delimiter at the end
+							continue;
+							}
+						else if ((TUint)ch == CEditableText::ELineBreak)
+							{
+							_LIT8(KLineBreak8, "\r\n");
+							outputFile.Write(KLineBreak8);
+							}
+						else if ((TUint)ch < 0x80)
+							{
+							// ASCII
+							outputChar.Append(ch);
+							outputFile.Write(outputChar);
+							}
+						else
+							{
+							TInt pos = iCodePage.Locate(ch);
+							if (pos != KErrNotFound)
+								{
+								// Extended ASCII (code page)
+								TChar chNormal(0x80 + pos);
+								outputChar.Append(chNormal);
+								outputFile.Write(outputChar);
+								}
+							else
+								{
+								// Unicode characters are converted to UTF-8
+								CnvUtfConverter::ConvertFromUnicodeToUtf8(outputChar, outputText.Mid(i, 1));
+								outputFile.Write(outputChar);
+								}
+							}
+						
+						}
+					CleanupStack::PopAndDestroy(&outputFile);
+					}
+				CleanupStack::PopAndDestroy(&fileSession);
 				}
 			}
 		CleanupStack::PopAndDestroy(dlgFolder);
