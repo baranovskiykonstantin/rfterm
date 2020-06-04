@@ -41,9 +41,10 @@ CLEANLIB : do_nothing
 
 RESOURCE : $(ICONTARGETFILENAME)
 
+# Animated flag ( /A ) must be set otherwise the icon will be shown a bit smaller!
 $(ICONTARGETFILENAME) : $(ICONDIR)\qgn_menu_RFterm.svg
 	mifconv $(ICONTARGETFILENAME) \
-		/c32 $(ICONDIR)\qgn_menu_RFterm.svg
+		/A /c32 $(ICONDIR)\qgn_menu_RFterm.svg
 
 FREEZE : do_nothing
 
