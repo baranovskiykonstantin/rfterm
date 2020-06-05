@@ -711,6 +711,7 @@ void CRFtermBt::SendFileL(const TDesC& aFileName, const TBool aDoEcho)
 		iFileSession.Close();
 		iFileIsOpenned = EFalse;
 		SetState(EConnected);
+		RequestData();
 		return;
 		}
 
