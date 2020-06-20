@@ -408,7 +408,10 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 			{
 			CRFtermOutput* output = static_cast<CRFtermOutput*>(
 					iAppView->ComponentControl(ERFtermAppViewOutput));
-			output->SaveOutputAsTextL();
+			if (output->SaveOutputAsTextL())
+				{
+				ShowOutputIsSavedNoteL();
+				}
 			break;
 			}
 
@@ -456,6 +459,27 @@ CArrayFix<TCoeHelpContext>* CRFtermAppUi::HelpContextL() const
 #else
 	return NULL;
 #endif
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppUi::ShowOutputIsSavedNoteL()
+// Show note if output has been saved successfully
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppUi::ShowOutputIsSavedNoteL()
+	{
+	// Load a string from the resource file and display it
+	HBufC* textResource = StringLoader::LoadLC(R_STR_OUTPUT_IS_SAVED);
+	CAknConfirmationNote* confirmNote;
+
+	confirmNote = new (ELeave) CAknConfirmationNote;
+
+	// Show the information Note with
+	// textResource loaded with StringLoader.
+	confirmNote->ExecuteLD(*textResource);
+
+	// Pop HBuf from CleanUpStack and Destroy it.
+	CleanupStack::PopAndDestroy(textResource);
 	}
 
 // -----------------------------------------------------------------------------

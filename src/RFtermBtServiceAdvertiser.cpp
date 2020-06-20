@@ -81,8 +81,8 @@ CRFtermBtServiceAdvertiser::~CRFtermBtServiceAdvertiser()
 //
 void CRFtermBtServiceAdvertiser::ConstructL()
 	{
-	iServiceName = StringLoader::LoadL (R_RFTERM_SERVICE_NAME);
-	iServiceDescription = StringLoader::LoadL (R_RFTERM_SERVICE_DESCRIPTION);
+	iServiceName = StringLoader::LoadL(R_RFTERM_SERVICE_NAME);
+	iServiceDescription = StringLoader::LoadL(R_RFTERM_SERVICE_DESCRIPTION);
 	}
 
 // ----------------------------------------------------------------------------

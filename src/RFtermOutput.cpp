@@ -278,8 +278,9 @@ void CRFtermOutput::GetCurrentCodePage(TPtrC& aCodePage)
 	aCodePage.Set(iCodePage);
 	}
 
-void CRFtermOutput::SaveOutputAsTextL()
+TBool CRFtermOutput::SaveOutputAsTextL()
 	{
+	TBool isSaved = EFalse;
 	_LIT(KDefaultOutputPath, "C:\\data\\");
 	_LIT(KDefaultOutputFileName, "RFtermOutput.txt");
 
@@ -318,6 +319,7 @@ void CRFtermOutput::SaveOutputAsTextL()
 					CleanupClosePushL(outputFile);
 					TPtrC outputText(iText->Read(0));
 					TBuf8 <2> outputChar;
+					_LIT8(KLineBreak8, "\r\n");
 					for (TInt i = 0; i < outputText.Length(); i++)
 						{
 						TChar ch = outputText[i];
@@ -329,7 +331,6 @@ void CRFtermOutput::SaveOutputAsTextL()
 							}
 						else if ((TUint)ch == CEditableText::ELineBreak)
 							{
-							_LIT8(KLineBreak8, "\r\n");
 							outputFile.Write(KLineBreak8);
 							}
 						else if ((TUint)ch < 0x80)
@@ -355,8 +356,8 @@ void CRFtermOutput::SaveOutputAsTextL()
 								outputFile.Write(outputChar);
 								}
 							}
-						
 						}
+					isSaved = ETrue;
 					CleanupStack::PopAndDestroy(&outputFile);
 					}
 				CleanupStack::PopAndDestroy(&fileSession);
@@ -365,6 +366,8 @@ void CRFtermOutput::SaveOutputAsTextL()
 		CleanupStack::PopAndDestroy(dlgFolder);
 		}
 	CleanupStack::PopAndDestroy(dlgDrive);
+
+	return isSaved;
 	}
 
 void CRFtermOutput::AppendNewLineL()

@@ -76,12 +76,6 @@ private: // Functions from base classes
 	 */
 	CArrayFix<TCoeHelpContext>* HelpContextL() const;
 
-	/**
-	* ShowBTNotAvailableNoteL.
-	* Show note if BT is not available
-	*/
-	void ShowBTNotAvailableNoteL();
-
 private: // From MEikMenuObserver
 
 	void DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane);
@@ -92,6 +86,18 @@ private: // New functions
 	void ExternalizeSettingsL() const;
 
 	void HandleSettingsChange();
+
+	/**
+	* ShowBTNotAvailableNoteL.
+	* Show note if BT is not available
+	*/
+	void ShowBTNotAvailableNoteL();
+
+	/**
+	* ShowOutputIsSavedNoteL.
+	* Show note if output has been saved successfully
+	*/
+	void ShowOutputIsSavedNoteL();
 
 private: // Data
 

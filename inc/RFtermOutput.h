@@ -44,7 +44,7 @@ public: // New functions
 	// so custom method is used to properly change the rect of the control.
 	void UpdateRect(const TRect& aNewRect);
 	void GetCurrentCodePage(TPtrC& aCodePage);
-	void SaveOutputAsTextL();
+	TBool SaveOutputAsTextL();
 
 public: // CEikEdwin
 

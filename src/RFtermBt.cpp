@@ -420,7 +420,6 @@ void CRFtermBt::RunL()
 				break;
 			
 			case EWaitingToGetDevice:
-				
 				break;
 				
 			default:
