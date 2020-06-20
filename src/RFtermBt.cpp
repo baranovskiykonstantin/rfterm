@@ -711,6 +711,10 @@ void CRFtermBt::SendFileL(const TDesC& aFileName, const TBool aDoEcho)
 		iFileIsOpenned = EFalse;
 		SetState(EConnected);
 		RequestData();
+		if (iObserver)
+			{
+			iObserver->HandleBtFileSendingFinishL();
+			}
 		return;
 		}
 

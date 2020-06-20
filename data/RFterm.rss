@@ -191,6 +191,7 @@ RESOURCE TBUF r_str_waiting_conn { buf=qtn_str_waiting_conn; }
 RESOURCE TBUF r_str_port_number { buf=qtn_str_port_number; }
 RESOURCE TBUF r_str_bell { buf=qtn_str_bell; }
 RESOURCE TBUF r_str_output_is_saved { buf=qtn_str_output_is_saved; }
+RESOURCE TBUF r_str_file_is_sent { buf=qtn_str_file_is_sent; }
 //RESOURCE TBUF r_str_ { buf=qtn_str_; }
 
 

@@ -106,7 +106,8 @@
 #define qtn_str_waiting_conn "Waiting connection"
 #define qtn_str_port_number "Channel "
 #define qtn_str_bell "RFterm: BELL"
-#define qtn_str_output_is_saved "Output has been saved successfully."
+#define qtn_str_output_is_saved "Output has been saved."
+#define qtn_str_file_is_sent "File has been sent."
 //#define qtn_str_
 
 #define qtn_err_no_bt "Bluetooth unavailable."

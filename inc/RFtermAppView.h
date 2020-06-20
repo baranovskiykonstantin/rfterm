@@ -180,6 +180,7 @@ private: // From MRFtermBtObserver
 	void HandleBtDeviceChangeL(CBTDevice* aRemoteDevice);
 	void HandleBtNotifyL(const TDesC& aMessage);
 	void HandleBtDataL(const TDesC& aData);
+	void HandleBtFileSendingFinishL();
 
 private: // Data
 

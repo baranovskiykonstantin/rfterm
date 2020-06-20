@@ -15,6 +15,7 @@
 #include <aknlistquerydialog.h>
 #include <eikspane.h>
 #include <aknnavilabel.h>
+#include <aknnotewrappers.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermAppUi.h"
 #include "RFtermAppView.h"
@@ -638,6 +639,27 @@ void CRFtermAppView::HandleBtDataL(const TDesC& aData)
 		{
 		iRFtermOutput->AppendTextL(aData);
 		}
+	}
+
+// -----------------------------------------------------------------------------
+// CRFtermAppView::HandleBtFileSendingFinishL()
+// Show note if file has been successfully sent.
+// -----------------------------------------------------------------------------
+//
+void CRFtermAppView::HandleBtFileSendingFinishL()
+	{
+	// Load a string from the resource file and display it
+	HBufC* textResource = StringLoader::LoadLC(R_STR_FILE_IS_SENT);
+	CAknConfirmationNote* confirmNote;
+
+	confirmNote = new (ELeave) CAknConfirmationNote;
+
+	// Show the information Note with
+	// textResource loaded with StringLoader.
+	confirmNote->ExecuteLD(*textResource);
+
+	// Pop HBuf from CleanUpStack and Destroy it.
+	CleanupStack::PopAndDestroy(textResource);
 	}
 
 // -----------------------------------------------------------------------------

@@ -52,6 +52,15 @@ public:
 	 */
 	virtual void HandleBtDataL(const TDesC& aData) = 0;
 
+	/**
+	 * HandleBtFileSendingFinishL()
+	 * File has been successfully sent.
+	 * 
+	 * Derived classes provide the implementation.
+	 * 
+	 */
+	virtual void HandleBtFileSendingFinishL() = 0;
+
 	};
 
 #endif /* RFTERMBTOBSERVER_H */
