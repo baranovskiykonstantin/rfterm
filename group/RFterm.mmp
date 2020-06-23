@@ -28,6 +28,7 @@ SOURCE			RFtermTextQueryDialog.cpp
 SOURCE			RFtermSettings.cpp
 SOURCE			RFtermSettingsDialog.cpp
 SOURCE			RFtermScrollBars.cpp
+SOURCE			RFtermBatteryStatus.cpp
 
 SOURCEPATH		..\data
 

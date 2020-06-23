@@ -54,7 +54,8 @@ CRFtermBt::CRFtermBt() :
 	CActive(CActive::EPriorityStandard),
 	iState(EWaitingToGetDevice),
 	iServerMode(EFalse),
-	iFileIsOpenned(EFalse)
+	iFileIsOpenned(EFalse),
+	iBatteryIsOK(EFalse)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -76,12 +77,17 @@ CRFtermBt::~CRFtermBt()
 		}
 	Cancel();
 
+	delete iBatteryStatus;
+	iBatteryStatus = NULL;
+
 	if (iFileIsOpenned)
 		{
 		iFile.Close();
 		iFileSession.Close();
 		iFileIsOpenned = EFalse;
 		}
+
+	iBTPhysicalLinkAdapter.Close();
 
 	iSocket.Close();
 	iAcceptedSocket.Close();
@@ -111,6 +117,7 @@ void CRFtermBt::ConstructL()
 	iServiceSearcher->SetObserver(iObserver);
 	iAdvertiser = CRFtermBtServiceAdvertiser::NewL();
 	User::LeaveIfError(iSocketServer.Connect());
+	iBatteryStatus = CRFtermBatteryStatus::NewL(this);
 	}
 
 // ----------------------------------------------------------------------------
@@ -161,15 +168,10 @@ void CRFtermBt::RunL()
 		CleanupStack::PopAndDestroy(textResource);
 		if (State() != EDisconnected)
 			{
+			NotifyDeviceIsDisconnectedL();
+			
 			iSocket.CancelAll();
 			iSocket.Close();
-			
-			delete iRemoteDevice;
-			iRemoteDevice = NULL;
-			if (iObserver)
-				{
-				iObserver->HandleBtDeviceChangeL(iRemoteDevice);
-				}
 			}
 		SetState(EWaitingToGetDevice);
 		return;
@@ -284,6 +286,7 @@ void CRFtermBt::RunL()
 				iAdvertiser->UpdateAvailabilityL(EFalse);
 				
 				SetState(EConnected);
+				PreventLowPowerModes();
 				NotifyDeviceIsConnectedL();
 				RequestData();
 				break;
@@ -302,6 +305,7 @@ void CRFtermBt::RunL()
 				CleanupStack::PopAndDestroy(textResource);
 
 				SetState(EConnected);
+				PreventLowPowerModes();
 				NotifyDeviceIsConnectedL();
 				RequestData();
 				break;
@@ -484,16 +488,11 @@ void CRFtermBt::DisconnectFromServerL()
 		iFileIsOpenned = EFalse;
 		}
 
+	NotifyDeviceIsDisconnectedL();
+
 	// Terminate all operations
 	iSocket.CancelAll();
 	Cancel();
-
-	delete iRemoteDevice;
-	iRemoteDevice = NULL;
-	if (iObserver)
-		{
-		iObserver->HandleBtDeviceChangeL(iRemoteDevice);
-		}
 
 	HBufC* strReleasingConn = StringLoader::LoadLC(R_STR_RELEASING_CONN);
 	NotifyL(*strReleasingConn);
@@ -778,15 +777,11 @@ void CRFtermBt::StopL()
 				iActiveSocket->CancelRead();
 				}
 			}
+		
+		NotifyDeviceIsDisconnectedL();
+		
 		iAcceptedSocket.Close();
 		iSocket.Close();
-
-		delete iRemoteDevice;
-		iRemoteDevice = NULL;
-		if (iObserver)
-			{
-			iObserver->HandleBtDeviceChangeL(iRemoteDevice);
-			}
 		}
 
 	SetState(EWaitingToGetDevice);
@@ -862,6 +857,77 @@ void CRFtermBt::NotifyDeviceIsConnectedL()
 		CleanupStack::PopAndDestroy(nameBuf);
 
 		iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+		}
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::NotifyDeviceIsDisconnectedL()
+// Send to observer BT device disconnect notify.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::NotifyDeviceIsDisconnectedL()
+	{
+	delete iRemoteDevice;
+	iRemoteDevice = NULL;
+	if (iObserver)
+		{
+		iObserver->HandleBtDeviceChangeL(iRemoteDevice);
+		}
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::AllowLowPowerModes()
+// Enable low power modes to save the battery.
+// ----------------------------------------------------------------------------
+void CRFtermBt::AllowLowPowerModes()
+	{
+	TInt error = iBTPhysicalLinkAdapter.Open(iSocketServer, *iActiveSocket);
+	if (error == KErrNone)
+		{
+		iBTPhysicalLinkAdapter.AllowLowPowerModes(EAnyLowPowerMode);
+		iBTPhysicalLinkAdapter.Close();
+		}
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::PreventLowPowerModes()
+// Disable low power modes to reach max bandwidth.
+// ----------------------------------------------------------------------------
+void CRFtermBt::PreventLowPowerModes()
+	{
+	if (iBatteryIsOK)
+		{
+		TInt error = iBTPhysicalLinkAdapter.Open(iSocketServer, *iActiveSocket);
+		if (error == KErrNone)
+			{
+			iBTPhysicalLinkAdapter.PreventLowPowerModes(EAnyLowPowerMode);
+			iBTPhysicalLinkAdapter.Close();
+			}
+		}
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::HandleBatteryStatusChangeL()
+// Battery status change notify.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::HandleBatteryStatusChangeL(EPSHWRMBatteryStatus aBatteryStatus)
+	{
+	if (aBatteryStatus == EBatteryStatusOk)
+		{
+		iBatteryIsOK = ETrue;
+		if (IsConnected())
+			{
+			PreventLowPowerModes();
+			}
+		}
+	else
+		{
+		iBatteryIsOK = EFalse;
+		if (IsConnected())
+			{
+			AllowLowPowerModes();
+			}
 		}
 	}
 

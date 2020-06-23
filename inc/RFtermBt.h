@@ -19,6 +19,7 @@
 #include "RFtermBtServiceAdvertiser.h"
 #include "RFtermBtObserver.h"
 #include "RFtermConstants.h"
+#include "RFtermBatteryStatus.h"
 
 /**
 * TRFtermState
@@ -55,7 +56,9 @@ enum TRFtermState
 * CRFtermBt
 * Connects and sends messages to a remote machine using bluetooth
 */
-class CRFtermBt : public CActive
+class CRFtermBt :
+	public CActive,
+	public MRFtermBatteryStatusObserver
 	{
 
 public: // Constructors and destructor
@@ -207,6 +210,14 @@ private: // Functions from base classes
 	*/
 	void ConstructL();
 
+private: // From MRFtermBatteryStatusObserver
+
+	/**
+	 * HandleBatteryStatusChangeL()
+	 * Battery status change notify.
+	 */
+	void HandleBatteryStatusChangeL(EPSHWRMBatteryStatus aBatteryStatus);
+
 private: // New private functions
 
 	/**
@@ -271,7 +282,25 @@ private: // New private functions
 	 */
 	void NotifyDeviceIsConnectedL();
 
-private: // data
+	/**
+	 * NotifyDeviceIsDisconnectedL()
+	 * Send to observer BT device disconnect notify.
+	 */
+	void NotifyDeviceIsDisconnectedL();
+
+	/**
+	 * AllowLowPowerModes()
+	 * Enable low power modes to save the battery.
+	 */
+	void AllowLowPowerModes();
+
+	/**
+	 * PreventLowPowerModes()
+	 * Disable low power modes to reach max bandwidth.
+	 */
+	void PreventLowPowerModes();
+
+private: // Data
 
 	/**
 	* iState the current state of the client
@@ -379,6 +408,25 @@ private: // data
 	* iObserver the handler of log messages
 	*/
 	MRFtermBtObserver* iObserver;
+
+	/**
+	 * iBatteryStatus
+	 * the battery status checker
+	 */
+	CRFtermBatteryStatus* iBatteryStatus;
+
+	/**
+	 * iBatteryIsOK
+	 * if battery is OK the low power modes of BT are not used
+	 * to reach max bandwidth.
+	 */
+	TBool iBatteryIsOK;
+
+	/**
+	 * iBTPhysicalLinkAdapter
+	 * enable/disable low power modes.
+	 */
+	RBTPhysicalLinkAdapter iBTPhysicalLinkAdapter;
 
 	};
 
