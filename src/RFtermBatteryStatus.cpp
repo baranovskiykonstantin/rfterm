@@ -18,8 +18,9 @@
 // ----------------------------------------------------------------------------
 //
 CRFtermBatteryStatus::CRFtermBatteryStatus(MRFtermBatteryStatusObserver* aObserver) :
-	CActive(CActive::EPriorityStandard),
-	iBatteryStatusObserver(aObserver)
+	iObserver(aObserver),
+	iBatteryLevelValue(EBatteryLevelUnknown),
+	iChargingStatusValue(EChargingStatusNotConnected)
 	{
 	}
 
@@ -44,10 +45,8 @@ CRFtermBatteryStatus* CRFtermBatteryStatus::NewL(MRFtermBatteryStatusObserver* a
 //
 void CRFtermBatteryStatus::ConstructL()
 	{
-	User::LeaveIfError(iProperty.Attach(KPSUidHWRMPowerState, KHWRMBatteryStatus));
-	CActiveScheduler::Add(this);
-	// initial subscription and process current property value
-	RunL();
+	iBatteryLevel = CBatteryLevel::NewL(this);
+	iChargingStatus = CChargingStatus::NewL(this);
 	}
 
 // ----------------------------------------------------------------------------
@@ -57,43 +56,56 @@ void CRFtermBatteryStatus::ConstructL()
 //
 CRFtermBatteryStatus::~CRFtermBatteryStatus()
 	{
-	Cancel();
-	iProperty.Close();
+	delete iChargingStatus;
+	iChargingStatus = NULL;
+	
+	delete iBatteryLevel;
+	iBatteryLevel = NULL;
 	}
 
 // ----------------------------------------------------------------------------
-// CRFtermBatteryStatus::DoCancel()
-// Cancel any outstanding requests.
+// CRFtermBatteryStatus::IsOK()
+// Get status of the battery.
 // ----------------------------------------------------------------------------
 //
-void CRFtermBatteryStatus::DoCancel()
+TBool CRFtermBatteryStatus::IsOK()
 	{
-	iProperty.Cancel();
-	}
-
-// ----------------------------------------------------------------------------
-// CRFtermBt::RunL()
-// Respond to an event.
-// ----------------------------------------------------------------------------
-//
-void CRFtermBatteryStatus::RunL()
-	{
-	//resubscribe before processing new value to prevent missing updates
-	iProperty.Subscribe(iStatus);
-	SetActive();
-
-	if (iBatteryStatusObserver)
+	if (iBatteryLevelValue > EBatteryLevelLevel2 || iChargingStatusValue >= EChargingStatusCharging)
 		{
-		TInt keyValue;
-		if (iProperty.Get(keyValue) == KErrNotFound )
-			{
-			// property deleted
-			iBatteryStatusObserver->HandleBatteryStatusChangeL(EBatteryStatusUnknown);
-			}
-		else
-			{
-			iBatteryStatusObserver->HandleBatteryStatusChangeL((EPSHWRMBatteryStatus)keyValue);
-			}
+		return ETrue;
+		}
+	return EFalse;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBatteryStatus::HandleBatteryLevelChangeL()
+// Battery level change notify.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBatteryStatus::HandleBatteryLevelChangeL(EPSHWRMBatteryLevel aBatteryLevel)
+	{
+	TBool prevStatus = IsOK();
+	iBatteryLevelValue = aBatteryLevel;
+	TBool newStatus = IsOK();
+	if (iObserver && prevStatus != newStatus)
+		{
+		iObserver->HandleBatteryStatusChangeL();
+		}
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBatteryStatus::HandleChargingStatusChangeL()
+// Charging status change notify.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBatteryStatus::HandleChargingStatusChangeL(EPSHWRMChargingStatus aChargingStatus)
+	{
+	TBool prevStatus = IsOK();
+	iChargingStatusValue = aChargingStatus;
+	TBool newStatus = IsOK();
+	if (iObserver && prevStatus != newStatus)
+		{
+		iObserver->HandleBatteryStatusChangeL();
 		}
 	}
 

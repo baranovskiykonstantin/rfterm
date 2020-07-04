@@ -54,8 +54,7 @@ CRFtermBt::CRFtermBt() :
 	CActive(CActive::EPriorityStandard),
 	iState(EWaitingToGetDevice),
 	iServerMode(EFalse),
-	iFileIsOpenned(EFalse),
-	iBatteryIsOK(EFalse)
+	iFileIsOpenned(EFalse)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -895,7 +894,7 @@ void CRFtermBt::AllowLowPowerModes()
 // ----------------------------------------------------------------------------
 void CRFtermBt::PreventLowPowerModes()
 	{
-	if (iBatteryIsOK)
+	if (iBatteryStatus->IsOK())
 		{
 		TInt error = iBTPhysicalLinkAdapter.Open(iSocketServer, *iActiveSocket);
 		if (error == KErrNone)
@@ -911,20 +910,16 @@ void CRFtermBt::PreventLowPowerModes()
 // Battery status change notify.
 // ----------------------------------------------------------------------------
 //
-void CRFtermBt::HandleBatteryStatusChangeL(EPSHWRMBatteryStatus aBatteryStatus)
+void CRFtermBt::HandleBatteryStatusChangeL()
 	{
-	if (aBatteryStatus == EBatteryStatusOk)
+	TBool batteryStatus = iBatteryStatus->IsOK();
+	if (IsConnected())
 		{
-		iBatteryIsOK = ETrue;
-		if (IsConnected())
+		if (iBatteryStatus->IsOK())
 			{
 			PreventLowPowerModes();
 			}
-		}
-	else
-		{
-		iBatteryIsOK = EFalse;
-		if (IsConnected())
+		else
 			{
 			AllowLowPowerModes();
 			}

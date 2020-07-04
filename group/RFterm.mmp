@@ -29,6 +29,8 @@ SOURCE			RFtermSettings.cpp
 SOURCE			RFtermSettingsDialog.cpp
 SOURCE			RFtermScrollBars.cpp
 SOURCE			RFtermBatteryStatus.cpp
+SOURCE			BatteryLevel.cpp
+SOURCE			ChargingStatus.cpp
 
 SOURCEPATH		..\data
 

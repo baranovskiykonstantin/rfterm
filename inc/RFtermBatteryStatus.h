@@ -10,9 +10,8 @@
 #ifndef __RFTERMBATTERYSTATUS_H__
 #define __RFTERMBATTERYSTATUS_H__
 
-#include <e32base.h>
-#include <HWRMPowerStateSDKPSKeys.h>
-#include <e32property.h>
+#include <BatteryLevel.h>
+#include <ChargingStatus.h>
 
 /**
  * MRFtermBatteryStatusObserver mixin.
@@ -28,47 +27,68 @@ public:
 	 * Battery status change notify.
 	 * 
 	 * Derived classes provide the implementation.
-	 * 
-	 * @param aBatteryStatus Contains the new status of the battery.
 	 */
-	virtual void HandleBatteryStatusChangeL(EPSHWRMBatteryStatus aBatteryStatus) = 0;
+	virtual void HandleBatteryStatusChangeL() = 0;
 
 	};
 
 /**
 * CRFtermBatteryStatus
-* Checks the battery status and sends the notify of battery status change
+* Checks the battery status and sends the notification of battery status change
 * to MRFtermBatteryStatusObserver.
 */
-class CRFtermBatteryStatus : public CActive
+class CRFtermBatteryStatus :
+	public CBase,
+	private MBatteryLevelObserver,
+	private MChargingStatusObserver
 	{
 
 public: // Constructors and destructor
+
 	static CRFtermBatteryStatus* NewL(MRFtermBatteryStatusObserver* aObserver);
 	virtual ~CRFtermBatteryStatus();
 
 private: // Constructors
+
 	CRFtermBatteryStatus(MRFtermBatteryStatusObserver* aObserver);
 	void ConstructL();
 
-private: // From CActive
-	void RunL();
-	void DoCancel();
+private: // From MBatteryLevelObserver
+
+	void HandleBatteryLevelChangeL(EPSHWRMBatteryLevel aBatteryLevel);
+
+private: // From MChargingStatusObserver
+
+	void HandleChargingStatusChangeL(EPSHWRMChargingStatus aChargingStatus);
+
+public: // New public functions
+
+	/**
+	 * IsOK()
+	 * Get status of the battery.
+	 */
+	TBool IsOK();
 
 private: // Data
 
 	/**
-	 * iProperty
-	 * Reflects status of the battery.
+	 * iBatteryLevel
 	 */
-	RProperty iProperty;
+	CBatteryLevel* iBatteryLevel;
+	EPSHWRMBatteryLevel iBatteryLevelValue;
+
+	/**
+	 * iChargingStatus
+	 */
+	CChargingStatus* iChargingStatus;
+	EPSHWRMChargingStatus iChargingStatusValue;
 
 	/**
 	 * iObserver
 	 * Handles the battery status change.
 	 * Non-owning pointer.
 	 */
-	MRFtermBatteryStatusObserver* iBatteryStatusObserver;
+	MRFtermBatteryStatusObserver* iObserver;
 
 	};
 

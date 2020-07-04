@@ -214,9 +214,9 @@ private: // From MRFtermBatteryStatusObserver
 
 	/**
 	 * HandleBatteryStatusChangeL()
-	 * Battery status change notify.
+	 * Battery status change notification.
 	 */
-	void HandleBatteryStatusChangeL(EPSHWRMBatteryStatus aBatteryStatus);
+	void HandleBatteryStatusChangeL();
 
 private: // New private functions
 
@@ -414,13 +414,6 @@ private: // Data
 	 * the battery status checker
 	 */
 	CRFtermBatteryStatus* iBatteryStatus;
-
-	/**
-	 * iBatteryIsOK
-	 * if battery is OK the low power modes of BT are not used
-	 * to reach max bandwidth.
-	 */
-	TBool iBatteryIsOK;
 
 	/**
 	 * iBTPhysicalLinkAdapter
