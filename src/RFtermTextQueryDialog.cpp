@@ -29,3 +29,4 @@ void CRFtermTextQueryDialog::UpdateLeftSoftKeyL()
 	// Do not hide OK button. Allow empty input.
 	}
 
+// End of File

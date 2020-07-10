@@ -30,6 +30,7 @@
 #include "RFtermBt.h"
 #include "RFtermConstants.h"
 #include "RFtermSettingsDialog.h"
+#include "RFtermSignalQueryDialog.h"
 
 // ============================ MEMBER FUNCTIONS ===============================
 
@@ -366,6 +367,15 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 					{
 					iBtClient->SendMessageL(ctrlChar);
 					}
+				}
+			break;
+			}
+
+		case ERFtermSignal:
+			{
+			if(iBtClient->IsReadyToSend())
+				{
+				CRFtermSignalQueryDialog::RunDlgLD(iBtClient);
 				}
 			break;
 			}

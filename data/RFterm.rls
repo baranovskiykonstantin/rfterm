@@ -25,6 +25,7 @@
 #define qtn_send_message "Message"
 #define qtn_send_history "Message from history"
 #define qtn_send_ctrl_char "Control character"
+#define qtn_send_signal "Signal"
 #define qtn_send_file "File"
 
 #define qtn_clear "Clear"
@@ -38,8 +39,6 @@
 #define qtn_exit "Exit"
 
 // Other resources
-#define qtn_msg_connected "Connection has been established successfully."
-
 #define qtn_loc_resource_file_1 "\\resource\\apps\\RFterm_0xae7f53fa"
 
 // Navigation pane
@@ -55,6 +54,7 @@
 #define qtn_str_history_query_label "Message History"
 #define qtn_str_ctrlchar_query_label "Control Characters"
 #define qtn_str_int_query_label "Integer (0-255)"
+#define qtn_str_signal_query_label "RS-232 signals"
 
 // Settings
 #define qtn_str_settings_input_label "Input"
@@ -94,6 +94,10 @@
 #define qtn_str_setting_codepage_item5 "CP 1251 (Cyrillic)"
 #define qtn_str_setting_codepage_item6 "CP 1252 (Latin-1)"
 #define qtn_str_setting_codepage_item7 "KOI-8"
+
+// RS-232 Signals
+#define qtn_str_signal_input "input"
+#define qtn_str_signal_output "output"
 
 // Messages
 #define qtn_str_disconnected "Disconnected"

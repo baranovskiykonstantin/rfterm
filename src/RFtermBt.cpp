@@ -912,7 +912,6 @@ void CRFtermBt::PreventLowPowerModes()
 //
 void CRFtermBt::HandleBatteryStatusChangeL()
 	{
-	TBool batteryStatus = iBatteryStatus->IsOK();
 	if (IsConnected())
 		{
 		if (iBatteryStatus->IsOK())
@@ -924,6 +923,89 @@ void CRFtermBt::HandleBatteryStatusChangeL()
 			AllowLowPowerModes();
 			}
 		}
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::GetInputSignals()
+// Get RS-232 input signals.
+// ----------------------------------------------------------------------------
+//
+TUint8 CRFtermBt::GetInputSignals()
+	{
+	__ASSERT_ALWAYS(IsConnected(), Panic(ERFtermSignalsAreUnavailable));
+	TPckgBuf<TUint8> signalsPckg(0);
+	iActiveSocket->GetOpt(KRFCOMMGetRemoteModemStatus, KSolBtRFCOMM, signalsPckg);
+	TUint8 inputSignals(signalsPckg());
+	return inputSignals;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::GetOutputSignals()
+// Get RS-232 ouptut signals.
+// ----------------------------------------------------------------------------
+//
+TUint8 CRFtermBt::GetOutputSignals()
+	{
+	__ASSERT_ALWAYS(IsConnected(), Panic(ERFtermSignalsAreUnavailable));
+	TPckgBuf<TUint8> signalsPckg(0);
+	iActiveSocket->GetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	TUint8 outputSignals(signalsPckg());
+	return outputSignals;
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::SetOutputSignals()
+// Set RS-232 output signals.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::SetOutputSignals(TUint8 aOutputSignals)
+	{
+	__ASSERT_ALWAYS(IsConnected(), Panic(ERFtermSignalsAreUnavailable));
+	TPckgBuf<TUint8> signalsPckg(0);
+	iActiveSocket->GetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	// Only KRS232SignalDTR and KRS232SignalRTS are accepted.
+	aOutputSignals &= KRS232SignalDTR | KRS232SignalRTS;
+	signalsPckg() |= aOutputSignals;
+	iActiveSocket->SetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	/*
+	TRequestStatus ioctlStatus;
+	iActiveSocket->Ioctl(KRFCOMMModemStatusCmdIoctl, ioctlStatus, &signalsPckg, KSolBtRFCOMM);
+	User::WaitForRequest(ioctlStatus); // wait synchronously
+	*/
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::ClearOutputSignals()
+// Clear RS-232 output signals.
+// ----------------------------------------------------------------------------
+//
+void CRFtermBt::ClearOutputSignals(TUint8 aOutputSignals)
+	{
+	__ASSERT_ALWAYS(IsConnected(), Panic(ERFtermSignalsAreUnavailable));
+	TPckgBuf<TUint8> signalsPckg(0);
+	iActiveSocket->GetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	// Only KRS232SignalDTR and KRS232SignalRTS are accepted.
+	aOutputSignals &= KRS232SignalDTR | KRS232SignalRTS;
+	signalsPckg() &= ~aOutputSignals;
+	iActiveSocket->SetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	}
+
+// ----------------------------------------------------------------------------
+// CRFtermBt::ToggleOutputSignals()
+// Set RS-232 output signals to opposite state.
+// ----------------------------------------------------------------------------
+//
+TUint8 CRFtermBt::ToggleOutputSignals(TUint8 aOutputSignals)
+	{
+	__ASSERT_ALWAYS(IsConnected(), Panic(ERFtermSignalsAreUnavailable));
+	TPckgBuf<TUint8> signalsPckg(0);
+	iActiveSocket->GetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	// Only KRS232SignalDTR and KRS232SignalRTS are accepted.
+	aOutputSignals &= KRS232SignalDTR | KRS232SignalRTS;
+	signalsPckg() ^= aOutputSignals;
+	iActiveSocket->SetOpt(KRFCOMMLocalModemStatus, KSolBtRFCOMM, signalsPckg);
+	TUint8 outputSignals(signalsPckg());
+	return outputSignals;
 	}
 
 // End of File

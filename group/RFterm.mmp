@@ -31,6 +31,7 @@ SOURCE			RFtermScrollBars.cpp
 SOURCE			RFtermBatteryStatus.cpp
 SOURCE			BatteryLevel.cpp
 SOURCE			ChargingStatus.cpp
+SOURCE			RFtermSignalQueryDialog.cpp
 
 SOURCEPATH		..\data
 
@@ -50,6 +51,7 @@ USERINCLUDE		..\help
 
 SYSTEMINCLUDE	/epoc32/include
 
+LIBRARY			aknicon.lib
 LIBRARY			aknnotify.lib
 LIBRARY			apparc.lib
 LIBRARY			avkon.lib

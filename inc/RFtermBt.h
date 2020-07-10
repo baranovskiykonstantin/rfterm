@@ -53,6 +53,18 @@ enum TRFtermState
 	};
 
 /**
+ * RS-232 signals.
+ */
+// outputs
+const TUint8 KRS232SignalDTR = KModemSignalRTC;
+const TUint8 KRS232SignalRTS = KModemSignalRTR;
+// inputs
+const TUint8 KRS232SignalDSR = KModemSignalRTC;
+const TUint8 KRS232SignalCTS = KModemSignalRTR;
+const TUint8 KRS232SignalDCD = KModemSignalDV;
+const TUint8 KRS232SignalRI  = KModemSignalIC;
+
+/**
 * CRFtermBt
 * Connects and sends messages to a remote machine using bluetooth
 */
@@ -187,6 +199,44 @@ public: // New functions
 	 * Assing an observer to receive log messages.
 	 */
 	void SetObserver(MRFtermBtObserver* aObserver);
+
+	/**
+	 * GetInputSignals()
+	 * Get RS-232 input signals.
+	 * @return Use bitmask (KRS232SignalDSR, KRS232SignalCTS, KRS232SignalDCD, KRS232SignalRI)
+	 * to get the value of interested signal.
+	 */
+	TUint8 GetInputSignals();
+
+	/**
+	 * GetOutputSignals()
+	 * Get RS-232 ouptut signals.
+	 * @return Use bitmask (KRS232SignalDTR, KRS232SignalRTS)
+	 * to get the value of interested signal.
+	 */
+	TUint8 GetOutputSignals();
+
+	/**
+	 * SetOutputSignals()
+	 * Set RS-232 output signals.
+	 * @param aOutputSignals Combination of KRS232SignalDTR, KRS232SignalRTS masks.
+	 */
+	void SetOutputSignals(TUint8 aOutputSignals);
+
+	/**
+	 * ClearOutputSignals()
+	 * Clear RS-232 output signals.
+	 * @param aOutputSignals Combination of KRS232SignalDTR, KRS232SignalRTS masks.
+	 */
+	void ClearOutputSignals(TUint8 aOutputSignals);
+
+	/**
+	 * ToggleOutputSignals()
+	 * Set RS-232 output signals to opposite state.
+	 * @param aOutputSignals Combination of KRS232SignalDTR, KRS232SignalRTS masks.
+	 * @return State of the output signals after toggling.
+	 */
+	TUint8 ToggleOutputSignals(TUint8 aOutputSignals);
 
 protected: // from CActive
 

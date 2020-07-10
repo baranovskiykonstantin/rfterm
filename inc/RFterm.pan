@@ -23,6 +23,7 @@ enum TRFtermPanics
 	ERFtermOutputBadCodePage,
 	ERFtermOutputBadContent,
 	ERFtermInputBadCtrlChar,
+	ERFtermSignalsAreUnavailable,
 	// add further panics here
 	};
 

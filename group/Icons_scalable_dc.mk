@@ -16,6 +16,9 @@ endif
 TARGETDIR=$(ZDIR)\resource\apps
 ICONTARGETFILENAME=$(TARGETDIR)\RFterm_0xae7f53fa.mif
 
+HEADERDIR=$(EPOCROOT)epoc32\include
+HEADERFILENAME=$(HEADERDIR)\RFterm_0xae7f53fa.mbg
+
 ICONDIR=..\gfx
 
 do_nothing :
@@ -28,6 +31,8 @@ BLD : do_nothing
 CLEAN :
 	@echo ...Deleting $(ICONTARGETFILENAME)
 	del /q /f $(ICONTARGETFILENAME)
+	@echo ...Deleting $(HEADERFILENAME)
+	del /q /f $(HEADERFILENAME)
 
 LIB : do_nothing
 
@@ -43,14 +48,17 @@ RESOURCE : $(ICONTARGETFILENAME)
 
 # Animated flag ( /A ) must be set otherwise the icon will be shown a bit smaller!
 $(ICONTARGETFILENAME) : $(ICONDIR)\qgn_menu_RFterm.svg
-	mifconv $(ICONTARGETFILENAME) \
-		/A /c32 $(ICONDIR)\qgn_menu_RFterm.svg
+	mifconv $(ICONTARGETFILENAME) /h$(HEADERFILENAME) \
+		/A /c32 $(ICONDIR)\qgn_menu_RFterm.svg \
+		/c32,8 $(ICONDIR)\signal_off.svg \
+		/c32,8 $(ICONDIR)\signal_on.svg
 
 FREEZE : do_nothing
 
 SAVESPACE : do_nothing
 
 RELEASABLES :
+	@echo $(HEADERFILENAME)&& \
 	@echo $(ICONTARGETFILENAME)
 
 FINAL : do_nothing

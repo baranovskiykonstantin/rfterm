@@ -18,9 +18,9 @@
 // ----------------------------------------------------------------------------
 //
 CRFtermBatteryStatus::CRFtermBatteryStatus(MRFtermBatteryStatusObserver* aObserver) :
-	iObserver(aObserver),
 	iBatteryLevelValue(EBatteryLevelUnknown),
-	iChargingStatusValue(EChargingStatusNotConnected)
+	iChargingStatusValue(EChargingStatusNotConnected),
+	iObserver(aObserver)
 	{
 	}
 

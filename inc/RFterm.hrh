@@ -24,6 +24,7 @@ enum TRFtermCommandIds
 	ERFtermHistory,
 	ERFtermCtrlChar,
 	ERFtermFile,
+	ERFtermSignal,
 	ERFtermClear,
 	ERFtermSave,
 	ERFtermSettings,
