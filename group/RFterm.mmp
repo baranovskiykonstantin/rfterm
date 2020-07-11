@@ -14,24 +14,24 @@ TARGETTYPE		exe
 UID				0x100039CE 0xae7f53fa
 
 SOURCEPATH		..\src
+SOURCE			BatteryLevel.cpp
+SOURCE			ChargingStatus.cpp
 SOURCE			RFterm.cpp
-SOURCE			RFtermApplication.cpp
-SOURCE			RFtermAppView.cpp
 SOURCE			RFtermAppUi.cpp
-SOURCE			RFtermDocument.cpp
-SOURCE			RFtermOutput.cpp
+SOURCE			RFtermAppView.cpp
+SOURCE			RFtermApplication.cpp
+SOURCE			RFtermBatteryStatus.cpp
 SOURCE			RFtermBt.cpp
 SOURCE			RFtermBtServiceAdvertiser.cpp
 SOURCE			RFtermBtServiceSearcher.cpp
+SOURCE			RFtermDocument.cpp
+SOURCE			RFtermOutput.cpp
+SOURCE			RFtermScrollBars.cpp
 SOURCE			RFtermSdpAttributeParser.cpp
-SOURCE			RFtermTextQueryDialog.cpp
 SOURCE			RFtermSettings.cpp
 SOURCE			RFtermSettingsDialog.cpp
-SOURCE			RFtermScrollBars.cpp
-SOURCE			RFtermBatteryStatus.cpp
-SOURCE			BatteryLevel.cpp
-SOURCE			ChargingStatus.cpp
 SOURCE			RFtermSignalQueryDialog.cpp
+SOURCE			RFtermTextQueryDialog.cpp
 
 SOURCEPATH		..\data
 
@@ -78,6 +78,7 @@ LIBRARY			gdi.lib
 LIBRARY			hlplch.lib
 LIBRARY			sdpagent.lib
 LIBRARY			sdpdatabase.lib
+LIBRARY			touchfeedback.lib
 LIBRARY			uiklaf.lib
 LIBRARY			ws32.lib
 

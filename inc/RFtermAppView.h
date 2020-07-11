@@ -12,6 +12,7 @@
 
 #include <coecntrl.h>
 #include <aknnavide.h>
+#include <touchfeedback.h>
 #include "RFtermOutput.h"
 #include "RFtermScrollBars.h"
 #include "RFtermSettings.h"
@@ -209,6 +210,12 @@ private: // Data
 	 * Decorator for status bar label.
 	 */
 	CAknNavigationDecorator* iNaviDecorator;
+
+	/**
+	 * iTouchFeedback
+	 * Tactile feedback instance.
+	 */
+	MTouchFeedback* iTouchFeedback;
 
 public:
 
