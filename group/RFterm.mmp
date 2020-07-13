@@ -47,7 +47,7 @@ TARGETPATH \private\10003a3f\apps
 END //RESOURCE
 
 USERINCLUDE		..\inc
-USERINCLUDE		..\help
+USERINCLUDE		..\help\out
 
 SYSTEMINCLUDE	/epoc32/include
 

@@ -17,18 +17,18 @@ do_nothing :
 # in the mmp makefiles.
 
 MAKMAKE : RFterm_0xae7f53fa.hlp
-RFterm_0xae7f53fa.hlp : RFterm.xml RFterm.cshlp Custom.xml
+RFterm_0xae7f53fa.hlp : src\RFterm.rtf RFterm.cshlp Custom.xml
 	cshlpcmp.bat RFterm.cshlp
 ifeq (WINSCW,$(findstring WINSCW, $(PLATFORM)))
-	md $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
-	copy RFterm_0xae7f53fa.hlp $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
+	md $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
+	copy out\RFterm_0xae7f53fa.hlp $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
 endif
 
 BLD : do_nothing
 
 CLEAN :
-	del RFterm_0xae7f53fa.hlp
-	del RFterm_0xae7f53fa.hlp.hrh
+	del out\RFterm_0xae7f53fa.hlp
+	del out\RFterm_0xae7f53fa.hlp.hrh
 
 LIB : do_nothing
 

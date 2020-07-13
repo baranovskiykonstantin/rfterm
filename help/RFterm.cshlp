@@ -4,14 +4,14 @@
 <cshproj>
 <helpfileUID>0xae7f53fa</helpfileUID>
 <directories>
-	<input></input>
-	<output></output>
+	<input>src\</input>
+	<output>out\</output>
 	<graphics></graphics>
 	<working>temp\</working>
 </directories>
 <files>
 	<source>
-	<xmlfile>RFterm.xml</xmlfile>
+	<file>RFterm.rtf</file>
 	</source>
 	<destination>RFterm_0xae7f53fa.hlp</destination>
 	<customization>custom.xml</customization>
