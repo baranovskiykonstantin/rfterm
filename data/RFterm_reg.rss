@@ -8,7 +8,7 @@
 */
 
 #include "RFterm.hrh"
-#include "RFterm.rls"
+#include "RFterm.loc"
 #include <appinfo.rh>
 #include <rfterm_0xae7f53fa.rsg>
 
@@ -18,7 +18,7 @@ UID3 _UID3
 RESOURCE APP_REGISTRATION_INFO
 	{
 	app_file="RFterm_0xae7f53fa";
-	localisable_resource_file =  qtn_loc_resource_file_1;
+	localisable_resource_file = qtn_loc_resource_file;
 	localisable_resource_id = R_LOCALISABLE_APP_INFO;
 
 	embeddability=KAppNotEmbeddable;

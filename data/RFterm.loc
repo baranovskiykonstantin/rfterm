@@ -1,0 +1,20 @@
+/*
+============================================================================
+ Name        : RFterm.loc
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This is a localisation file for RFterm.
+============================================================================
+*/
+#ifndef __RFTERM_LOC__
+#define __RFTERM_LOC__
+
+#ifdef LANGUAGE_01
+#include "RFterm.l01"
+#elif LANGUAGE_16
+#include "RFterm.l16"
+#else
+#include "RFterm.l01" // default
+#endif
+
+#endif /* __RFTERM_LOC__ */

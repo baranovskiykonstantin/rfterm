@@ -20,7 +20,7 @@
 #include <RFterm_0xae7f53fa.rsg>
 
 #ifdef _HELP_AVAILABLE_
-#include "RFterm_0xae7f53fa.hlp.hrh"
+#include "RFterm_0xae7f53fa.h01.hrh"
 #endif
 #include "RFterm.hrh"
 #include "RFterm.pan"

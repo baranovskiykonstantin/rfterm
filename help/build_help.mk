@@ -16,19 +16,22 @@ do_nothing :
 # will be found by cpp.exe when calculating the dependency information
 # in the mmp makefiles.
 
-MAKMAKE : RFterm_0xae7f53fa.hlp
-RFterm_0xae7f53fa.hlp : src\RFterm.rtf RFterm.cshlp Custom.xml
-	cshlpcmp.bat RFterm.cshlp
+MAKMAKE :
+	cshlpcmp.bat RFterm_01.cshlp
+	cshlpcmp.bat RFterm_16.cshlp
 ifeq (WINSCW,$(findstring WINSCW, $(PLATFORM)))
 	md $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
-	copy out\RFterm_0xae7f53fa.hlp $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
+	copy out\RFterm_0xae7f53fa.h01 $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
+	copy out\RFterm_0xae7f53fa.h16 $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
 endif
 
 BLD : do_nothing
 
 CLEAN :
-	del out\RFterm_0xae7f53fa.hlp
-	del out\RFterm_0xae7f53fa.hlp.hrh
+	del out\RFterm_0xae7f53fa.h01
+	del out\RFterm_0xae7f53fa.h01.hrh
+	del out\RFterm_0xae7f53fa.h16
+	del out\RFterm_0xae7f53fa.h16.hrh
 
 LIB : do_nothing
 
@@ -41,6 +44,7 @@ FREEZE : do_nothing
 SAVESPACE : do_nothing
 
 RELEASABLES :
-	@echo RFterm_0xae7f53fa.hlp
+	@echo RFterm_0xae7f53fa.h01
+	@echo RFterm_0xae7f53fa.h16
 
 FINAL : do_nothing

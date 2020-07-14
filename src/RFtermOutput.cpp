@@ -618,7 +618,13 @@ void CRFtermOutput::AppendMessageL(const TDesC& aMessage)
 		AppendNewLineL();
 		}
 	AppendRawTextL(KRFtermOutputMessageMark);
-	AppendRawTextL(aMessage);
+	// AppendRawTextL(aMessage);
+	// This function is not acceptable because it filters
+	// characters accordingly to the current code page.
+	// Messages are localized and contain characters encoded
+	// in UTF-8, so put the message to the output directly.
+	iText->InsertL(iLastLineCursorPos, aMessage);
+	iLastLineCursorPos += aMessage.Length();
 	AppendNewLineL();
 
 	iTextView->HandleGlobalChangeL();

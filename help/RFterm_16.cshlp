@@ -11,9 +11,9 @@
 </directories>
 <files>
 	<source>
-	<file>RFterm.rtf</file>
+	<file>RFterm_16.rtf</file>
 	</source>
-	<destination>RFterm_0xae7f53fa.hlp</destination>
-	<customization>custom.xml</customization>
+	<destination>RFterm_0xae7f53fa.h16</destination>
+	<customization>Custom.xml</customization>
 	</files>
 </cshproj>

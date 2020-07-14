@@ -82,7 +82,7 @@ LIBRARY			touchfeedback.lib
 LIBRARY			uiklaf.lib
 LIBRARY			ws32.lib
 
-LANG SC
+LANG 01 16
 
 VENDORID		0
 SECUREID		0xae7f53fa

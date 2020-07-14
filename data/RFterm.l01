@@ -1,15 +1,18 @@
 /*
 ============================================================================
- Name        : RFterm.rls
+ Name        : RFterm.l01
  Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
- Description : This is a localisation file for RFterm
+ Description : This is a localisation file for RFterm (EN).
 				A .rls file is the one and only place where the logical
 				strings to be localised are defined. 
 ============================================================================
 */
 
 //  LOCALISATION STRINGS
+
+// Other resources
+#define qtn_loc_resource_file "\\resource\\apps\\RFterm_0xae7f53fa"
 
 // Caption string for app.
 #define qtn_caption_string "RFterm"
@@ -38,9 +41,6 @@
 
 #define qtn_exit "Exit"
 
-// Other resources
-#define qtn_loc_resource_file_1 "\\resource\\apps\\RFterm_0xae7f53fa"
-
 // Navigation pane
 #define qtn_str_navi_disconnected "disconnected"
 
@@ -53,7 +53,8 @@
 #define qtn_str_ignoresym_confirmation "Next symbols are not supported by code page and will be ignored:\n%S\nDo you wisht to continue?"
 #define qtn_str_history_query_label "Message History"
 #define qtn_str_ctrlchar_query_label "Control Characters"
-#define qtn_str_int_query_label "Integer (0-255)"
+#define qtn_str_ctrlchar_custom "Custom..."
+#define qtn_str_int_query_label "Byte (0-255)"
 #define qtn_str_signal_query_label "RS-232 signals"
 
 // Settings

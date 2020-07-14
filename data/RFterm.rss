@@ -6,9 +6,9 @@
  Description : This file contains all the resources for the RFterm.
 ============================================================================
 */
+
 //  RESOURCE IDENTIFIER
 NAME RFTM	// 4 letter ID
-
 
 //  INCLUDES
 #include <eikon.rh>
@@ -16,7 +16,7 @@ NAME RFTM	// 4 letter ID
 #include <avkon.rh>
 #include <appinfo.rh>
 #include "RFterm.hrh"
-#include "RFterm.rls"
+#include "RFterm.loc"
 
 //  RESOURCE DEFINITIONS
 // -----------------------------------------------------------------------------
@@ -68,7 +68,7 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 		{
 		caption = qtn_caption_string;
 
-		number_of_icons = 1;
+		number_of_icons = 3;
 		icon_file = "\\resource\\apps\\RFterm_0xae7f53fa.mif";
 		};
 	}
@@ -406,7 +406,7 @@ RESOURCE ARRAY r_ctrlchar_items
 		LBUF { txt = "^L - FORM FEED"; },
 		LBUF { txt = "^@ - NULL"; },
 		LBUF { txt = "^M^J - CR+LF"; },
-		LBUF { txt = "Custom..."; }
+		LBUF { txt = qtn_str_ctrlchar_custom; }
 		};
 	}
 

@@ -1,0 +1,135 @@
+/*
+============================================================================
+ Name        : RFterm.l16
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This is a localisation file for RFterm (RU).
+============================================================================
+*/
+
+CHARACTER_SET UTF8
+
+//  LOCALISATION STRINGS
+
+// Other resources
+#define qtn_loc_resource_file "\\resource\\apps\\RFterm_0xae7f53fa"
+
+// Caption string for app.
+#define qtn_caption_string "RFterm"
+
+// Items in "Options" menu pane
+#define qtn_connect "Подключиться"
+#define qtn_disconnect "Отключиться"
+
+#define qtn_start "Запустить"
+#define qtn_stop "Остановить"
+
+#define qtn_send "Отправить"
+#define qtn_send_message "Сообщение"
+#define qtn_send_history "Недавнее сообщение"
+#define qtn_send_ctrl_char "Управляющий символ"
+#define qtn_send_signal "Сигнал"
+#define qtn_send_file "Файл"
+
+#define qtn_clear "Очистить"
+
+#define qtn_save "Сохранить"
+
+#define qtn_settings "Настройки"
+
+#define qtn_help "Справка"
+
+#define qtn_exit "Выйти"
+
+// Navigation pane
+#define qtn_str_navi_disconnected "не подключён"
+
+// Bluetooth
+#define qtn_rfterm_service_name "Serial Port"
+#define qtn_rfterm_service_description "RFterm application"
+
+// Dialogs
+#define qtn_str_text_query_label "Отправить:"
+#define qtn_str_ignoresym_confirmation "Следующие символы не поддерживаются кодовой страницей и будут исключены:\n%S\nПродолжить?"
+#define qtn_str_history_query_label "История сообщений"
+#define qtn_str_ctrlchar_query_label "Управляющие символы"
+#define qtn_str_ctrlchar_custom "Другой..."
+#define qtn_str_int_query_label "Байт (0-255)"
+#define qtn_str_signal_query_label "Сигналы RS-232"
+
+// Settings
+#define qtn_str_settings_input_label "Ввод"
+
+#define qtn_str_setting_appendix_label "Добавить к сообщению"
+#define qtn_str_setting_appendix_item0 "CARRIAGE RETURN"
+#define qtn_str_setting_appendix_item1 "LINE FEED"
+#define qtn_str_setting_appendix_item2 "CR+LF"
+#define qtn_str_setting_appendix_item3 "Ничего"
+
+#define qtn_str_setting_historysize_label "Размер истории сообщ."
+
+#define qtn_str_setting_echo_label "Выводить отпр. сообщ. (эхо)"
+#define qtn_str_setting_off_label "Нет"
+#define qtn_str_setting_on_label "Да"
+
+
+#define qtn_str_settings_output_label "Вывод"
+
+#define qtn_str_setting_fontsize_label "Размер шрифта"
+
+#define qtn_str_setting_tabsize_label "Размер табуляции"
+
+#define qtn_str_setting_mapping_label "Замена cимв. новой строки"
+#define qtn_str_setting_mapping_item0 "CR -> LF"
+#define qtn_str_setting_mapping_item1 "CR -> CR+LF"
+#define qtn_str_setting_mapping_item2 "LF -> CR"
+#define qtn_str_setting_mapping_item3 "LF -> CR+LF"
+#define qtn_str_setting_mapping_item4 "Не заменять"
+
+#define qtn_str_setting_codepage_label "Кодовая страница"
+#define qtn_str_setting_codepage_item0 "ISO 8859-1 (Latin-1)"
+#define qtn_str_setting_codepage_item1 "ISO 8859-2 (Latin-2)"
+#define qtn_str_setting_codepage_item2 "ISO 8859-3 (Latin-3)"
+#define qtn_str_setting_codepage_item3 "ISO 8859-4 (Latin-4)"
+#define qtn_str_setting_codepage_item4 "ISO 8859-5 (Latin/Cyrillic)"
+#define qtn_str_setting_codepage_item5 "CP 1251 (Cyrillic)"
+#define qtn_str_setting_codepage_item6 "CP 1252 (Latin-1)"
+#define qtn_str_setting_codepage_item7 "KOI-8"
+
+// RS-232 Signals
+#define qtn_str_signal_input "вход"
+#define qtn_str_signal_output "выход"
+
+// Messages
+#define qtn_str_disconnected "Отключён"
+#define qtn_str_disconnect_complete "Отключение завершено"
+#define qtn_str_connected "Подключён"
+#define qtn_str_found_service "Сервис найден"
+#define qtn_str_client_busy "Клиент занят"
+#define qtn_str_releasing_conn "Освобождение соединения"
+#define qtn_str_connecting "Подключение к сервису"
+#define qtn_str_waiting_conn "Ожидание подключения"
+#define qtn_str_port_number "Канал "
+#define qtn_str_bell "RFterm: BELL"
+#define qtn_str_output_is_saved "Вывод сохранён."
+#define qtn_str_file_is_sent "Файл отправлен."
+//#define qtn_str_
+
+#define qtn_err_no_bt "Bluetooth недоступен."
+#define qtn_err_no_device_selected "Устройство не выбрано"
+#define qtn_err_cant_get_device_list "Не удалось получить список устройств"
+#define qtn_err_connection_error "Ошибка подключения"
+#define qtn_err_lost_connection "Соединение потеряно"
+#define qtn_err_message_failed "Сообщение не отправлено"
+#define qtn_err_file_sending_failed "Файл не отправлен"
+#define qtn_err_failed_to_disconnect "Не удалось отключиться"
+#define qtn_err_no_conn "Нет соединения!"
+#define qtn_err_nrrc_error "Ошибка NRRC"
+#define qtn_err_nrrc_no_records "Нет записей NRRC"
+#define qtn_err_cant_get_attribute "Не удалось получить атрибут "
+#define qtn_err_attr_req_com "AttrReqCom"
+#define qtn_err_registry "Неизвестное устройство"
+#define qtn_err_file_opening "Ошибка открытия файла"
+//#define qtn_err_
+
+// End of File
