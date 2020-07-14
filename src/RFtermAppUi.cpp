@@ -254,11 +254,13 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				{
 				if (iBtClient->Server())
 					{
-					iBtClient->StopL();
+					// stop in any way!
+					TRAPD(error, iBtClient->StopL());
 					}
 				else
 					{
-					iBtClient->DisconnectL();
+					// disconnect in any way!
+					TRAPD(error, iBtClient->DisconnectL());
 					}
 				}
 

@@ -126,7 +126,13 @@ void CRFtermBt::ConstructL()
 //
 void CRFtermBt::DoCancel()
 	{
-	// no implementation required
+	if (iState == EGettingService)
+		{
+		// Interrupt the work of CRFtermBtServiceSearcher.
+		// iStatus of CRFtermBt is used by CRFtermBtServiceSearcher.
+		TRequestStatus* status = &iStatus;
+		User::RequestComplete(status, KErrNotFound);
+		}
 	}
 
 // ----------------------------------------------------------------------------
@@ -459,7 +465,7 @@ void CRFtermBt::ConnectL()
 //
 void CRFtermBt::DisconnectL()
 	{
-	if ((State() == EConnected)||(State() == ESendingMessage))
+	if (IsConnected())
 		{
 		DisconnectFromServerL();
 		SetState(EDisconnecting);
