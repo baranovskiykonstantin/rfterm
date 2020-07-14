@@ -13,6 +13,8 @@
 #include "RFterm.l01"
 #elif LANGUAGE_16
 #include "RFterm.l16"
+#elif LANGUAGE_93
+#include "RFterm.l93"
 #else
 #include "RFterm.l01" // default
 #endif
