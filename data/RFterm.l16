@@ -69,8 +69,8 @@ CHARACTER_SET UTF8
 #define qtn_str_setting_historysize_label "Размер истории сообщ."
 
 #define qtn_str_setting_echo_label "Выводить отпр. сообщ. (эхо)"
-#define qtn_str_setting_off_label "Нет"
-#define qtn_str_setting_on_label "Да"
+#define qtn_str_setting_no_label "Нет"
+#define qtn_str_setting_yes_label "Да"
 
 
 #define qtn_str_settings_output_label "Вывод"
@@ -95,6 +95,8 @@ CHARACTER_SET UTF8
 #define qtn_str_setting_codepage_item5 "CP 1251 (Cyrillic)"
 #define qtn_str_setting_codepage_item6 "CP 1252 (Latin-1)"
 #define qtn_str_setting_codepage_item7 "KOI-8"
+
+#define qtn_str_setting_save_notifies_label "Сохранять уведомления"
 
 // RS-232 Signals
 #define qtn_str_signal_input "вход"

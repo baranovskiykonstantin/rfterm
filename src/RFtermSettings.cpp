@@ -46,6 +46,7 @@ void CRFtermSettings::SetDefaultValues()
 	iTabSize = 4;
 	iCtrlCharMapping = EMapCRtoCRLF;
 	iCodePage = ECodePageLatin1;
+	iSaveNotifies = ETrue;
 	Notify();
 	}
 
@@ -136,6 +137,12 @@ void CRFtermSettings::SetCodePage(TCodePage aCodePage)
 	Notify();
 	}
 
+void CRFtermSettings::SetNotifySaving(TBool aSaveNotifies)
+	{
+	iSaveNotifies = (TBool)aSaveNotifies;
+	Notify();
+	}
+
 void CRFtermSettings::ConstructL()
 	{
 	}
@@ -152,6 +159,7 @@ void CRFtermSettings::LoadL(RReadStream& aStream)
 	SetTabSize(aStream.ReadInt32L());
 	SetCtrlCharMapping((TCtrlCharMapping) aStream.ReadInt32L());
 	SetCodePage((TCodePage) aStream.ReadInt32L());
+	SetNotifySaving(aStream.ReadInt8L());
 	iSkipNotifications = EFalse;
 	Notify();
 	}
@@ -166,6 +174,7 @@ void CRFtermSettings::SaveL(RWriteStream& aStream) const
 	aStream.WriteInt32L(iTabSize);
 	aStream.WriteInt32L((TInt)iCtrlCharMapping);
 	aStream.WriteInt32L((TInt)iCodePage);
+	aStream.WriteInt8L(iSaveNotifies);
 	}
 
 void CRFtermSettings::AddObserver(MRFtermSettingsObserver* aObserver)

@@ -539,7 +539,7 @@ RESOURCE FORM settings_input_form
 			itemflags = EEikDlgItemTakesEnterKey;
 			control = POPUP_FIELD_TEXT
 				{
-				textarray = setting_onoff_items;
+				textarray = setting_yesno_items;
 				popupfield = POPUP_FIELD {};
 				active = 0;
 				};
@@ -558,12 +558,12 @@ RESOURCE ARRAY setting_appendix_items
 		};
 	}
 
-RESOURCE ARRAY setting_onoff_items
+RESOURCE ARRAY setting_yesno_items
 	{
 	items =
 		{
-		LBUF { txt = qtn_str_setting_off_label; },
-		LBUF { txt = qtn_str_setting_on_label; }
+		LBUF { txt = qtn_str_setting_no_label; },
+		LBUF { txt = qtn_str_setting_yes_label; }
 		};
 	}
 
@@ -628,6 +628,19 @@ RESOURCE FORM settings_output_form
 			control = POPUP_FIELD_TEXT
 				{
 				textarray = setting_codepage_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
+				};
+			},
+		DLG_LINE
+			{
+			id = ESettingSaveNotifies;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_save_notifies_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_yesno_items;
 				popupfield = POPUP_FIELD {};
 				active = 0;
 				};

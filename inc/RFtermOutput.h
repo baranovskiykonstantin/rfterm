@@ -35,6 +35,7 @@ public: // New functions
 	void SetFontSizeL(TInt aFontSize);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetTabSize(TInt aSize);
+	void SetNotifySaving(TBool aSaveNotifies);
 	void ChangeCodePage(TCodePage aCodePage);
 	TBool IsEmpty() const;
 	void ClearL();
@@ -100,6 +101,7 @@ private: // Data
 	TCtrlCharMapping iCtrlCharMapping;
 	TPtrC iCodePage;
 	TTextCursor iOutputCursor;
+	TBool iSaveNotifies;
 
 	TInt iLastLineStartPos;
 	TInt iLastLineCursorPos;
@@ -120,6 +122,7 @@ private: // Data
 
 inline void CRFtermOutput::SetCtrlCharMapping(TCtrlCharMapping aMapping) { iCtrlCharMapping = aMapping; }
 inline void CRFtermOutput::SetTabSize(TInt aSize) { iTabSize = aSize; }
+inline void CRFtermOutput::SetNotifySaving(TBool aSaveNotifies) { iSaveNotifies = aSaveNotifies; }
 
 #endif /* __RFTERMOUTPUT_H__ */
 

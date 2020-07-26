@@ -154,6 +154,11 @@ void CRFtermSettingsDialog::LoadFormDataL()
 	CAknPopupFieldText* codePageControl =
 		(CAknPopupFieldText*)Control(ESettingCodePage);
 	codePageControl->SetCurrentValueIndex(index);
+
+	index = ((TInt) iSettings->DoSaveNotifies());
+	CAknPopupFieldText* saveNotifiesControl =
+		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
+	saveNotifiesControl->SetCurrentValueIndex(index);
 	}
 
 TBool CRFtermSettingsDialog::SaveFormDataL()
@@ -208,6 +213,10 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 	CAknPopupFieldText* codePageControl =
 		(CAknPopupFieldText*)Control(ESettingCodePage);
 	iSettings->SetCodePage((TCodePage) (codePageControl->CurrentValueIndex() + 1));
+
+	CAknPopupFieldText* saveNotifiesControl =
+		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
+	iSettings->SetNotifySaving(saveNotifiesControl->CurrentValueIndex());
 	
 	return ETrue;
 	}

@@ -95,6 +95,7 @@ public: // New functions
 	TInt TabSize() const;
 	TCtrlCharMapping CtrlCharMapping() const;
 	TCodePage CodePage() const;
+	TBool DoSaveNotifies() const;
 
 	// Setters
 	void SetMessageAddendum(const TDesC& aAddendum);
@@ -104,6 +105,7 @@ public: // New functions
 	void SetTabSize(TInt aSize);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetCodePage(TCodePage aCodePage);
+	void SetNotifySaving(TBool aSaveNotifies);
 
 	// MRFtermSettingsObserver
 	void AddObserver(MRFtermSettingsObserver* aObserver);
@@ -156,6 +158,11 @@ private: // Data
 	 */
 	TCodePage iCodePage;
 
+	/**
+	 * Save notifies or not
+	 */
+	TBool iSaveNotifies;
+
 private: // Observers
 
 	/**
@@ -177,6 +184,7 @@ inline TInt CRFtermSettings::FontSize() const { return iFontSize; }
 inline TInt CRFtermSettings::TabSize() const { return iTabSize; }
 inline TCtrlCharMapping CRFtermSettings::CtrlCharMapping() const { return iCtrlCharMapping; }
 inline TCodePage CRFtermSettings::CodePage() const { return iCodePage; }
+inline TBool CRFtermSettings::DoSaveNotifies() const { return iSaveNotifies; }
 
 #endif /* __RFTERMSETTINGS_H__ */
 

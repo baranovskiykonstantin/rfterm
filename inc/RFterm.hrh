@@ -47,7 +47,8 @@ enum TRFtermSettingControlIds
 	ESettingFontSize,
 	ESettingTabSize,
 	ESettingMapping,
-	ESettingCodePage
+	ESettingCodePage,
+	ESettingSaveNotifies
 	};
 
 #endif // __RFTERM_HRH__

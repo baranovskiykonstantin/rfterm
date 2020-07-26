@@ -585,6 +585,7 @@ void CRFtermAppView::HandleSettingsChange(const CRFtermSettings* aSettings)
 		iRFtermOutput->SetFontSizeL(aSettings->FontSize());
 		iRFtermOutput->SetCtrlCharMapping(aSettings->CtrlCharMapping());
 		iRFtermOutput->SetTabSize(aSettings->TabSize());
+		iRFtermOutput->SetNotifySaving(aSettings->DoSaveNotifies());
 		}
 	}
 

@@ -47,6 +47,7 @@ CRFtermOutput::CRFtermOutput()
 	, iTabSize(4)
 	, iCtrlCharMapping(EMapCRtoCRLF)
 	, iCodePage(KCodePageLatin1)
+	, iSaveNotifies(ETrue)
 	, iLastLineStartPos(0)
 	, iLastLineCursorPos(0)
 	{
@@ -339,6 +340,15 @@ TBool CRFtermOutput::SaveOutputAsTextL()
 							outputChar.Append(ch);
 							outputFile.Write(outputChar);
 							}
+						else if ((TUint)ch == KRFtermOutputNotifyMark && !iSaveNotifies)
+							{
+							// Notify starts with KRFtermOutputNotifyMark and ends with CEditableText::ELineBreak
+							do
+								{
+								ch = outputText[++i];
+								}
+							while (i < outputText.Length() && (TUint)ch != CEditableText::ELineBreak);
+							}
 						else
 							{
 							TInt pos = iCodePage.Locate(ch);
@@ -617,12 +627,13 @@ void CRFtermOutput::AppendMessageL(const TDesC& aMessage)
 		{
 		AppendNewLineL();
 		}
-	AppendRawTextL(KRFtermOutputMessageMark);
 	// AppendRawTextL(aMessage);
 	// This function is not acceptable because it filters
 	// characters accordingly to the current code page.
 	// Messages are localized and contain characters encoded
 	// in UTF-8, so put the message to the output directly.
+	iText->InsertL(iLastLineCursorPos, KRFtermOutputNotifyLabel);
+	iLastLineCursorPos += KRFtermOutputNotifyLabel().Length();
 	iText->InsertL(iLastLineCursorPos, aMessage);
 	iLastLineCursorPos += aMessage.Length();
 	AppendNewLineL();
