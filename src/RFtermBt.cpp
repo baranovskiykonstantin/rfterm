@@ -292,8 +292,8 @@ void CRFtermBt::RunL()
 				
 				SetState(EConnected);
 				PreventLowPowerModes();
-				NotifyDeviceIsConnectedL();
 				RequestData();
+				NotifyDeviceIsConnectedL();
 				break;
 				
 			case EGettingService:
@@ -311,8 +311,8 @@ void CRFtermBt::RunL()
 
 				SetState(EConnected);
 				PreventLowPowerModes();
-				NotifyDeviceIsConnectedL();
 				RequestData();
+				NotifyDeviceIsConnectedL();
 				break;
 				
 			case EConnected:
