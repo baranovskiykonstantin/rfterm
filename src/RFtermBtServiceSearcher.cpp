@@ -186,6 +186,8 @@ void CRFtermBtServiceSearcher::NextRecordRequestCompleteL(
 		errorStr.Num(aError);
 		HBufC* errNRRC = StringLoader::LoadLC(R_ERR_NRRC_ERROR);
 		HBufC* errFull = HBufC::NewLC(errNRRC->Length() + errorStr.Length());
+		errFull->Des().Copy(*errNRRC);
+		errFull->Des().Append(errorStr);
 		NotifyL(*errFull);
 		CleanupStack::PopAndDestroy(2); // errNRRC, errFull
 		Finished(aError);
@@ -279,6 +281,8 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 		TBuf<6> errorStr;
 		errorStr.Num(aError);
 		HBufC* errFull = HBufC::NewLC(errCantGetAttribute->Length() + errorStr.Length());
+		errFull->Des().Copy(*errCantGetAttribute);
+		errFull->Des().Append(errorStr);
 		NotifyL(*errFull);
 		CleanupStack::PopAndDestroy(2); // errCantGetAttribute, errFull
 		}
