@@ -155,6 +155,10 @@ void CRFtermBtServiceSearcher::NextRecordRequestComplete(
 	TSdpServRecordHandle aHandle,
 	TInt aTotalRecordsCount)
 	{
+	// Canceled by BT client. Quit.
+	if (*iStatusObserver != KRequestPending)
+		return;
+
 	TRAPD(error,
 		NextRecordRequestCompleteL(aError, aHandle, aTotalRecordsCount));
 
@@ -217,6 +221,10 @@ void CRFtermBtServiceSearcher::AttributeRequestResult(
 	TSdpAttributeID aAttrID,
 	CSdpAttrValue* aAttrValue)
 	{
+	// Canceled by BT client. Quit.
+	if (*iStatusObserver != KRequestPending)
+		return;
+
 	TRAPD(error, AttributeRequestResultL(aHandle, aAttrID, aAttrValue));
 	if (error != KErrNone)
 		{
@@ -259,6 +267,10 @@ void CRFtermBtServiceSearcher::AttributeRequestResultL(
 void CRFtermBtServiceSearcher::AttributeRequestComplete(TSdpServRecordHandle aHandle,
 	TInt aError)
 	{
+	// Canceled by BT client. Quit.
+	if (*iStatusObserver != KRequestPending)
+		return;
+
 	TRAPD(error, AttributeRequestCompleteL(aHandle, aError));
 	if (error != KErrNone)
 		{
@@ -312,7 +324,9 @@ void CRFtermBtServiceSearcher::Finished(TInt aError /* default = KErrNone */)
 		{
 		aError = KErrNotFound;
 		}
-	User::RequestComplete(iStatusObserver, aError);
+	// if != KRequestPending -> canceled by BT client
+	if (*iStatusObserver == KRequestPending)
+		User::RequestComplete(iStatusObserver, aError);
 	}
 
 // ----------------------------------------------------------------------------
