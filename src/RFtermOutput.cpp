@@ -97,7 +97,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	iOutputCursor.iAscent = -1;
 	iOutputCursor.iWidth = 10;
 	iOutputCursor.iFlags = 0;
-	iOutputCursor.iColor = KRgbWhite;
+	iOutputCursor.iColor = KDefaultFontColor;
 
 	SetFontSizeL(iFontSize); // Create with default font size
 
@@ -207,7 +207,7 @@ void CRFtermOutput::SetFontSizeL(TInt aFontSize)
 	TCharFormat charFormat(KRFtermFontName, 1);
 	TCharFormatMask charFormatMask;
 //	pCharFormatLayer->Sense(charFormat, charFormatMask);
-	charFormat.iFontPresentation.iTextColor = KRgbWhite;
+	charFormat.iFontPresentation.iTextColor = KDefaultFontColor;
 	charFormatMask.SetAttrib(EAttColor);
 //	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	charFormatMask.SetAttrib(EAttFontTypeface);

@@ -33,7 +33,7 @@ void CRFtermScrollBars::DrawVScrollBar(CWindowGc& aGc) const
 		}
 	else
 		{
-		aGc.SetBrushColor(KRgbWhite);
+		aGc.SetBrushColor(KDefaultFontColor);
 		}
 	aGc.DrawRect(iVThumbRect);
 	}
@@ -50,7 +50,7 @@ void CRFtermScrollBars::DrawHScrollBar(CWindowGc& aGc) const
 		}
 	else
 		{
-		aGc.SetBrushColor(KRgbWhite);
+		aGc.SetBrushColor(KDefaultFontColor);
 		}
 	aGc.DrawRect(iHThumbRect);
 	}

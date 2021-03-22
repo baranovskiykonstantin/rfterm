@@ -11,6 +11,7 @@
 #define __RFTERMCONSTANTS_H__
 
 #include <bt_sock.h>
+#include <gdi.h>
 #include "RFterm.hrh"
 
 const TInt KRfcommChannel = 1;
@@ -49,6 +50,8 @@ _LIT(KDL, "\x007f");	// Delete
 
 const TInt KRFtermScrollBarBreadth = 5;
 const TInt KRFtermScrollBarSensorBreadth = 30;
+
+const TRgb KDefaultFontColor(0xE0E0E0);
 
 #endif /* __RFTERMCONSTANTS_H__ */
 
