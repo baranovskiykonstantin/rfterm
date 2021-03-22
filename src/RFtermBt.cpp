@@ -148,18 +148,14 @@ void CRFtermBt::RunL()
 	if (iStatus == KErrDisconnected)
 		{
 		// Disconnected
-		HBufC* strDisconnected = StringLoader::LoadLC(R_STR_DISCONNECTED);
-		NotifyL(*strDisconnected);
-		CleanupStack::PopAndDestroy(strDisconnected);
+		NotifyL(R_STR_DISCONNECTED);
 		StopL();
 		return;
 		}
 		
 	else if (iStatus == KErrAbort)
 		{
-		HBufC* strDisconnected = StringLoader::LoadLC(R_STR_DISCONNECTED);
-		NotifyL(*strDisconnected);
-		CleanupStack::PopAndDestroy(strDisconnected);
+		NotifyL(R_STR_DISCONNECTED);
 		StopL();
 		return;
 		}
@@ -168,9 +164,7 @@ void CRFtermBt::RunL()
 		// this error happens if connected server
 		// sudently loses link (powered down for example)
 		{
-		textResource = StringLoader::LoadLC(R_ERR_LOST_CONNECTION);
-		NotifyL(*textResource);
-		CleanupStack::PopAndDestroy(textResource);
+		NotifyL(R_ERR_LOST_CONNECTION);
 		if (State() != EDisconnected)
 			{
 			NotifyDeviceIsDisconnectedL();
@@ -188,48 +182,32 @@ void CRFtermBt::RunL()
 			{
 			case EGettingDevice:
 				if (iStatus == KErrCancel)
-					{
-					textResource = StringLoader::LoadLC(R_ERR_NO_DEVICE_SELECTED);
-					NotifyL(*textResource);
-					CleanupStack::PopAndDestroy(textResource);
-					}
+					NotifyL(R_ERR_NO_DEVICE_SELECTED);
 				else
-					{
-					textResource = StringLoader::LoadLC(R_ERR_CANT_GET_DEVICE_LIST);
-					NotifyL(*textResource);
-					CleanupStack::PopAndDestroy(textResource);
-					}
+					NotifyL(R_ERR_CANT_GET_DEVICE_LIST);
 				SetState(EWaitingToGetDevice);
 				break;
 				
 			case EGettingService:
 			case EGettingConnection:
-				textResource = StringLoader::LoadLC(R_ERR_CONNECTION_ERROR);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
+				NotifyL(R_ERR_CONNECTION_ERROR);
 				SetState(EWaitingToGetDevice);
 				break;
 				
 			case EConnected:
-				textResource = StringLoader::LoadLC(R_ERR_LOST_CONNECTION);
-				NotifyL(*textResource);
+				NotifyL(R_ERR_LOST_CONNECTION);
 				DisconnectFromServerL();
-				CleanupStack::PopAndDestroy(textResource);
 				SetState(EDisconnecting);
 				break;
 				
 			case ESendingMessage:
-				textResource = StringLoader::LoadLC(R_ERR_MESSAGE_FAILED);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
+				NotifyL(R_ERR_MESSAGE_FAILED);
 				DisconnectFromServerL();
 				SetState(EDisconnecting);
 				break;
 				
 			case ESendingFile:
-				textResource = StringLoader::LoadLC(R_ERR_FILE_SENDING_FAILED);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
+				NotifyL(R_ERR_FILE_SENDING_FAILED);
 				DisconnectFromServerL();
 				SetState(EDisconnecting);
 				break;
@@ -237,27 +215,19 @@ void CRFtermBt::RunL()
 			case EDisconnecting:
 				if (iStatus == KErrDisconnected)
 					{
-					textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
-					NotifyL(*textResource);
-					CleanupStack::PopAndDestroy(textResource);
-
+					NotifyL(R_STR_DISCONNECT_COMPLETE);
 					StopL();
 					SetState(EWaitingToGetDevice);
 					}
 				else
 					{
-					textResource = StringLoader::LoadLC(R_ERR_FAILED_TO_DISCONNECT);
-					NotifyL(*textResource);
-					CleanupStack::PopAndDestroy(textResource);
-
+					NotifyL(R_ERR_FAILED_TO_DISCONNECT);
 					Panic(ERFtermUnableToDisconnect);
 					}
 				break;
 			
 			case EWaitingToGetDevice:
-				textResource = StringLoader::LoadLC(R_STR_DISCONNECTED);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
+				NotifyL(R_STR_DISCONNECTED);
 				break;
 				
 			default:
@@ -283,13 +253,9 @@ void CRFtermBt::RunL()
 				break;
 				
 			case EConnecting:
-				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
-				
+				NotifyL(R_STR_CONNECTED);
 				// do not accept any more connections
 				iAdvertiser->UpdateAvailabilityL(EFalse);
-				
 				SetState(EConnected);
 				PreventLowPowerModes();
 				RequestData();
@@ -297,18 +263,13 @@ void CRFtermBt::RunL()
 				break;
 				
 			case EGettingService:
-				textResource = StringLoader::LoadLC(R_STR_FOUND_SERVICE);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
+				NotifyL(R_STR_FOUND_SERVICE);
 				SetState(EGettingConnection);
 				ConnectToServerL();
 				break;
 				
 			case EGettingConnection:
-				textResource = StringLoader::LoadLC(R_STR_CONNECTED);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy(textResource);
-
+				NotifyL(R_STR_CONNECTED);
 				SetState(EConnected);
 				PreventLowPowerModes();
 				RequestData();
@@ -337,9 +298,7 @@ void CRFtermBt::RunL()
 				break;
 				
 			case EDisconnecting:
-				textResource = StringLoader::LoadLC(R_STR_DISCONNECT_COMPLETE);
-				NotifyL(*textResource);
-				CleanupStack::PopAndDestroy (textResource);
+				NotifyL(R_STR_DISCONNECT_COMPLETE);
 				iSocket.Close();
 				SetState(EWaitingToGetDevice);
 				break;
@@ -450,10 +409,7 @@ void CRFtermBt::ConnectL()
 		}
 	else
 		{
-		HBufC* errClientBusy = StringLoader::LoadLC(R_STR_CLIENT_BUSY);
-		NotifyL(*errClientBusy);
-		CleanupStack::PopAndDestroy(errClientBusy);
-		
+		NotifyL(R_STR_CLIENT_BUSY);
 		User::Leave(KErrInUse);
 		}
 	}
@@ -472,9 +428,7 @@ void CRFtermBt::DisconnectL()
 		}
 	else
 		{
-		HBufC* errNoConn = StringLoader::LoadLC(R_ERR_NO_CONN);
-		NotifyL(*errNoConn);
-		CleanupStack::PopAndDestroy(errNoConn);
+		NotifyL(R_ERR_NO_CONN);
 		User::Leave(KErrDisconnected);
 		}
 	}
@@ -499,9 +453,7 @@ void CRFtermBt::DisconnectFromServerL()
 	iSocket.CancelAll();
 	Cancel();
 
-	HBufC* strReleasingConn = StringLoader::LoadLC(R_STR_RELEASING_CONN);
-	NotifyL(*strReleasingConn);
-	CleanupStack::PopAndDestroy(strReleasingConn);
+	NotifyL(R_STR_RELEASING_CONN);
 	iSocket.Shutdown(RSocket::ENormal, iStatus);
 	SetActive();
 	}
@@ -513,9 +465,7 @@ void CRFtermBt::DisconnectFromServerL()
 //
 void CRFtermBt::ConnectToServerL()
 	{
-	HBufC* strConnecting = StringLoader::LoadLC(R_STR_CONNECTING);
-	NotifyL(*strConnecting);
-	CleanupStack::PopAndDestroy(strConnecting);
+	NotifyL(R_STR_CONNECTING);
 
 	User::LeaveIfError(iSocket.Open(iSocketServer, KStrRFCOMM));
 
@@ -597,8 +547,7 @@ void CRFtermBt::SendFileL(const TDesC& aFileName, const TBool aDoEcho)
 		TInt result = iFile.Open(iFileSession, aFileName, EFileRead);
 		if (result != KErrNone)
 			{
-			HBufC* errFileOpening = StringLoader::LoadLC(R_ERR_FILE_OPENING);
-			NotifyL(*errFileOpening);
+			NotifyL(R_ERR_FILE_OPENING);
 			iFileSession.Close();
 			return;
 			}
@@ -732,9 +681,7 @@ void CRFtermBt::SetSecurityWithChannelL(
 	SetActive();
 
 	// Write Log events
-	HBufC* strWaitingConn = StringLoader::LoadLC(R_STR_WAITING_CONN);
-	NotifyL(*strWaitingConn);
-	CleanupStack::PopAndDestroy(strWaitingConn);
+	NotifyL(R_STR_WAITING_CONN);
 
 	HBufC* strPortNumber = StringLoader::LoadLC(R_STR_PORT_NUMBER);
 	TBuf<10> channelStr;
@@ -827,6 +774,12 @@ void CRFtermBt::NotifyL(const TDesC& aMessage)
 		{
 		iObserver->HandleBtNotifyL(aMessage);
 		}
+	}
+void CRFtermBt::NotifyL(TInt aResId)
+	{
+	HBufC* message = StringLoader::LoadLC(aResId);
+	NotifyL(*message);
+	CleanupStack::PopAndDestroy(message);
 	}
 
 // ----------------------------------------------------------------------------

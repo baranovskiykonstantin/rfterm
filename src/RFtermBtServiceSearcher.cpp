@@ -200,9 +200,7 @@ void CRFtermBtServiceSearcher::NextRecordRequestCompleteL(
 
 	if (aTotalRecordsCount == 0)
 		{
-		HBufC* errNRRCNoRecords = StringLoader::LoadLC(R_ERR_NRRC_NO_RECORDS);
-		NotifyL(*errNRRCNoRecords);
-		CleanupStack::PopAndDestroy(errNRRCNoRecords);
+		NotifyL(R_ERR_NRRC_NO_RECORDS);
 		Finished(KErrNotFound);
 		return;
 		}
@@ -305,9 +303,7 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 		}
 	else
 		{
-		HBufC* errAttrReqCom = StringLoader::LoadLC(R_ERR_ATTR_REQ_COM);
-		NotifyL(*errAttrReqCom);
-		CleanupStack::PopAndDestroy(errAttrReqCom);
+		NotifyL(R_ERR_ATTR_REQ_COM);
 		Finished();
 		}
 	}
@@ -473,6 +469,12 @@ void CRFtermBtServiceSearcher::NotifyL(const TDesC& aMessage)
 		{
 		iObserver->HandleBtNotifyL(aMessage);
 		}
+	}
+void CRFtermBtServiceSearcher::NotifyL(TInt aResId)
+	{
+	HBufC* message = StringLoader::LoadLC(aResId);
+	NotifyL(*message);
+	CleanupStack::PopAndDestroy(message);
 	}
 
 // End of File

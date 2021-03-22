@@ -160,6 +160,7 @@ private: // New functions
 	 * Send log message to observer.
 	 */
 	void NotifyL(const TDesC& aMessage);
+	void NotifyL(TInt aResId);
 
 public: // from MSdpAgentNotifier
 

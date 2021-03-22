@@ -325,6 +325,7 @@ private: // New private functions
 	 * Send log message to observer.
 	 */
 	void NotifyL(const TDesC& aMessage);
+	void NotifyL(TInt aResId);
 
 	/**
 	 * NotifyDeviceIsConnectedL()
