@@ -127,11 +127,7 @@ void CRFtermOutput::UpdateRect(const TRect& aNewRect)
 
 TBool CRFtermOutput::IsEmpty() const
 	{
-	if (iText->DocumentLength())
-		{
-		return EFalse;
-		}
-	return ETrue;
+	return (iText->DocumentLength() == 0);
 	}
 
 void CRFtermOutput::ClearL()
