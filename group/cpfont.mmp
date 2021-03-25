@@ -1,0 +1,22 @@
+/*
+============================================================================
+ Name        : RFterm.mmp
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This is the project specification file for cpfont.
+============================================================================
+*/
+
+TARGET			cpfont_0xaa40a41a.exe
+TARGETTYPE		exe
+UID				0x0 0xaa40a81a
+
+SOURCEPATH		..\src
+SOURCE			cpfont.cpp
+
+USERINCLUDE		..\inc
+SYSTEMINCLUDE	\epoc32\include
+
+LIBRARY			euser.lib efsrv.lib
+
+CAPABILITY		Tcb

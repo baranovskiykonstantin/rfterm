@@ -35,7 +35,8 @@
 "..\help\out\RFterm_0xae7f53fa.h01"														-"c:\resource\help\RFterm_0xae7f53fa.h01"
 "..\help\out\RFterm_0xae7f53fa.h16"														-"c:\resource\help\RFterm_0xae7f53fa.h16"
 "..\help\out\RFterm_0xae7f53fa.h93"														-"c:\resource\help\RFterm_0xae7f53fa.h93"
-"$(EPOCROOT)epoc32\winscw\c\system\fonts\RFterm_0xae7f53fa_font.ttf"					-"c:\system\fonts\RFterm_0xae7f53fa_font.ttf"
+"$(EPOCROOT)epoc32\winscw\c\resource\apps\RFterm_0xae7f53fa_font.ttf"					-"c:\resource\apps\RFterm_0xae7f53fa_font.ttf"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\cpfont_0xaa40a41a.exe"					-"c:\sys\bin\cpfont_0xaa40a41a.exe", FR, RI, RW
 
 ;required for application to be covered by backup/restore facility 
 "..\sis\backup_registration.xml"														-"c:\private\ae7f53fa\backup_registration.xml"

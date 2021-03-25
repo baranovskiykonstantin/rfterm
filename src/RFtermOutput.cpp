@@ -43,7 +43,7 @@ CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent)
 	}
 
 CRFtermOutput::CRFtermOutput()
-	: iFontSize(120)
+	: iRFtermFontID(-1)
 	, iTabSize(4)
 	, iCtrlCharMapping(EMapCRtoCRLF)
 	, iCodePage(KCodePageLatin1)
@@ -56,12 +56,34 @@ CRFtermOutput::CRFtermOutput()
 void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	{
 	CEikEdwin::ConstructL(
-		ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor | ENoWrap,
-		0,
-		0,
-		0
-	);
+			ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor | ENoWrap,
+			0, 0, 0);
 	SetContainerWindowL(*aParent);
+
+	// Check if font is present in Font and Bitmap Server.
+	// If not then add it manually.
+	TInt numTypefaces = CEikonEnv::Static()->ScreenDevice()->NumTypefaces();
+	TBool fontIsPresent(EFalse);
+	for (TInt i = 0; i < numTypefaces; i++)
+		{
+		TTypefaceSupport typefaceSupport;
+		CEikonEnv::Static()->ScreenDevice()->TypefaceSupport(typefaceSupport, i);
+		if (typefaceSupport.iTypeface.iName == KRFtermFontName)
+			{
+			fontIsPresent = ETrue;
+			break;
+			}
+		}
+	if (!fontIsPresent)
+		{
+		TInt fontLoadingError;
+		fontLoadingError = CEikonEnv::Static()->ScreenDevice()->AddFile(
+				KCourierNewFontPath, iRFtermFontID);
+		if (fontLoadingError != KErrNone)
+			{
+			Panic(ERFtermCannotLoadFont);
+			}
+		}
 
 	SetBackgroundColorL(KRgbBlack);
 	iTextView->SetBackgroundColor(KRgbBlack);
@@ -82,14 +104,6 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	SetParaFormatLayer(pParaFormatLayer);
 	CleanupStack::Pop(pParaFormatLayer);
 
-	TInt fontLoadingError; 
-	fontLoadingError = CEikonEnv::Static()->ScreenDevice()->AddFile(
-		KRFtermFontPath, iRFtermFontID);
-	if (fontLoadingError != KErrNone)
-		{
-		Panic(ERFtermCannotLoadFont);
-		}
-
 	SetAknEditorAllowedInputModes(EAknEditorNullInputMode);
 
 	iOutputCursor.iType = TTextCursor::ETypeRectangle;
@@ -99,7 +113,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	iOutputCursor.iFlags = 0;
 	iOutputCursor.iColor = KDefaultFontColor;
 
-	SetFontSizeL(iFontSize); // Create with default font size
+	SetFontSizeL(120); // Create with default font size
 
 	iBellNote = CAknGlobalNote::NewL();
 	iBellNote->SetTone(EAknNoteDialogWarningTone);
@@ -110,7 +124,8 @@ CRFtermOutput::~CRFtermOutput()
 	delete iBellNote;
 	iBellNote = NULL;
 
-	CEikonEnv::Static()->ScreenDevice()->RemoveFile(iRFtermFontID); 
+	if (iRFtermFontID >= 0)
+		CEikonEnv::Static()->ScreenDevice()->RemoveFile(iRFtermFontID);
 	}
 
 void CRFtermOutput::UpdateRect(const TRect& aNewRect)

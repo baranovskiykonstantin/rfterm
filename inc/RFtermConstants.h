@@ -28,7 +28,8 @@ const TInt KRFtermTextBufLength = 128;
 
 const TInt KRFtermTimeOut = 20000000; // 20 seconds time-out
 
-_LIT(KRFtermFontPath, "c:\\system\\fonts\\RFterm_0xae7f53fa_font.ttf");
+_LIT(KRFtermFontPath, "c:\\resource\\apps\\RFterm_0xae7f53fa_font.ttf");
+_LIT(KCourierNewFontPath, "c:\\resource\\fonts\\cour.ttf");
 _LIT(KRFtermFontName, "Courier New");
 
 _LIT(KRFtermIconsFile, "\\resource\\apps\\RFterm_0xae7f53fa.mif");
