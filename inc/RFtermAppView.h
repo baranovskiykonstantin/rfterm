@@ -10,9 +10,12 @@
 #ifndef __RFTERMAPPVIEW_H__
 #define __RFTERMAPPVIEW_H__
 
+#include <blddef.h>
 #include <coecntrl.h>
 #include <aknnavide.h>
+#ifdef __S60v5__
 #include <touchfeedback.h>
+#endif
 #include "RFtermOutput.h"
 #include "RFtermScrollBars.h"
 #include "RFtermSettings.h"
@@ -215,7 +218,9 @@ private: // Data
 	 * iTouchFeedback
 	 * Tactile feedback instance.
 	 */
+#ifdef __S60v5__
 	MTouchFeedback* iTouchFeedback;
+#endif
 
 public:
 

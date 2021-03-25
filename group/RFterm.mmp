@@ -6,6 +6,7 @@
  Description : This is the project specification file for RFterm.
 ============================================================================
 */
+#include "blddef.h"
 
 MACRO _HELP_AVAILABLE_
 
@@ -78,9 +79,11 @@ LIBRARY			gdi.lib
 LIBRARY			hlplch.lib
 LIBRARY			sdpagent.lib
 LIBRARY			sdpdatabase.lib
-LIBRARY			touchfeedback.lib
 LIBRARY			uiklaf.lib
 LIBRARY			ws32.lib
+#if defined(__S60v5__)
+LIBRARY			touchfeedback.lib
+#endif
 
 LANG 01 16 93
 
@@ -90,6 +93,8 @@ CAPABILITY		ReadUserData LocalServices
 
 EPOCSTACKSIZE	0x5000
 
+#if defined(__S60v5__)
 DEBUGGABLE_UDEBONLY
+#endif
 
 // End of File

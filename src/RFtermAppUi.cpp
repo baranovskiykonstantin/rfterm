@@ -14,6 +14,7 @@
 #include <f32file.h>
 #include <s32file.h>
 #include <hlplch.h>
+// For S60v3 the Multiple Drive Support API Plug-in is required.
 #include <caknmemoryselectiondialogmultidrive.h>
 #include <caknfileselectiondialog.h>
 

@@ -1,0 +1,1 @@
+﻿It is highly recommended to reboot the device to be sure the installed font is loaded properly.

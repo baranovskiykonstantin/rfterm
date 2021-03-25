@@ -1,0 +1,45 @@
+; Installation file for RFterm application
+;
+; This is an auto-generated PKG file by Carbide.
+; This file uses variables specific to Carbide builds that will not work
+; on command-line builds. If you want to use this generated PKG file from the
+; command-line tools you will need to modify the variables with the appropriate
+; values: $(EPOCROOT), $(PLATFORM), $(TARGET)
+;
+;Language - standard language definitions
+&EN,RU,UK
+
+; standard SIS file header
+#{"RFterm","RFterm","RFterm"},(0xae7f53fa),1,0,0
+
+;Localised Vendor name
+%{"Konstantin Baranovskiy","Барановский Константин","Барановський Костянтин"}
+
+;Unique Vendor name
+:"Konstantin Baranovskiy"
+
+;Supports Series 60 v 5.0
+[0x1028315F], 0, 0, 0, {"Series60ProductID","Series60ProductID","Series60ProductID"}
+
+;Files to install
+;You should change the source paths to match that of your environment
+;<source> <destination>
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\RFterm_0xae7f53fa.exe"					-"c:\sys\bin\RFterm_0xae7f53fa.exe"
+"$(EPOCROOT)epoc32\data\z\resource\apps\RFterm_0xae7f53fa.r01"							-"c:\resource\apps\RFterm_0xae7f53fa.r01"
+"$(EPOCROOT)epoc32\data\z\resource\apps\RFterm_0xae7f53fa.r16"							-"c:\resource\apps\RFterm_0xae7f53fa.r16"
+"$(EPOCROOT)epoc32\data\z\resource\apps\RFterm_0xae7f53fa.r93"							-"c:\resource\apps\RFterm_0xae7f53fa.r93"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\RFterm_0xae7f53fa_reg.r01"				-"c:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.r01"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\RFterm_0xae7f53fa_reg.r16"				-"c:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.r16"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\RFterm_0xae7f53fa_reg.r93"				-"c:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.r93"
+"$(EPOCROOT)epoc32\data\z\resource\apps\RFterm_0xae7f53fa.mif"							-"c:\resource\apps\RFterm_0xae7f53fa.mif"
+"..\help\out\RFterm_0xae7f53fa.h01"														-"c:\resource\help\RFterm_0xae7f53fa.h01"
+"..\help\out\RFterm_0xae7f53fa.h16"														-"c:\resource\help\RFterm_0xae7f53fa.h16"
+"..\help\out\RFterm_0xae7f53fa.h93"														-"c:\resource\help\RFterm_0xae7f53fa.h93"
+"$(EPOCROOT)epoc32\winscw\c\resource\apps\RFterm_0xae7f53fa_font.ttf"					-"c:\resource\apps\RFterm_0xae7f53fa_font.ttf"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\cpfont_0xaa40a41a.exe"					-"c:\sys\bin\cpfont_0xaa40a41a.exe", FR, RI, RW
+;For Unicode text files to be displayed correctly, it is recommended that the
+;Byte Order Mark (BOM) be specified at the beginning of the text files.
+{"..\data\fontnote_EN.txt" "..\data\fontnote_RU.txt" "..\data\fontnote_UK.txt"}			-"", FT, TC
+
+;required for application to be covered by backup/restore facility
+"..\sis\backup_registration.xml"														-"c:\private\ae7f53fa\backup_registration.xml"

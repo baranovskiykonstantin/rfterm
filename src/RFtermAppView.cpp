@@ -95,6 +95,7 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 		CleanupStack::PopAndDestroy(naviLabel);
 		}
 
+#ifdef __S60v5__
 	// Tactile feedback
 	// From dev docs:
 	// "Do not delete the pointer in the controller destructor"
@@ -103,6 +104,7 @@ void CRFtermAppView::ConstructL(const TRect& aRect)
 		{
 		iTouchFeedback->SetFeedbackEnabledForThisApp(ETrue);
 		}
+#endif
 
 	// Set the windows size
 	SetRect(aRect);
@@ -317,10 +319,12 @@ void CRFtermAppView::HandlePointerEventL(const TPointerEvent& aPointerEvent)
 			}
 		}
 
+#ifdef __S60v5__
 	if (TPointerEvent::EButton1Down == pointerEvent.iType && iTouchFeedback)
 		{
 		iTouchFeedback->InstantFeedback(ETouchFeedbackBasic);
 		}
+#endif
 
 	// Call base class HandlePointerEventL()
 	CCoeControl::HandlePointerEventL(pointerEvent);
