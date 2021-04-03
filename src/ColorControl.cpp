@@ -25,7 +25,8 @@ _LIT(KModule, "CColorDialog");
 
 const TInt KPreviewTileWidth = 25;
 const TInt KPreviewTileHeight = 25;
-const TInt KControlMargins = 10;
+const TInt KPreviewMargins = 10;
+const TInt KSliderMargins = 20;
 _LIT(KDelimiterR, "R ");
 _LIT(KDelimiterG, "G ");
 _LIT(KDelimiterB, "B");
@@ -59,8 +60,8 @@ void CColorPreview::ConstructL(const CCoeControl* aParent, const TRgb* aInitialC
 TSize CColorPreview::MinimumSize()
 	{
 	TSize ms;
-	ms.iWidth = KPreviewTileWidth + KControlMargins * 2;
-	ms.iHeight = KPreviewTileHeight * 2 + KControlMargins * 2;
+	ms.iWidth = KPreviewTileWidth + KPreviewMargins * 2;
+	ms.iHeight = KPreviewTileHeight * 2 + KPreviewMargins * 2;
 	return ms;
 	}
 
@@ -71,7 +72,7 @@ void CColorPreview::Draw(const TRect& /*aRect*/) const
 
 	// Initial color preview
 	TRect previewRect(rect);
-	previewRect.Shrink(KControlMargins, KControlMargins);
+	previewRect.Shrink(KPreviewMargins, KPreviewMargins);
 	previewRect.SetHeight(previewRect.Height() / 2);
 	gc.SetPenStyle(CGraphicsContext::ENullPen);
 	gc.SetBrushStyle(CGraphicsContext::ESolidBrush);
@@ -200,11 +201,11 @@ void CColorControl::SizeChanged()
 		// Default slider has an empty field at the left side.
 		// Make a slider wider than a parent window and move empty part outside the window.
 		// The size of the empty part was found manually.
-		TInt emptyPart = (TInt)((TReal)iFont->HeightInPixels() * 5.6);
+		TInt emptyPart = (TInt)(iFont->HeightInPixels() * 5.6);
 		sliderRect.SetWidth(sliderRect.Width() + emptyPart);
 		sliderRect.Move(-emptyPart, sliderRect.Height());
-		sliderRect.SetWidth(sliderRect.Width() - KControlMargins * 2);
-		sliderRect.Move(KControlMargins, 0);
+		sliderRect.SetWidth(sliderRect.Width() - KSliderMargins * 4);
+		sliderRect.Move(KSliderMargins * 2, 0);
 		Components().ControlById<CAknSlider>(EColorControlSliderR)->SetRect(sliderRect);
 		sliderRect.Move(0, sliderRect.Height());
 		Components().ControlById<CAknSlider>(EColorControlSliderG)->SetRect(sliderRect);
@@ -218,14 +219,14 @@ void CColorControl::SizeChanged()
 		previewRect.SetSize(TSize(rect.Width() / 4, rect.Height()));
 		Components().ControlById<CColorPreview>(EColorControlPreview)->SetRect(previewRect);
 		TRect sliderRect = TRect(TSize(rect.Width(), rect.Height() / 3));
-		TInt emptyPart = (TInt)((TReal)iFont->HeightInPixels() * 5.6);
+		TInt emptyPart = (TInt)(iFont->HeightInPixels() * 5.6);
 		if (previewRect.Width() > emptyPart)
 			{
 			sliderRect.SetWidth(sliderRect.Width() - (previewRect.Width() - emptyPart));
 			sliderRect.Move(previewRect.Width() - emptyPart, 0);
 			}
-		sliderRect.SetWidth(sliderRect.Width() - KControlMargins * 2);
-		sliderRect.Move(KControlMargins, 0);
+		sliderRect.SetWidth(sliderRect.Width() - KSliderMargins * 2);
+		sliderRect.Move(KSliderMargins, 0);
 		Components().ControlById<CAknSlider>(EColorControlSliderR)->SetRect(sliderRect);
 		sliderRect.Move(0, sliderRect.Height());
 		Components().ControlById<CAknSlider>(EColorControlSliderG)->SetRect(sliderRect);
