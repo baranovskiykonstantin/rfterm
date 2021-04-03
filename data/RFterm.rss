@@ -775,11 +775,11 @@ RESOURCE SLIDER r_color_slider_r
 	minvalue = 0;
 	maxvalue = 255;
 	step = 1;
-	valuetype=EAknSliderValueDecimal;
-	singular_valuelabel = "R";
+	valuetype = EAknSliderValueBareFigure;
+	valuelabel = "R: %U";
+	singular_valuelabel = "R: %U";
 	minlabel = " ";
 	maxlabel = " ";
-	valuelabel = "R";
 	}
 
 //----------------------------------------------------
@@ -795,11 +795,11 @@ RESOURCE SLIDER r_color_slider_g
 	minvalue = 0;
 	maxvalue = 255;
 	step = 1;
-	valuetype=EAknSliderValueDecimal;
-	singular_valuelabel = "G";
+	valuetype = EAknSliderValueBareFigure;
+	valuelabel = "G: %U";
+	singular_valuelabel = "G: %U";
 	minlabel = " ";
 	maxlabel = " ";
-	valuelabel = "G";
 	}
 
 //----------------------------------------------------
@@ -815,11 +815,11 @@ RESOURCE SLIDER r_color_slider_b
 	minvalue = 0;
 	maxvalue = 255;
 	step = 1;
-	valuetype=EAknSliderValueDecimal;
-	singular_valuelabel = "B";
+	valuetype = EAknSliderValueBareFigure;
+	valuelabel = "B: %U";
+	singular_valuelabel = "B: %U";
 	minlabel = " ";
 	maxlabel = " ";
-	valuelabel = "B";
 	}
 
 //----------------------------------------------------
