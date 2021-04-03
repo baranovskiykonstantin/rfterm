@@ -8,7 +8,7 @@
  */
 
 // INCLUDE FILES
-#include <StringLoader.h>
+#include <stringloader.h>
 #include <coemain.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermBtServiceAdvertiser.h"
@@ -683,14 +683,9 @@ void CRFtermBt::SetSecurityWithChannelL(
 	// Write Log events
 	NotifyL(R_STR_WAITING_CONN);
 
-	HBufC* strPortNumber = StringLoader::LoadLC(R_STR_PORT_NUMBER);
-	TBuf<10> channelStr;
-	channelStr.Num(channel);
-	HBufC* portStrWithNumber = HBufC::NewLC(strPortNumber->Length() + channelStr.Length());
-	portStrWithNumber->Des().Copy(*strPortNumber);
-	portStrWithNumber->Des().Append(channelStr);
-	NotifyL(*portStrWithNumber);
-	CleanupStack::PopAndDestroy(2); // strPortNumber, portStrWithNumber
+	HBufC* strPortNumber = StringLoader::LoadLC(R_STR_PORT_NUMBER, channel);
+	NotifyL(*strPortNumber);
+	CleanupStack::PopAndDestroy(); // strPortNumber
 
 	// Set the security according to.
 	TBTServiceSecurity serviceSecurity;

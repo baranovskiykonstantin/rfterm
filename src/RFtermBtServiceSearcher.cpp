@@ -8,7 +8,7 @@
  */
 
 #include <bt_sock.h>
-#include <StringLoader.h>
+#include <stringloader.h>
 #include <RFterm_0xae7f53fa.rsg>
 #include "RFtermBtServiceSearcher.h"
 #include "RFtermBtServiceSearcher.pan"
@@ -186,14 +186,9 @@ void CRFtermBtServiceSearcher::NextRecordRequestCompleteL(
 
 	if (aError != KErrNone)
 		{
-		TBuf<6> errorStr;
-		errorStr.Num(aError);
-		HBufC* errNRRC = StringLoader::LoadLC(R_ERR_NRRC_ERROR);
-		HBufC* errFull = HBufC::NewLC(errNRRC->Length() + errorStr.Length());
-		errFull->Des().Copy(*errNRRC);
-		errFull->Des().Append(errorStr);
-		NotifyL(*errFull);
-		CleanupStack::PopAndDestroy(2); // errNRRC, errFull
+		HBufC* errNRRC = StringLoader::LoadLC(R_ERR_NRRC_ERROR, aError);
+		NotifyL(*errNRRC);
+		CleanupStack::PopAndDestroy(); // errNRRC
 		Finished(aError);
 		return;
 		}
@@ -287,14 +282,9 @@ void CRFtermBtServiceSearcher::AttributeRequestCompleteL(
 	{
 	if (aError != KErrNone)
 		{
-		HBufC* errCantGetAttribute = StringLoader::LoadLC(R_ERR_CANT_GET_ATTRIBUTE);
-		TBuf<6> errorStr;
-		errorStr.Num(aError);
-		HBufC* errFull = HBufC::NewLC(errCantGetAttribute->Length() + errorStr.Length());
-		errFull->Des().Copy(*errCantGetAttribute);
-		errFull->Des().Append(errorStr);
-		NotifyL(*errFull);
-		CleanupStack::PopAndDestroy(2); // errCantGetAttribute, errFull
+		HBufC* errCantGetAttribute = StringLoader::LoadLC(R_ERR_CANT_GET_ATTRIBUTE, aError);
+		NotifyL(*errCantGetAttribute);
+		CleanupStack::PopAndDestroy(); // errCantGetAttribute
 		}
 	else if (!HasFinishedSearching())
 		{
