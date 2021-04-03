@@ -13,6 +13,7 @@
 #include <e32base.h>
 #include <e32cmn.h>
 #include <s32strm.h>
+#include <gdi.h>
 
 /**
  * Enum TCtrlCharMapping.
@@ -96,6 +97,10 @@ public: // New functions
 	TCtrlCharMapping CtrlCharMapping() const;
 	TCodePage CodePage() const;
 	TBool DoSaveNotifies() const;
+	TRgb BackgroundColor() const;
+	TRgb FontColor() const;
+	TRgb CursorColor() const;
+	TRgb ScrollbarsColor() const;
 
 	// Setters
 	void SetMessageAddendum(const TDesC& aAddendum);
@@ -106,6 +111,10 @@ public: // New functions
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetCodePage(TCodePage aCodePage);
 	void SetNotifySaving(TBool aSaveNotifies);
+	void SetBackgroundColor(TRgb aColor);
+	void SetFontColor(TRgb aColor);
+	void SetCursorColor(TRgb aColor);
+	void SetScrollbarsColor(TRgb aColor);
 
 	// MRFtermSettingsObserver
 	void AddObserver(MRFtermSettingsObserver* aObserver);
@@ -163,6 +172,26 @@ private: // Data
 	 */
 	TBool iSaveNotifies;
 
+	/**
+	 * Output background color
+	 */
+	TRgb iBgColor;
+
+	/**
+	 * Output font color
+	 */
+	TRgb iFontColor;
+
+	/**
+	 * Output cursor color
+	 */
+	TRgb iCursorColor;
+
+	/**
+	 * Output scrollbars color
+	 */
+	TRgb iSbColor;
+
 private: // Observers
 
 	/**
@@ -185,6 +214,10 @@ inline TInt CRFtermSettings::TabSize() const { return iTabSize; }
 inline TCtrlCharMapping CRFtermSettings::CtrlCharMapping() const { return iCtrlCharMapping; }
 inline TCodePage CRFtermSettings::CodePage() const { return iCodePage; }
 inline TBool CRFtermSettings::DoSaveNotifies() const { return iSaveNotifies; }
+inline TRgb CRFtermSettings::BackgroundColor() const { return iBgColor; }
+inline TRgb CRFtermSettings::FontColor() const { return iFontColor; }
+inline TRgb CRFtermSettings::CursorColor() const { return iCursorColor; }
+inline TRgb CRFtermSettings::ScrollbarsColor() const { return iSbColor; }
 
 #endif /* __RFTERMSETTINGS_H__ */
 

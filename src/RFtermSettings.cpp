@@ -47,6 +47,10 @@ void CRFtermSettings::SetDefaultValues()
 	iCtrlCharMapping = EMapCRtoCRLF;
 	iCodePage = ECodePageLatin1;
 	iSaveNotifies = ETrue;
+	iBgColor = KRgbBlack;
+	iFontColor = KDefaultFontColor;
+	iCursorColor = KDefaultFontColor;
+	iSbColor = KDefaultFontColor;
 	Notify();
 	}
 
@@ -143,6 +147,30 @@ void CRFtermSettings::SetNotifySaving(TBool aSaveNotifies)
 	Notify();
 	}
 
+void CRFtermSettings::SetBackgroundColor(TRgb aColor)
+	{
+	iBgColor = aColor;
+	Notify();
+	}
+
+void CRFtermSettings::SetFontColor(TRgb aColor)
+	{
+	iFontColor = aColor;
+	Notify();
+	}
+
+void CRFtermSettings::SetCursorColor(TRgb aColor)
+	{
+	iCursorColor = aColor;
+	Notify();
+	}
+
+void CRFtermSettings::SetScrollbarsColor(TRgb aColor)
+	{
+	iSbColor = aColor;
+	Notify();
+	}
+
 void CRFtermSettings::ConstructL()
 	{
 	}
@@ -160,6 +188,10 @@ void CRFtermSettings::LoadL(RReadStream& aStream)
 	SetCtrlCharMapping((TCtrlCharMapping) aStream.ReadInt32L());
 	SetCodePage((TCodePage) aStream.ReadInt32L());
 	SetNotifySaving(aStream.ReadInt8L());
+	SetBackgroundColor(aStream.ReadInt32L());
+	SetFontColor(TRgb(aStream.ReadInt32L()));
+	SetCursorColor(TRgb(aStream.ReadInt32L()));
+	SetScrollbarsColor(TRgb(aStream.ReadInt32L()));
 	iSkipNotifications = EFalse;
 	Notify();
 	}
@@ -175,6 +207,10 @@ void CRFtermSettings::SaveL(RWriteStream& aStream) const
 	aStream.WriteInt32L((TInt)iCtrlCharMapping);
 	aStream.WriteInt32L((TInt)iCodePage);
 	aStream.WriteInt8L(iSaveNotifies);
+	aStream.WriteInt32L(iBgColor.Value());
+	aStream.WriteInt32L(iFontColor.Value());
+	aStream.WriteInt32L(iCursorColor.Value());
+	aStream.WriteInt32L(iSbColor.Value());
 	}
 
 void CRFtermSettings::AddObserver(MRFtermSettingsObserver* aObserver)

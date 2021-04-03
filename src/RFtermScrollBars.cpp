@@ -13,6 +13,8 @@ CRFtermScrollBars::CRFtermScrollBars(const CCoeControl *aParent)
 	: iVIsVisible(EFalse)
 	, iHIsVisible(EFalse)
 	, iObserver(NULL)
+	, iBgColor(KRgbBlack)
+	, iSbColor(KDefaultFontColor)
 	{
 	SetContainerWindowL(*aParent);
 	}
@@ -25,15 +27,17 @@ void CRFtermScrollBars::DrawVScrollBar(CWindowGc& aGc) const
 	{
 	aGc.SetPenStyle(CGraphicsContext::ENullPen);
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetBrushColor(KRgbDarkGray);
+	aGc.SetBrushColor(iBgColor);
 	aGc.Clear(iVBackgroundRect);
 	if (iVScrollBarIsActive)
 		{
-		aGc.SetBrushColor(KRgbGray);
+		TRgb hlColor = iSbColor;
+		HighlightColor(hlColor);
+		aGc.SetBrushColor(hlColor);
 		}
 	else
 		{
-		aGc.SetBrushColor(KDefaultFontColor);
+		aGc.SetBrushColor(iSbColor);
 		}
 	aGc.DrawRect(iVThumbRect);
 	}
@@ -42,15 +46,17 @@ void CRFtermScrollBars::DrawHScrollBar(CWindowGc& aGc) const
 	{
 	aGc.SetPenStyle(CGraphicsContext::ENullPen);
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetBrushColor(KRgbDarkGray);
+	aGc.SetBrushColor(iBgColor);
 	aGc.Clear(iHBackgroundRect);
 	if (iHScrollBarIsActive)
 		{
-		aGc.SetBrushColor(KRgbGray);
+		TRgb hlColor = iSbColor;
+		HighlightColor(hlColor);
+		aGc.SetBrushColor(hlColor);
 		}
 	else
 		{
-		aGc.SetBrushColor(KDefaultFontColor);
+		aGc.SetBrushColor(iSbColor);
 		}
 	aGc.DrawRect(iHThumbRect);
 	}
@@ -58,7 +64,7 @@ void CRFtermScrollBars::DrawHScrollBar(CWindowGc& aGc) const
 void CRFtermScrollBars::DrawCorner(CWindowGc& aGc) const
 	{
 	aGc.SetBrushStyle(CGraphicsContext::ESolidBrush);
-	aGc.SetBrushColor(KRgbBlack);
+	aGc.SetBrushColor(iBgColor);
 	aGc.Clear(iCornerBackgroundRect);
 	}
 
@@ -322,6 +328,35 @@ void CRFtermScrollBars::Update(TBool aDrawNow)
 			DrawCornerNow();
 			}
 		}
+	}
+
+void CRFtermScrollBars::SetColors(TRgb aBg, TRgb aSb)
+	{
+	iBgColor = aBg;
+	iSbColor = aSb;
+	DrawDeferred();
+	}
+
+void CRFtermScrollBars::HighlightColor(TRgb& aColor) const
+	{
+	const TInt hlValue = 50;
+	TInt r = aColor.Red();
+	TInt g = aColor.Green();
+	TInt b = aColor.Blue();
+	TInt maxColor = Max(r, Max(g, b));
+	if (maxColor < 127)
+		{
+		r = Min(255, r + hlValue);
+		g = Min(255, g + hlValue);
+		b = Min(255, b + hlValue);
+		}
+	else
+		{
+		r = Max(0, r - hlValue);
+		g = Max(0, g - hlValue);
+		b = Max(0, b - hlValue);
+		}
+	aColor = TRgb(r, g, b);
 	}
 
 void CRFtermScrollBars::GetFreeRect(TRect& aRect) const

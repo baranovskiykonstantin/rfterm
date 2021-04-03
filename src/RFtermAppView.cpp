@@ -582,7 +582,13 @@ void CRFtermAppView::HandleSettingsChange(const CRFtermSettings* aSettings)
 		iMessageHistoryArray->Compress();
 		}
 
-	// Output code page
+	if (iRFtermScrollBars)
+		{
+		iRFtermScrollBars->SetColors(
+				aSettings->BackgroundColor(),
+				aSettings->ScrollbarsColor());
+		}
+
 	if (iRFtermOutput)
 		{
 		iRFtermOutput->ChangeCodePage(aSettings->CodePage());
@@ -590,6 +596,10 @@ void CRFtermAppView::HandleSettingsChange(const CRFtermSettings* aSettings)
 		iRFtermOutput->SetCtrlCharMapping(aSettings->CtrlCharMapping());
 		iRFtermOutput->SetTabSize(aSettings->TabSize());
 		iRFtermOutput->SetNotifySaving(aSettings->DoSaveNotifies());
+		iRFtermOutput->SetColors(
+				aSettings->BackgroundColor(),
+				aSettings->FontColor(),
+				aSettings->CursorColor());
 		}
 	}
 

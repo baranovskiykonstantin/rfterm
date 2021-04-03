@@ -98,6 +98,15 @@ CHARACTER_SET UTF8
 
 #define qtn_str_setting_save_notifies_label "Сохранять уведомления"
 
+
+#define qtn_str_settings_colors_label "Цвета"
+
+#define qtn_str_setting_color_bg_label "Фон"
+#define qtn_str_setting_color_font_label "Текст"
+#define qtn_str_setting_color_cursor_label "Курсор"
+#define qtn_str_setting_color_sb_label "Полосы прокрутки"
+
+
 // RS-232 Signals
 #define qtn_str_signal_input "вход"
 #define qtn_str_signal_output "выход"

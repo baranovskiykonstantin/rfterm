@@ -10,6 +10,7 @@
 #ifndef __RFTERMSCROLLBARS_H__
 #define __RFTERMSCROLLBARS_H__
 
+#include <gdi.h>
 #include <coecntrl.h>
 #include "RFtermConstants.h"
 #include "RFtermScrollBarModel.h"
@@ -40,6 +41,7 @@ public: // New functions
 	inline TBool IsVScrollBarVisible() const;
 	inline TBool IsHScrollBarVisible() const;
 	void Update(TBool aDrawNow);
+	void SetColors(TRgb aBg, TRgb aSb);
 	/**
 	 * Area that can be occupied by the container control.
 	 */
@@ -59,6 +61,10 @@ private: // New functions
 	void DrawHScrollBar(CWindowGc& aGc) const;
 	void DrawCorner(CWindowGc& aGc) const;
 	void Draw(const TRect& aRect) const;
+	/**
+	 * Change color to look different when a scrollbar is pressed.
+	 */
+	void HighlightColor(TRgb& aColor) const;
 	
 private: // From MRFtermOutputObserver
 
@@ -90,6 +96,9 @@ private: // Data
 
 	// Non owning pointer to observer
 	MRFtermScrollBarsObserver* iObserver;
+
+	TRgb iBgColor;
+	TRgb iSbColor;
 
 	};
 

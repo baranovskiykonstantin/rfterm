@@ -44,12 +44,15 @@ CRFtermOutput* CRFtermOutput::NewLC(const CCoeControl *aParent)
 
 CRFtermOutput::CRFtermOutput()
 	: iRFtermFontID(-1)
+	, iFontSize(120)
 	, iTabSize(4)
 	, iCtrlCharMapping(EMapCRtoCRLF)
 	, iCodePage(KCodePageLatin1)
 	, iSaveNotifies(ETrue)
 	, iLastLineStartPos(0)
 	, iLastLineCursorPos(0)
+	, iBgColor(KRgbBlack)
+	, iFgColor(KDefaultFontColor)
 	{
 	}
 
@@ -93,16 +96,7 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	viewMargins.SetAllValuesTo(0);
 	SetBorderViewMargins(viewMargins);
 
-	CParaFormatLayer* pParaFormatLayer = CEikonEnv::NewDefaultParaFormatLayerL();
-	CleanupStack::PushL(pParaFormatLayer);
-	CParaFormat paraFormat;
-	TParaFormatMask paraFormatMask;
-	pParaFormatLayer->SenseL(&paraFormat, paraFormatMask);
-	paraFormat.iFillColor = KRgbBlack;
-	paraFormatMask.SetAttrib(EAttFillColor);
-	pParaFormatLayer->SetL(&paraFormat, paraFormatMask);
-	SetParaFormatLayer(pParaFormatLayer);
-	CleanupStack::Pop(pParaFormatLayer);
+	UpdateFormatL();
 
 	SetAknEditorAllowedInputModes(EAknEditorNullInputMode);
 
@@ -112,8 +106,6 @@ void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	iOutputCursor.iWidth = 10;
 	iOutputCursor.iFlags = 0;
 	iOutputCursor.iColor = KDefaultFontColor;
-
-	SetFontSizeL(120); // Create with default font size
 
 	iBellNote = CAknGlobalNote::NewL();
 	iBellNote->SetTone(EAknNoteDialogWarningTone);
@@ -177,6 +169,40 @@ void CRFtermOutput::UpdateCursorL()
 		}
 	}
 
+void CRFtermOutput::UpdateFormatL()
+	{
+	CParaFormatLayer* paraFormatLayer = CEikonEnv::NewDefaultParaFormatLayerL();
+	CleanupStack::PushL(paraFormatLayer);
+	CParaFormat* paraFormat = CParaFormat::NewLC();
+	paraFormat->iFillColor = iBgColor;
+	paraFormat->iLineSpacingInTwips = iFontSize;
+//	paraFormat->iWrap = EFalse;
+	TParaFormatMask paraFormatMask;
+	paraFormatMask.SetAttrib(EAttFillColor);
+	paraFormatMask.SetAttrib(EAttLineSpacing);
+//	paraFormatMask.SetAttrib(EAttWrap);
+	paraFormatLayer->SetL(paraFormat, paraFormatMask);
+	SetParaFormatLayer(paraFormatLayer);
+	CleanupStack::Pop(paraFormat);
+	CleanupStack::Pop(paraFormatLayer);
+
+	CCharFormatLayer* charFormatLayer = CEikonEnv::NewDefaultCharFormatLayerL();
+	CleanupStack::PushL(charFormatLayer);
+	TCharFormat charFormat(KRFtermFontName, iFontSize);
+	charFormat.iFontPresentation.iTextColor = iFgColor;
+	TCharFormatMask charFormatMask;
+//	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
+	charFormatMask.SetAttrib(EAttFontTypeface);
+	charFormatMask.SetAttrib(EAttFontHeight);
+	charFormatMask.SetAttrib(EAttColor);
+	charFormatLayer->SetL(charFormat, charFormatMask);
+	SetCharFormatLayer(charFormatLayer);
+	CleanupStack::Pop(charFormatLayer);
+
+	iTextView->HandleGlobalChangeL();
+	iTextView->FinishBackgroundFormattingL();
+	}
+
 void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
 	{
 	// Scroll to the cursor pos
@@ -206,32 +232,27 @@ void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
 
 void CRFtermOutput::SetFontSizeL(TInt aFontSize)
 	{
-	if (iFontSize == aFontSize)
-		{
-		return;
-		}
-
 	iFontSize = aFontSize;
-	CCharFormatLayer* pCharFormatLayer = CEikonEnv::NewDefaultCharFormatLayerL();
-	CleanupStack::PushL(pCharFormatLayer);
-//	TCharFormat charFormat;
-	TCharFormat charFormat(KRFtermFontName, 1);
-	TCharFormatMask charFormatMask;
-//	pCharFormatLayer->Sense(charFormat, charFormatMask);
-	charFormat.iFontPresentation.iTextColor = KDefaultFontColor;
-	charFormatMask.SetAttrib(EAttColor);
-//	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
-	charFormatMask.SetAttrib(EAttFontTypeface);
-	charFormat.iFontSpec.iHeight = aFontSize;
-	charFormatMask.SetAttrib(EAttFontHeight);
-	pCharFormatLayer->SetL(charFormat, charFormatMask);
-	SetCharFormatLayer(pCharFormatLayer);
-	CleanupStack::Pop(pCharFormatLayer);
+	UpdateFormatL();
 
 	iOutputCursor.iWidth = aFontSize / 12;
 
 	DrawDeferred();
 	ScrollToCursorPosL(ETrue);
+	}
+
+void CRFtermOutput::SetColors(TRgb aBg, TRgb aFg, TRgb aCursor)
+	{
+	iBgColor = aBg;
+	iFgColor = aFg;
+	// cursor color is XORed with background
+	iOutputCursor.iColor = aCursor ^ aBg;
+	UpdateCursorL();
+
+	SetBackgroundColorL(aBg);
+	iTextView->SetBackgroundColor(aBg);
+	UpdateFormatL();
+	DrawDeferred();
 	}
 
 void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)

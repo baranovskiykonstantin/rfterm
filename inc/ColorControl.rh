@@ -1,0 +1,19 @@
+/*
+ ============================================================================
+ Name        : ColorControl.rh
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This file contains declarations for resources of ColorControl.
+ ============================================================================
+ */
+#ifndef __COLORCONTROL_RH__
+#define __COLORCONTROL_RH__
+
+STRUCT COLOREDITOR
+	{
+
+	}
+
+#endif // __COLORCONTROL_RH__
+
+// End of File

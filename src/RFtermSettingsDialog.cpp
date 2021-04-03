@@ -17,9 +17,11 @@
 #include <akntabgrp.h>
 #include <RFterm_0xae7f53fa.rsg>
 
-#include "RFtermSettingsDialog.h"
+#include "ColorControl.h"
+#include "ColorControl.hrh"
 #include "RFterm.hrh"
 #include "RFtermConstants.h"
+#include "RFtermSettingsDialog.h"
 
 TInt CRFtermSettingsDialog::RunDlgLD(CRFtermSettings* aSettings)
 	{
@@ -50,10 +52,7 @@ TBool CRFtermSettingsDialog::OkToExitL(TInt aButtonId)
 		}
 	else if (aButtonId == EAknSoftkeyEdit)
 		{
-		ProcessCommandL(EAknFormCmdEdit);
-		CEikButtonGroupContainer* cba = CEikButtonGroupContainer::Current();
-		cba->SetCommandSetL(R_AVKON_SOFTKEYS_SAVE_BACK);
-		cba->DrawNow();
+		StartEditing();
 		}
 	else if (aButtonId == EAknSoftkeyDone)
 		{
@@ -86,14 +85,19 @@ void CRFtermSettingsDialog::HandlePointerEventL(const TPointerEvent &aPointerEve
 			{
 			TPoint posDelta = iDownPointerPos - aPointerEvent.iPosition;
 			if (Abs(posDelta.iX) < KMaxDelta && Abs(posDelta.iY) < KMaxDelta)
-				{
-				ProcessCommandL(EAknFormCmdEdit);
-				CEikButtonGroupContainer* cba = CEikButtonGroupContainer::Current();
-				cba->SetCommandSetL(R_AVKON_SOFTKEYS_SAVE_BACK);
-				cba->DrawNow();
-				}
+				StartEditing();
 			}
 		}
+	}
+
+TKeyResponse CRFtermSettingsDialog::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType)
+	{
+	if (aType == EEventKey && aKeyEvent.iScanCode == EStdKeyDevice3 && !IsEditable())
+		{
+		StartEditing();
+		return EKeyWasConsumed;
+		}
+	return CAknForm::OfferKeyEventL(aKeyEvent, aType);
 	}
 
 void CRFtermSettingsDialog::PreLayoutDynInitL()
@@ -159,6 +163,26 @@ void CRFtermSettingsDialog::LoadFormDataL()
 	CAknPopupFieldText* saveNotifiesControl =
 		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
 	saveNotifiesControl->SetCurrentValueIndex(index);
+
+	TRgb color = iSettings->BackgroundColor();
+	CColorEditor* bgColorEditorControl =
+		(CColorEditor*)Control(ESettingColorBackground);
+	bgColorEditorControl->SetColor(color);
+
+	color = iSettings->FontColor();
+	CColorEditor* fontColorEditorControl =
+		(CColorEditor*)Control(ESettingColorFont);
+	fontColorEditorControl->SetColor(color);
+
+	color = iSettings->CursorColor();
+	CColorEditor* cursorColorEditorControl =
+		(CColorEditor*)Control(ESettingColorCursor);
+	cursorColorEditorControl->SetColor(color);
+
+	color = iSettings->ScrollbarsColor();
+	CColorEditor* sbColorEditorControl =
+		(CColorEditor*)Control(ESettingColorScrollbars);
+	sbColorEditorControl->SetColor(color);
 	}
 
 TBool CRFtermSettingsDialog::SaveFormDataL()
@@ -217,6 +241,22 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 	CAknPopupFieldText* saveNotifiesControl =
 		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
 	iSettings->SetNotifySaving(saveNotifiesControl->CurrentValueIndex());
+
+	CColorEditor* bgColorEditorControl =
+		(CColorEditor*)Control(ESettingColorBackground);
+	iSettings->SetBackgroundColor(bgColorEditorControl->Color());
+
+	CColorEditor* fontColorEditorControl =
+		(CColorEditor*)Control(ESettingColorFont);
+	iSettings->SetFontColor(fontColorEditorControl->Color());
+
+	CColorEditor* cursorColorEditorControl =
+		(CColorEditor*)Control(ESettingColorCursor);
+	iSettings->SetCursorColor(cursorColorEditorControl->Color());
+
+	CColorEditor* scrollbarsColorEditorControl =
+		(CColorEditor*)Control(ESettingColorScrollbars);
+	iSettings->SetScrollbarsColor(scrollbarsColorEditorControl->Color());
 	
 	return ETrue;
 	}
@@ -239,7 +279,38 @@ void CRFtermSettingsDialog::ActivateL()
 				static_cast<CAknNavigationControlContainer*> (statusPane->ControlL(naviPaneUid));
 		CAknNavigationDecorator* naviDecorator = naviPane->Top();
 		CAknTabGroup* tabs = (CAknTabGroup*)naviDecorator->DecoratedControl();
-		tabs->SetTabFixedWidthL(KTabWidthWithTwoTabs);
+		tabs->SetTabFixedWidthL(KTabWidthWithThreeTabs);
 		}
 	}
+
+void CRFtermSettingsDialog::StartEditing()
+	{
+	ProcessCommandL(EAknFormCmdEdit);
+	CEikButtonGroupContainer* cba = CEikButtonGroupContainer::Current();
+	cba->SetCommandSetL(R_AVKON_SOFTKEYS_SAVE_BACK);
+	cba->DrawNow();
+	}
+
+SEikControlInfo CRFtermSettingsDialog::CreateCustomControlL(TInt aControlType)
+	{
+	SEikControlInfo controlInfo;
+	controlInfo.iControl = NULL;
+	controlInfo.iTrailerTextId = 0;
+	controlInfo.iFlags = 0;
+
+	if (aControlType == EColorEditor)
+		{
+		controlInfo.iControl = new (ELeave) CColorEditor;
+		}
+
+	return controlInfo;
+	}
+
+MEikDialogPageObserver::TFormControlTypes
+CRFtermSettingsDialog::ConvertCustomControlTypeToBaseControlType(TInt aControlType) const
+	{
+	if (aControlType == EColorEditor)
+		return MEikDialogPageObserver::EMfneDerived;
+	return CAknForm::ConvertCustomControlTypeToBaseControlType(aControlType);
+	};
 

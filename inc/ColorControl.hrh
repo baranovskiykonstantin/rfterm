@@ -1,0 +1,26 @@
+/*
+ ============================================================================
+ Name        : ColorControl.hrh
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This file contains declarations for constants of ColorControl.
+ The file can be included in C++ or resource file.
+ ============================================================================
+ */
+#ifndef __COLORCONTROL_HRH__
+#define __COLORCONTROL_HRH__
+
+/**
+ * Control ID.
+ * Must be in range 0x2001-0x2800
+ * for custom controls.
+ */
+enum
+	{
+	EColorControl = 0x2137,
+	EColorEditor
+	};
+
+#endif // __COLORCONTROL_HRH__
+
+// End of File

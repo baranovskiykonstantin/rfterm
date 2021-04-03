@@ -33,6 +33,7 @@ SOURCE			RFtermSettings.cpp
 SOURCE			RFtermSettingsDialog.cpp
 SOURCE			RFtermSignalQueryDialog.cpp
 SOURCE			RFtermTextQueryDialog.cpp
+SOURCE			ColorControl.cpp
 
 SOURCEPATH		..\data
 
@@ -84,6 +85,9 @@ LIBRARY			ws32.lib
 #if defined(__S60v5__)
 LIBRARY			touchfeedback.lib
 #endif
+LIBRARY			aknskins.lib
+LIBRARY			aknskinsrv.lib
+LIBRARY			aknswallpaperutils.lib
 
 LANG 01 16 93
 

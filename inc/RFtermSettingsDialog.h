@@ -33,17 +33,24 @@ public: // From CAknForm
 
 	TBool OkToExitL(TInt aButtonId);
 	void HandlePointerEventL(const TPointerEvent &aPointerEvent);
+	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType);
 	TBool SaveFormDataL();
 	void DoNotSaveFormDataL();
 	void PreLayoutDynInitL();
+	MEikDialogPageObserver::TFormControlTypes ConvertCustomControlTypeToBaseControlType(TInt aControlType) const;
 
 private: // From CAknForm
 
 	void LoadFormDataL();
+	SEikControlInfo CreateCustomControlL(TInt aControlType);
 
 private: // From CCoeControl
 
 	void ActivateL();
+
+private: // New functions
+
+	void StartEditing();
 
 private: // Data
 

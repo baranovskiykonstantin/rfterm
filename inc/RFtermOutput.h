@@ -36,6 +36,7 @@ public: // New functions
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetTabSize(TInt aSize);
 	void SetNotifySaving(TBool aSaveNotifies);
+	void SetColors(TRgb aBg, TRgb aFg, TRgb aCursor);
 	void ChangeCodePage(TCodePage aCodePage);
 	TBool IsEmpty() const;
 	void ClearL();
@@ -75,6 +76,7 @@ private: // New functions
 	void AppendIndentL(TInt aIndentLength);
 	void ScrollToCursorPosL(TBool aSkipAdditionalScroll=EFalse);
 	void UpdateCursorL();
+	void UpdateFormatL();
 	/*
 	 * Find control character (one of KCtrlChars).
 	 * aText - the text for searching;
@@ -117,6 +119,9 @@ private: // Data
 	 * relative to the content rect pos (0, 0).
 	 */
 	TRect iOutputRect;
+
+	TRgb iBgColor;
+	TRgb iFgColor;
 
 	};
 

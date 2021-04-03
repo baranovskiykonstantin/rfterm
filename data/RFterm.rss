@@ -15,6 +15,8 @@ NAME RFTM	// 4 letter ID
 #include <avkon.rsg>
 #include <avkon.rh>
 #include <appinfo.rh>
+#include "ColorControl.rh"
+#include "ColorControl.hrh"
 #include "RFterm.hrh"
 #include "RFterm.loc"
 
@@ -497,6 +499,12 @@ RESOURCE ARRAY setting_pages
 			id = ESettingPageOutput;
 			text = qtn_str_settings_output_label;
 			form = settings_output_form;
+			},
+		PAGE
+			{
+			id = ESettingPageColors;
+			text = qtn_str_settings_colors_label;
+			form = settings_colors_form;
 			}
 		};
 	}
@@ -675,6 +683,54 @@ RESOURCE ARRAY setting_codepage_items
 		};
 	}
 
+RESOURCE FORM settings_colors_form
+	{
+	flags = EEikFormUseDoubleSpacedFormat;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EColorEditor;
+			prompt = qtn_str_setting_color_bg_label;
+			id = ESettingColorBackground;
+			itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+			control = COLOREDITOR
+				{
+				};
+			},
+		DLG_LINE
+			{
+			type = EColorEditor;
+			prompt = qtn_str_setting_color_font_label;
+			id = ESettingColorFont;
+			itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+			control = COLOREDITOR
+				{
+				};
+			},
+		DLG_LINE
+			{
+			type = EColorEditor;
+			prompt = qtn_str_setting_color_cursor_label;
+			id = ESettingColorCursor;
+			itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+			control = COLOREDITOR
+				{
+				};
+			},
+		DLG_LINE
+			{
+			type = EColorEditor;
+			prompt = qtn_str_setting_color_sb_label;
+			id = ESettingColorScrollbars;
+			itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+			control = COLOREDITOR
+				{
+				};
+			}
+		};
+	}
+
 //----------------------------------------------------
 //
 //    r_dialog_signal_query
@@ -704,6 +760,80 @@ RESOURCE DIALOG r_dialog_signal_query
 				};
 			}
 		};
+	}
+
+//----------------------------------------------------
+//
+//    r_color_slider_r
+//    Recource of slider of color control
+//
+//----------------------------------------------------
+//
+RESOURCE SLIDER r_color_slider_r
+	{
+	layout = EAknFormSliderLayout3;
+	minvalue = 0;
+	maxvalue = 255;
+	step = 1;
+	valuetype=EAknSliderValueDecimal;
+	singular_valuelabel = "R";
+	minlabel = " ";
+	maxlabel = " ";
+	valuelabel = "R";
+	}
+
+//----------------------------------------------------
+//
+//    r_color_slider_g
+//    Recource of slider of color control
+//
+//----------------------------------------------------
+//
+RESOURCE SLIDER r_color_slider_g
+	{
+	layout = EAknFormSliderLayout3;
+	minvalue = 0;
+	maxvalue = 255;
+	step = 1;
+	valuetype=EAknSliderValueDecimal;
+	singular_valuelabel = "G";
+	minlabel = " ";
+	maxlabel = " ";
+	valuelabel = "G";
+	}
+
+//----------------------------------------------------
+//
+//    r_color_slider_b
+//    Recource of slider of color control
+//
+//----------------------------------------------------
+//
+RESOURCE SLIDER r_color_slider_b
+	{
+	layout = EAknFormSliderLayout3;
+	minvalue = 0;
+	maxvalue = 255;
+	step = 1;
+	valuetype=EAknSliderValueDecimal;
+	singular_valuelabel = "B";
+	minlabel = " ";
+	maxlabel = " ";
+	valuelabel = "B";
+	}
+
+//----------------------------------------------------
+//
+//    r_color_dialog
+//    Recource of color dialog
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_color_dialog
+	{
+	flags = EEikDialogFlagNoDrag | EEikDialogFlagFillAppClientRect | 
+			EEikDialogFlagWait | EEikDialogFlagCbaButtons | EEikDialogFlagNoTitleBar;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
 	}
 
 // End of File
