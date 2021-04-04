@@ -176,7 +176,7 @@ void CRFtermOutput::UpdateFormatL()
 	CleanupStack::PushL(paraFormatLayer);
 	CParaFormat* paraFormat = CParaFormat::NewLC();
 	paraFormat->iFillColor = iBgColor;
-	paraFormat->iLineSpacingInTwips = iFontSize;
+	paraFormat->iLineSpacingInTwips = iFontSize * 1.2;
 //	paraFormat->iWrap = EFalse;
 	TParaFormatMask paraFormatMask;
 	paraFormatMask.SetAttrib(EAttFillColor);
