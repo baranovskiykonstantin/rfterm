@@ -99,8 +99,7 @@ CHARACTER_SET UTF8
 #define qtn_str_setting_save_notifies_label "Зберігати сповіщення"
 
 
-// "Кольори" занадто довге для вкладки
-#define qtn_str_settings_colors_label "Колір"
+#define qtn_str_settings_colors_label "Кольори"<0x0001>"Колір"
 
 #define qtn_str_setting_color_bg_label "Фон"
 #define qtn_str_setting_color_font_label "Текст"
