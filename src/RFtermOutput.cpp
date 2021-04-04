@@ -201,7 +201,9 @@ void CRFtermOutput::UpdateFormatL()
 	SetCharFormatLayer(charFormatLayer);
 	CleanupStack::Pop(charFormatLayer);
 
-	FormatTextL();
+	iTextView->HandleGlobalChangeNoRedrawL();
+	iTextView->FinishBackgroundFormattingL();
+	DrawDeferred();
 	}
 
 void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
