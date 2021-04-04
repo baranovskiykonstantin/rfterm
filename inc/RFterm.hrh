@@ -42,14 +42,18 @@ enum TRFtermSettingPageIds
 // Identifiers of settings dialog controls
 enum TRFtermSettingControlIds
 	{
+	// input
 	ESettingAppendix = 1,
 	ESettingHistorySize,
 	ESettingEcho,
+	// output
 	ESettingFontSize,
 	ESettingTabSize,
+	ESettingFontAntialiasing,
 	ESettingMapping,
 	ESettingCodePage,
 	ESettingSaveNotifies,
+	// colors
 	ESettingColorBackground,
 	ESettingColorFont,
 	ESettingColorCursor,

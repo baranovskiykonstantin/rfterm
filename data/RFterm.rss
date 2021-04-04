@@ -616,6 +616,19 @@ RESOURCE FORM settings_output_form
 			},
 		DLG_LINE
 			{
+			id = ESettingFontAntialiasing;
+			type = EAknCtPopupFieldText;
+			prompt = qtn_str_setting_font_antialiasing_label;
+			itemflags = EEikDlgItemTakesEnterKey;
+			control = POPUP_FIELD_TEXT
+				{
+				textarray = setting_yesno_items;
+				popupfield = POPUP_FIELD {};
+				active = 0;
+				};
+			},
+		DLG_LINE
+			{
 			id = ESettingMapping;
 			type = EAknCtPopupFieldText;
 			prompt = qtn_str_setting_mapping_label;

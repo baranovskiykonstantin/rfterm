@@ -94,6 +94,7 @@ public: // New functions
 	TBool IsEchoEnabled() const;
 	TInt FontSize() const;
 	TInt TabSize() const;
+	TBool FontAntialiasing() const;
 	TCtrlCharMapping CtrlCharMapping() const;
 	TCodePage CodePage() const;
 	TBool DoSaveNotifies() const;
@@ -108,6 +109,7 @@ public: // New functions
 	void EnableEcho(TBool aState);
 	void SetFontSize(TInt aSize);
 	void SetTabSize(TInt aSize);
+	void SetFontAntialiasing(TBool aState);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetCodePage(TCodePage aCodePage);
 	void SetNotifySaving(TBool aSaveNotifies);
@@ -156,6 +158,11 @@ private: // Data
 	 * Size of the tabulation step.
 	 */
 	TInt iTabSize;
+
+	/**
+	 * Font antialiasing
+	 */
+	TBool iFontAntialiasing;
 
 	/**
 	 * Map one control character with another.
@@ -211,6 +218,7 @@ inline TInt CRFtermSettings::MessageHistorySize() const { return iMessageHistory
 inline TBool CRFtermSettings::IsEchoEnabled() const { return iEcho; }
 inline TInt CRFtermSettings::FontSize() const { return iFontSize; }
 inline TInt CRFtermSettings::TabSize() const { return iTabSize; }
+inline TBool CRFtermSettings::FontAntialiasing() const { return iFontAntialiasing; }
 inline TCtrlCharMapping CRFtermSettings::CtrlCharMapping() const { return iCtrlCharMapping; }
 inline TCodePage CRFtermSettings::CodePage() const { return iCodePage; }
 inline TBool CRFtermSettings::DoSaveNotifies() const { return iSaveNotifies; }

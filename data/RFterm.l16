@@ -79,6 +79,8 @@ CHARACTER_SET UTF8
 
 #define qtn_str_setting_tabsize_label "Размер табуляции"
 
+#define qtn_str_setting_font_antialiasing_label "Сглаживание шрифта"
+
 #define qtn_str_setting_mapping_label "Замена cимв. новой строки"
 #define qtn_str_setting_mapping_item0 "CR -> LF"
 #define qtn_str_setting_mapping_item1 "CR -> CR+LF"

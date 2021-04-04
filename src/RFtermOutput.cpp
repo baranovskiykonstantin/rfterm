@@ -46,6 +46,7 @@ CRFtermOutput::CRFtermOutput()
 	: iRFtermFontID(-1)
 	, iFontSize(120)
 	, iTabSize(4)
+	, iFontAntialiasing(EFalse)
 	, iCtrlCharMapping(EMapCRtoCRLF)
 	, iCodePage(KCodePageLatin1)
 	, iSaveNotifies(ETrue)
@@ -191,7 +192,8 @@ void CRFtermOutput::UpdateFormatL()
 	TCharFormat charFormat(KRFtermFontName, iFontSize);
 	charFormat.iFontPresentation.iTextColor = iFgColor;
 	TCharFormatMask charFormatMask;
-//	charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
+	if (iFontAntialiasing)
+		charFormat.iFontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	charFormatMask.SetAttrib(EAttFontTypeface);
 	charFormatMask.SetAttrib(EAttFontHeight);
 	charFormatMask.SetAttrib(EAttColor);
@@ -199,8 +201,7 @@ void CRFtermOutput::UpdateFormatL()
 	SetCharFormatLayer(charFormatLayer);
 	CleanupStack::Pop(charFormatLayer);
 
-	iTextView->HandleGlobalChangeL();
-	iTextView->FinishBackgroundFormattingL();
+	FormatTextL();
 	}
 
 void CRFtermOutput::ScrollToCursorPosL(TBool aSkipAdditionalScroll)
@@ -237,11 +238,19 @@ void CRFtermOutput::SetFontSizeL(TInt aFontSize)
 
 	iOutputCursor.iWidth = aFontSize / 12;
 
-	DrawDeferred();
 	ScrollToCursorPosL(ETrue);
 	}
 
-void CRFtermOutput::SetColors(TRgb aBg, TRgb aFg, TRgb aCursor)
+void CRFtermOutput::SetFontAntialiasingL(TBool aState)
+	{
+	iFontAntialiasing = aState;
+	// Call to UpdateFormatL() has no effect.
+	// To apply the anti-aliasing we have to change the font size.
+	SetFontSizeL(iFontSize - 1);
+	SetFontSizeL(iFontSize);
+	}
+
+void CRFtermOutput::SetColorsL(TRgb aBg, TRgb aFg, TRgb aCursor)
 	{
 	iBgColor = aBg;
 	iFgColor = aFg;
@@ -252,7 +261,6 @@ void CRFtermOutput::SetColors(TRgb aBg, TRgb aFg, TRgb aCursor)
 	SetBackgroundColorL(aBg);
 	iTextView->SetBackgroundColor(aBg);
 	UpdateFormatL();
-	DrawDeferred();
 	}
 
 void CRFtermOutput::ChangeCodePage(TCodePage aCodePage)

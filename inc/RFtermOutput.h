@@ -35,8 +35,9 @@ public: // New functions
 	void SetFontSizeL(TInt aFontSize);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetTabSize(TInt aSize);
+	void SetFontAntialiasingL(TBool aState);
 	void SetNotifySaving(TBool aSaveNotifies);
-	void SetColors(TRgb aBg, TRgb aFg, TRgb aCursor);
+	void SetColorsL(TRgb aBg, TRgb aFg, TRgb aCursor);
 	void ChangeCodePage(TCodePage aCodePage);
 	TBool IsEmpty() const;
 	void ClearL();
@@ -100,6 +101,7 @@ private: // Data
 	TInt iRFtermFontID;
 	TInt iFontSize;
 	TInt iTabSize;
+	TBool iFontAntialiasing;
 	TCtrlCharMapping iCtrlCharMapping;
 	TPtrC iCodePage;
 	TTextCursor iOutputCursor;

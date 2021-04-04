@@ -77,6 +77,8 @@
 
 #define qtn_str_setting_tabsize_label "Tab size"
 
+#define qtn_str_setting_font_antialiasing_label "Font antialiasing"
+
 #define qtn_str_setting_mapping_label "Control char mapping"
 #define qtn_str_setting_mapping_item0 "CR -> LF"
 #define qtn_str_setting_mapping_item1 "CR -> CR+LF"

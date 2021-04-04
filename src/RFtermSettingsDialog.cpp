@@ -149,6 +149,11 @@ void CRFtermSettingsDialog::LoadFormDataL()
 		(CAknSlider*)Control(ESettingTabSize);
 	tabSizeControl->SetValueL(iSettings->TabSize());
 
+	index = ((TInt) iSettings->FontAntialiasing());
+	CAknPopupFieldText* fontAntialiasingControl =
+		(CAknPopupFieldText*)Control(ESettingFontAntialiasing);
+	fontAntialiasingControl->SetCurrentValueIndex(index);
+
 	index = ((TInt) iSettings->CtrlCharMapping()) - 1;
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);
@@ -164,6 +169,7 @@ void CRFtermSettingsDialog::LoadFormDataL()
 		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
 	saveNotifiesControl->SetCurrentValueIndex(index);
 
+	// Colors
 	TRgb color = iSettings->BackgroundColor();
 	CColorEditor* bgColorEditorControl =
 		(CColorEditor*)Control(ESettingColorBackground);
@@ -230,6 +236,10 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 		(CAknSlider*)Control(ESettingTabSize);
 	iSettings->SetTabSize(tabSizeControl->Value());
 
+	CAknPopupFieldText* fontAntialiasingControl =
+		(CAknPopupFieldText*)Control(ESettingFontAntialiasing);
+	iSettings->SetFontAntialiasing(fontAntialiasingControl->CurrentValueIndex());
+
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);
 	iSettings->SetCtrlCharMapping((TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1));
@@ -242,6 +252,7 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
 	iSettings->SetNotifySaving(saveNotifiesControl->CurrentValueIndex());
 
+	// Colors
 	CColorEditor* bgColorEditorControl =
 		(CColorEditor*)Control(ESettingColorBackground);
 	iSettings->SetBackgroundColor(bgColorEditorControl->Color());
