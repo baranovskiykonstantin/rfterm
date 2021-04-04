@@ -32,12 +32,10 @@ CRFtermSettings::~CRFtermSettings()
 
 CRFtermSettings::CRFtermSettings()
 	{
-	iSkipNotifications = ETrue;
-	SetDefaultValues();
-	iSkipNotifications = EFalse;
+	SetDefaultValues(EFalse);
 	}
 
-void CRFtermSettings::SetDefaultValues()
+void CRFtermSettings::SetDefaultValues(TBool aNotify)
 	{
 	iMessageAddendum = KCRLF;
 	iMessageHistorySize = 8;
@@ -52,10 +50,11 @@ void CRFtermSettings::SetDefaultValues()
 	iFontColor = KDefaultFontColor;
 	iCursorColor = KDefaultFontColor;
 	iSbColor = KDefaultFontColor;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetMessageAddendum(const TDesC& aAddendum)
+void CRFtermSettings::SetMessageAddendum(const TDesC& aAddendum, TBool aNotify)
 	{
 	if (aAddendum != KCR &&
 			aAddendum != KLF &&
@@ -68,10 +67,11 @@ void CRFtermSettings::SetMessageAddendum(const TDesC& aAddendum)
 		{
 		iMessageAddendum = aAddendum;
 		}
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetMessageHistorySize(TInt aSize)
+void CRFtermSettings::SetMessageHistorySize(TInt aSize, TBool aNotify)
 	{
 	if (aSize < 0 || aSize > 15)
 		{
@@ -81,16 +81,18 @@ void CRFtermSettings::SetMessageHistorySize(TInt aSize)
 		{
 		iMessageHistorySize = aSize;
 		}
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::EnableEcho(TBool aState)
+void CRFtermSettings::EnableEcho(TBool aState, TBool aNotify)
 	{
 	iEcho = aState ? 1 : 0;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetFontSize(TInt aSize)
+void CRFtermSettings::SetFontSize(TInt aSize, TBool aNotify)
 	{
 	if (aSize < 80 || aSize > 160)
 		{
@@ -100,10 +102,11 @@ void CRFtermSettings::SetFontSize(TInt aSize)
 		{
 		iFontSize = aSize;
 		}
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetTabSize(TInt aSize)
+void CRFtermSettings::SetTabSize(TInt aSize, TBool aNotify)
 	{
 	if (aSize < 1 || aSize > 8)
 		{
@@ -113,16 +116,18 @@ void CRFtermSettings::SetTabSize(TInt aSize)
 		{
 		iTabSize = aSize;
 		}
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetFontAntialiasing(TBool aState)
+void CRFtermSettings::SetFontAntialiasing(TBool aState, TBool aNotify)
 	{
 	iFontAntialiasing = aState ? 1 : 0;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetCtrlCharMapping(TCtrlCharMapping aMapping)
+void CRFtermSettings::SetCtrlCharMapping(TCtrlCharMapping aMapping, TBool aNotify)
 	{
 	if (aMapping < EMapCRtoLF || aMapping > EMapNone)
 		{
@@ -132,10 +137,11 @@ void CRFtermSettings::SetCtrlCharMapping(TCtrlCharMapping aMapping)
 		{
 		iCtrlCharMapping = aMapping;
 		}
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetCodePage(TCodePage aCodePage)
+void CRFtermSettings::SetCodePage(TCodePage aCodePage, TBool aNotify)
 	{
 	if (aCodePage < ECodePageLatin1 || aCodePage > ECodePageKOI8)
 		{
@@ -145,37 +151,43 @@ void CRFtermSettings::SetCodePage(TCodePage aCodePage)
 		{
 		iCodePage = aCodePage;
 		}
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetNotifySaving(TBool aSaveNotifies)
+void CRFtermSettings::SetNotifySaving(TBool aSaveNotifies, TBool aNotify)
 	{
 	iSaveNotifies = aSaveNotifies ? 1 : 0;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetBackgroundColor(TRgb aColor)
+void CRFtermSettings::SetBackgroundColor(TRgb aColor, TBool aNotify)
 	{
 	iBgColor = aColor;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetFontColor(TRgb aColor)
+void CRFtermSettings::SetFontColor(TRgb aColor, TBool aNotify)
 	{
 	iFontColor = aColor;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetCursorColor(TRgb aColor)
+void CRFtermSettings::SetCursorColor(TRgb aColor, TBool aNotify)
 	{
 	iCursorColor = aColor;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
-void CRFtermSettings::SetScrollbarsColor(TRgb aColor)
+void CRFtermSettings::SetScrollbarsColor(TRgb aColor, TBool aNotify)
 	{
 	iSbColor = aColor;
-	Notify();
+	if (aNotify)
+		Notify();
 	}
 
 void CRFtermSettings::ConstructL()
@@ -185,22 +197,20 @@ void CRFtermSettings::ConstructL()
 // Reading setting data from stream void
 void CRFtermSettings::LoadL(RReadStream& aStream)
 	{
-	iSkipNotifications = ETrue;
 	aStream >> iMessageAddendum;
-	SetMessageAddendum(iMessageAddendum);
-	SetMessageHistorySize(aStream.ReadInt32L());
-	EnableEcho(aStream.ReadInt8L());
-	SetFontSize(aStream.ReadInt32L());
-	SetTabSize(aStream.ReadInt32L());
-	SetFontAntialiasing(aStream.ReadInt8L());
-	SetCtrlCharMapping((TCtrlCharMapping) aStream.ReadInt32L());
-	SetCodePage((TCodePage) aStream.ReadInt32L());
-	SetNotifySaving(aStream.ReadInt8L());
-	SetBackgroundColor(aStream.ReadInt32L());
-	SetFontColor(TRgb(aStream.ReadInt32L()));
-	SetCursorColor(TRgb(aStream.ReadInt32L()));
-	SetScrollbarsColor(TRgb(aStream.ReadInt32L()));
-	iSkipNotifications = EFalse;
+	SetMessageAddendum(iMessageAddendum, EFalse);
+	SetMessageHistorySize(aStream.ReadInt32L(), EFalse);
+	EnableEcho(aStream.ReadInt8L(), EFalse);
+	SetFontSize(aStream.ReadInt32L(), EFalse);
+	SetTabSize(aStream.ReadInt32L(), EFalse);
+	SetFontAntialiasing(aStream.ReadInt8L(), EFalse);
+	SetCtrlCharMapping((TCtrlCharMapping) aStream.ReadInt32L(), EFalse);
+	SetCodePage((TCodePage) aStream.ReadInt32L(), EFalse);
+	SetNotifySaving(aStream.ReadInt8L(), EFalse);
+	SetBackgroundColor(aStream.ReadInt32L(), EFalse);
+	SetFontColor(TRgb(aStream.ReadInt32L()), EFalse);
+	SetCursorColor(TRgb(aStream.ReadInt32L()), EFalse);
+	SetScrollbarsColor(TRgb(aStream.ReadInt32L()), EFalse);
 	Notify();
 	}
 
@@ -238,11 +248,6 @@ void CRFtermSettings::RemoveObserver(MRFtermSettingsObserver* aObserver)
 
 void CRFtermSettings::Notify()
 	{
-	if (iSkipNotifications)
-		{
-		return;
-		}
-
 	for (TInt i = iObservers.Count(); i > 0; i--)
 		{
 		MRFtermSettingsObserver* observer = iObservers[i - 1];

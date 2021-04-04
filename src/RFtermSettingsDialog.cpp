@@ -200,75 +200,77 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 		{
 		case 0:
 			{
-			iSettings->SetMessageAddendum(KCR);
+			iSettings->SetMessageAddendum(KCR, EFalse);
 			break;
 			}
 		case 1:
 			{
-			iSettings->SetMessageAddendum(KLF);
+			iSettings->SetMessageAddendum(KLF, EFalse);
 			break;
 			}
 		case 2:
 			{
-			iSettings->SetMessageAddendum(KCRLF);
+			iSettings->SetMessageAddendum(KCRLF, EFalse);
 			break;
 			}
 		default:
 			{
-			iSettings->SetMessageAddendum(KNullDesC);
+			iSettings->SetMessageAddendum(KNullDesC, EFalse);
 			}
 		}
 
 	CEikNumberEditor* historySizeControl = 
 		(CEikNumberEditor*)Control(ESettingHistorySize);
-	iSettings->SetMessageHistorySize(historySizeControl->Number());
+	iSettings->SetMessageHistorySize(historySizeControl->Number(), EFalse);
 
 	CAknPopupFieldText* echoControl =
 		(CAknPopupFieldText*)Control(ESettingEcho);
-	iSettings->EnableEcho(echoControl->CurrentValueIndex());
+	iSettings->EnableEcho(echoControl->CurrentValueIndex(), EFalse);
 
 	// Output
 	CAknSlider* fontSizeControl =
 		(CAknSlider*)Control(ESettingFontSize);
-	iSettings->SetFontSize(fontSizeControl->Value());
+	iSettings->SetFontSize(fontSizeControl->Value(), EFalse);
 
 	CAknSlider* tabSizeControl =
 		(CAknSlider*)Control(ESettingTabSize);
-	iSettings->SetTabSize(tabSizeControl->Value());
+	iSettings->SetTabSize(tabSizeControl->Value(), EFalse);
 
 	CAknPopupFieldText* fontAntialiasingControl =
 		(CAknPopupFieldText*)Control(ESettingFontAntialiasing);
-	iSettings->SetFontAntialiasing(fontAntialiasingControl->CurrentValueIndex());
+	iSettings->SetFontAntialiasing(fontAntialiasingControl->CurrentValueIndex(), EFalse);
 
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);
-	iSettings->SetCtrlCharMapping((TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1));
+	iSettings->SetCtrlCharMapping((TCtrlCharMapping) (mappingControl->CurrentValueIndex() + 1), EFalse);
 
 	CAknPopupFieldText* codePageControl =
 		(CAknPopupFieldText*)Control(ESettingCodePage);
-	iSettings->SetCodePage((TCodePage) (codePageControl->CurrentValueIndex() + 1));
+	iSettings->SetCodePage((TCodePage) (codePageControl->CurrentValueIndex() + 1), EFalse);
 
 	CAknPopupFieldText* saveNotifiesControl =
 		(CAknPopupFieldText*)Control(ESettingSaveNotifies);
-	iSettings->SetNotifySaving(saveNotifiesControl->CurrentValueIndex());
+	iSettings->SetNotifySaving(saveNotifiesControl->CurrentValueIndex(), EFalse);
 
 	// Colors
 	CColorEditor* bgColorEditorControl =
 		(CColorEditor*)Control(ESettingColorBackground);
-	iSettings->SetBackgroundColor(bgColorEditorControl->Color());
+	iSettings->SetBackgroundColor(bgColorEditorControl->Color(), EFalse);
 
 	CColorEditor* fontColorEditorControl =
 		(CColorEditor*)Control(ESettingColorFont);
-	iSettings->SetFontColor(fontColorEditorControl->Color());
+	iSettings->SetFontColor(fontColorEditorControl->Color(), EFalse);
 
 	CColorEditor* cursorColorEditorControl =
 		(CColorEditor*)Control(ESettingColorCursor);
-	iSettings->SetCursorColor(cursorColorEditorControl->Color());
+	iSettings->SetCursorColor(cursorColorEditorControl->Color(), EFalse);
 
 	CColorEditor* scrollbarsColorEditorControl =
 		(CColorEditor*)Control(ESettingColorScrollbars);
 	iSettings->SetScrollbarsColor(scrollbarsColorEditorControl->Color());
-	
+
+	// Notify settings change at the last item only!
+
 	return ETrue;
 	}
 

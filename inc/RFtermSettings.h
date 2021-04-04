@@ -86,7 +86,7 @@ public: // New functions
 	void SaveL(RWriteStream& aStream) const;
 
 	// Using default values.
-	void SetDefaultValues();
+	void SetDefaultValues(TBool aNotify=ETrue);
 
 	// Getters
 	const TDesC& MessageAddendum() const;
@@ -104,19 +104,19 @@ public: // New functions
 	TRgb ScrollbarsColor() const;
 
 	// Setters
-	void SetMessageAddendum(const TDesC& aAddendum);
-	void SetMessageHistorySize(TInt aSize);
-	void EnableEcho(TBool aState);
-	void SetFontSize(TInt aSize);
-	void SetTabSize(TInt aSize);
-	void SetFontAntialiasing(TBool aState);
-	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
-	void SetCodePage(TCodePage aCodePage);
-	void SetNotifySaving(TBool aSaveNotifies);
-	void SetBackgroundColor(TRgb aColor);
-	void SetFontColor(TRgb aColor);
-	void SetCursorColor(TRgb aColor);
-	void SetScrollbarsColor(TRgb aColor);
+	void SetMessageAddendum(const TDesC& aAddendum, TBool aNotify=ETrue);
+	void SetMessageHistorySize(TInt aSize, TBool aNotify=ETrue);
+	void EnableEcho(TBool aState, TBool aNotify=ETrue);
+	void SetFontSize(TInt aSize, TBool aNotify=ETrue);
+	void SetTabSize(TInt aSize, TBool aNotify=ETrue);
+	void SetFontAntialiasing(TBool aState, TBool aNotify=ETrue);
+	void SetCtrlCharMapping(TCtrlCharMapping aMapping, TBool aNotify=ETrue);
+	void SetCodePage(TCodePage aCodePage, TBool aNotify=ETrue);
+	void SetNotifySaving(TBool aSaveNotifies, TBool aNotify=ETrue);
+	void SetBackgroundColor(TRgb aColor, TBool aNotify=ETrue);
+	void SetFontColor(TRgb aColor, TBool aNotify=ETrue);
+	void SetCursorColor(TRgb aColor, TBool aNotify=ETrue);
+	void SetScrollbarsColor(TRgb aColor, TBool aNotify=ETrue);
 
 	// MRFtermSettingsObserver
 	void AddObserver(MRFtermSettingsObserver* aObserver);
@@ -205,11 +205,6 @@ private: // Observers
 	 * Array of non ownign pointers to settings observers.
 	 */
 	RPointerArray<MRFtermSettingsObserver> iObservers;
-	
-	/**
-	 * Flag to pause observer notification.
-	 */
-	TBool iSkipNotifications;
 
 	};
 
