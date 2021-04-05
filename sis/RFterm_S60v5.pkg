@@ -10,7 +10,7 @@
 &EN,RU,UK
 
 ; standard SIS file header
-#{"RFterm","RFterm","RFterm"},(0xae7f53fa),1,0,0
+#{"RFterm","RFterm","RFterm"},(0xae7f53fa),1,1,0
 
 ;Localised Vendor name
 %{"Konstantin Baranovskiy","Барановский Константин","Барановський Костянтин"}
