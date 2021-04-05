@@ -50,6 +50,7 @@ enum TRFtermSettingControlIds
 	ESettingFontSize,
 	ESettingTabSize,
 	ESettingFontAntialiasing,
+	ESettingWrapText,
 	ESettingMapping,
 	ESettingCodePage,
 	ESettingSaveNotifies,

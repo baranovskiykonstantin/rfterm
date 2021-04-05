@@ -154,6 +154,11 @@ void CRFtermSettingsDialog::LoadFormDataL()
 		(CAknPopupFieldText*)Control(ESettingFontAntialiasing);
 	fontAntialiasingControl->SetCurrentValueIndex(index);
 
+	index = ((TInt) iSettings->DoWrapText());
+	CAknPopupFieldText* wrapTextControl =
+		(CAknPopupFieldText*)Control(ESettingWrapText);
+	wrapTextControl->SetCurrentValueIndex(index);
+
 	index = ((TInt) iSettings->CtrlCharMapping()) - 1;
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);
@@ -239,6 +244,10 @@ TBool CRFtermSettingsDialog::SaveFormDataL()
 	CAknPopupFieldText* fontAntialiasingControl =
 		(CAknPopupFieldText*)Control(ESettingFontAntialiasing);
 	iSettings->SetFontAntialiasing(fontAntialiasingControl->CurrentValueIndex(), EFalse);
+
+	CAknPopupFieldText* wrapTextControl =
+		(CAknPopupFieldText*)Control(ESettingWrapText);
+	iSettings->SetTextWrapping(wrapTextControl->CurrentValueIndex(), EFalse);
 
 	CAknPopupFieldText* mappingControl =
 		(CAknPopupFieldText*)Control(ESettingMapping);

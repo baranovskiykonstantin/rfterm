@@ -47,6 +47,7 @@ CRFtermOutput::CRFtermOutput()
 	, iFontSize(120)
 	, iTabSize(4)
 	, iFontAntialiasing(EFalse)
+	, iWrapText(EFalse)
 	, iCtrlCharMapping(EMapCRtoCRLF)
 	, iCodePage(KCodePageLatin1)
 	, iSaveNotifies(ETrue)
@@ -60,7 +61,7 @@ CRFtermOutput::CRFtermOutput()
 void CRFtermOutput::ConstructL(const CCoeControl *aParent)
 	{
 	CEikEdwin::ConstructL(
-			ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor | ENoWrap,
+			ENoAutoSelection | EOnlyASCIIChars | EResizable | EReadOnly | EAvkonDisableCursor,
 			0, 0, 0);
 	SetContainerWindowL(*aParent);
 
@@ -177,11 +178,11 @@ void CRFtermOutput::UpdateFormatL()
 	CParaFormat* paraFormat = CParaFormat::NewLC();
 	paraFormat->iFillColor = iBgColor;
 	paraFormat->iLineSpacingInTwips = iFontSize * 1.2;
-//	paraFormat->iWrap = EFalse;
+	paraFormat->iWrap = iWrapText;
 	TParaFormatMask paraFormatMask;
 	paraFormatMask.SetAttrib(EAttFillColor);
 	paraFormatMask.SetAttrib(EAttLineSpacing);
-//	paraFormatMask.SetAttrib(EAttWrap);
+	paraFormatMask.SetAttrib(EAttWrap);
 	paraFormatLayer->SetL(paraFormat, paraFormatMask);
 	SetParaFormatLayer(paraFormatLayer);
 	CleanupStack::Pop(paraFormat);
@@ -250,6 +251,13 @@ void CRFtermOutput::SetFontAntialiasingL(TBool aState)
 	// To apply the anti-aliasing we have to change the font size.
 	SetFontSizeL(iFontSize - 1);
 	SetFontSizeL(iFontSize);
+	}
+
+void CRFtermOutput::SetTextWrapping(TBool aState)
+	{
+	iWrapText = aState;
+	UpdateFormatL();
+	ScrollToCursorPosL(ETrue);
 	}
 
 void CRFtermOutput::SetColorsL(TRgb aBg, TRgb aFg, TRgb aCursor)
@@ -848,11 +856,16 @@ void CRFtermOutput::SetObserver(MRFtermOutputObserver* aObserver)
 
 void CRFtermOutput::NotifyViewRectChangedL()
 	{
+	TRect outputRect = iTextView->ViewRect();
+
 	TSize contentSize;
-	iLayout->GetMinimumSizeL(KMaxTInt, contentSize);
+	TInt wrapWidth = iWrapText ? outputRect.Width() : KMaxTInt;
+	iLayout->GetMinimumSizeL(wrapWidth, contentSize);
+	// Minimum size may be greater than wrapWidth
+	if (iWrapText && contentSize.iWidth > wrapWidth)
+		contentSize.iWidth = wrapWidth;
 	TRect contentRect(contentSize);
 
-	TRect outputRect = iTextView->ViewRect();
 	// Sometimes viewRect has the position (iTl)
 	// different from (0, 0).
 	TPoint viewOffset = outputRect.iTl;
@@ -867,7 +880,8 @@ void CRFtermOutput::NotifyViewRectChangedL()
 	firstParaRect.Move(-viewOffset);
 
 	// Add some room for cursor
-	contentRect.iBr.iX += iOutputCursor.iWidth * 2;
+	if (!iWrapText)
+		contentRect.iBr.iX += iOutputCursor.iWidth * 2;
 	// To avoid partial showing of the last line add extra height.
 	__ASSERT_ALWAYS(firstLineRect.Height() > 0, Panic(ERFtermOutputBadContent));
 	outputRect.iBr.iY -= outputRect.Height() % firstLineRect.Height();

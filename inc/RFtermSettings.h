@@ -95,6 +95,7 @@ public: // New functions
 	TInt FontSize() const;
 	TInt TabSize() const;
 	TBool FontAntialiasing() const;
+	TBool DoWrapText() const;
 	TCtrlCharMapping CtrlCharMapping() const;
 	TCodePage CodePage() const;
 	TBool DoSaveNotifies() const;
@@ -110,6 +111,7 @@ public: // New functions
 	void SetFontSize(TInt aSize, TBool aNotify=ETrue);
 	void SetTabSize(TInt aSize, TBool aNotify=ETrue);
 	void SetFontAntialiasing(TBool aState, TBool aNotify=ETrue);
+	void SetTextWrapping(TBool aState, TBool aNotify=ETrue);
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping, TBool aNotify=ETrue);
 	void SetCodePage(TCodePage aCodePage, TBool aNotify=ETrue);
 	void SetNotifySaving(TBool aSaveNotifies, TBool aNotify=ETrue);
@@ -165,6 +167,11 @@ private: // Data
 	TBool iFontAntialiasing;
 
 	/**
+	 * Text wrapping
+	 */
+	TBool iWrapText;
+
+	/**
 	 * Map one control character with another.
 	 */
 	TCtrlCharMapping iCtrlCharMapping;
@@ -214,6 +221,7 @@ inline TBool CRFtermSettings::IsEchoEnabled() const { return iEcho; }
 inline TInt CRFtermSettings::FontSize() const { return iFontSize; }
 inline TInt CRFtermSettings::TabSize() const { return iTabSize; }
 inline TBool CRFtermSettings::FontAntialiasing() const { return iFontAntialiasing; }
+inline TBool CRFtermSettings::DoWrapText() const { return iWrapText; }
 inline TCtrlCharMapping CRFtermSettings::CtrlCharMapping() const { return iCtrlCharMapping; }
 inline TCodePage CRFtermSettings::CodePage() const { return iCodePage; }
 inline TBool CRFtermSettings::DoSaveNotifies() const { return iSaveNotifies; }

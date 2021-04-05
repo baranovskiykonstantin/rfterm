@@ -43,6 +43,7 @@ void CRFtermSettings::SetDefaultValues(TBool aNotify)
 	iFontSize = 120;
 	iTabSize = 4;
 	iFontAntialiasing = EFalse;
+	iWrapText = EFalse;
 	iCtrlCharMapping = EMapCRtoCRLF;
 	iCodePage = ECodePageLatin1;
 	iSaveNotifies = ETrue;
@@ -127,6 +128,13 @@ void CRFtermSettings::SetFontAntialiasing(TBool aState, TBool aNotify)
 		Notify();
 	}
 
+void CRFtermSettings::SetTextWrapping(TBool aState, TBool aNotify)
+	{
+	iWrapText = aState ? 1 : 0;
+	if (aNotify)
+		Notify();
+	}
+
 void CRFtermSettings::SetCtrlCharMapping(TCtrlCharMapping aMapping, TBool aNotify)
 	{
 	if (aMapping < EMapCRtoLF || aMapping > EMapNone)
@@ -204,6 +212,7 @@ void CRFtermSettings::LoadL(RReadStream& aStream)
 	SetFontSize(aStream.ReadInt32L(), EFalse);
 	SetTabSize(aStream.ReadInt32L(), EFalse);
 	SetFontAntialiasing(aStream.ReadInt8L(), EFalse);
+	SetTextWrapping(aStream.ReadInt8L(), EFalse);
 	SetCtrlCharMapping((TCtrlCharMapping) aStream.ReadInt32L(), EFalse);
 	SetCodePage((TCodePage) aStream.ReadInt32L(), EFalse);
 	SetNotifySaving(aStream.ReadInt8L(), EFalse);
@@ -223,6 +232,7 @@ void CRFtermSettings::SaveL(RWriteStream& aStream) const
 	aStream.WriteInt32L(iFontSize);
 	aStream.WriteInt32L(iTabSize);
 	aStream.WriteInt8L(iFontAntialiasing);
+	aStream.WriteInt8L(iWrapText);
 	aStream.WriteInt32L((TInt)iCtrlCharMapping);
 	aStream.WriteInt32L((TInt)iCodePage);
 	aStream.WriteInt8L(iSaveNotifies);

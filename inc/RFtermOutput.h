@@ -36,6 +36,7 @@ public: // New functions
 	void SetCtrlCharMapping(TCtrlCharMapping aMapping);
 	void SetTabSize(TInt aSize);
 	void SetFontAntialiasingL(TBool aState);
+	void SetTextWrapping(TBool aState);
 	void SetNotifySaving(TBool aSaveNotifies);
 	void SetColorsL(TRgb aBg, TRgb aFg, TRgb aCursor);
 	void ChangeCodePage(TCodePage aCodePage);
@@ -102,6 +103,7 @@ private: // Data
 	TInt iFontSize;
 	TInt iTabSize;
 	TBool iFontAntialiasing;
+	TBool iWrapText;
 	TCtrlCharMapping iCtrlCharMapping;
 	TPtrC iCodePage;
 	TTextCursor iOutputCursor;
