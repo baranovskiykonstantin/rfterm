@@ -256,12 +256,12 @@ void CRFtermAppUi::HandleCommandL(TInt aCommand)
 				if (iBtClient->Server())
 					{
 					// stop in any way!
-					TRAPD(error, iBtClient->StopL());
+					TRAP_IGNORE(iBtClient->StopL());
 					}
 				else
 					{
 					// disconnect in any way!
-					TRAPD(error, iBtClient->DisconnectL());
+					TRAP_IGNORE(iBtClient->DisconnectL());
 					}
 				}
 

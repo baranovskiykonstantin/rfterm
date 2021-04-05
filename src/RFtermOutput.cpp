@@ -124,14 +124,9 @@ CRFtermOutput::~CRFtermOutput()
 
 void CRFtermOutput::UpdateRect(const TRect& aNewRect)
 	{
-	// The error does not matter.
-	// TRAP is used to hide leaving.
-	TInt error;
-	TRAP(error, SetCursorPosL(0, EFalse));
-
+	TRAP_IGNORE(SetCursorPosL(0, EFalse));
 	SetRect(aNewRect);
-
-	TRAP(error, ScrollToCursorPosL(ETrue));
+	TRAP_IGNORE(ScrollToCursorPosL(ETrue));
 	}
 
 TBool CRFtermOutput::IsEmpty() const
@@ -771,10 +766,7 @@ void CRFtermOutput::FocusChanged(TDrawNow aDrawNow)
 	CEikEdwin::FocusChanged(aDrawNow);
 	if (IsFocused())
 		{
-		// The error does not matter.
-		// TRAP is used to hide leaving.
-		TInt error;
-		TRAP(error, UpdateCursorL());
+		TRAP_IGNORE(UpdateCursorL());
 		}
 	else
 		{
