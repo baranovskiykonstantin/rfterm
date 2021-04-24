@@ -1,0 +1,149 @@
+/*
+============================================================================
+ Name        : RFterm.l83
+ Author      : Konstantin Baranovskiy
+ Copyright   : GPLv3
+ Description : This is a localisation file for RFterm (ES).
+============================================================================
+*/
+
+CHARACTER_SET UTF8
+
+//  LOCALISATION STRINGS
+
+// Other resources
+#define qtn_loc_resource_file "\\resource\\apps\\RFterm_0xae7f53fa"
+
+// Caption string for app.
+#define qtn_caption_string "RFterm"
+
+// Items in "Opciones" menu pane
+#define qtn_connect "Conectar"
+#define qtn_disconnect "Desconectar"
+
+#define qtn_start "Iniciar"
+#define qtn_stop "Detener"
+
+#define qtn_send "Enviar"
+#define qtn_send_message "Nuevo mensaje"
+#define qtn_send_history "Mensajes enviados"
+#define qtn_send_ctrl_char "Caracteres de control"
+#define qtn_send_signal "Señales"
+#define qtn_send_file "Archivos"
+
+#define qtn_clear "Limpiar terminal"
+
+#define qtn_save "Guardar registro"
+
+#define qtn_settings "Configurac."
+
+#define qtn_help "Ayuda"
+
+#define qtn_exit "Salir"
+
+// Navigation pane
+#define qtn_str_navi_disconnected "desconectado"
+
+// Bluetooth
+#define qtn_rfterm_service_name "Puerto Serial"
+#define qtn_rfterm_service_description "Aplicación RFterm"
+
+// Dialogs
+#define qtn_str_text_query_label "Enviar:"
+#define qtn_str_ignoresym_confirmation "Estos símbolos no son compatibles con la página de código y se ignorarán:\n%S\n¿Desea continuar?"
+#define qtn_str_history_query_label "Historial de Mensajes"
+#define qtn_str_ctrlchar_query_label "Caracteres de Control"
+#define qtn_str_ctrlchar_custom "Agregar..."
+#define qtn_str_int_query_label "Byte (0-255)"
+#define qtn_str_signal_query_label "Señales RS-232"
+
+// Settings
+#define qtn_str_settings_input_label "Entrada"
+
+#define qtn_str_setting_appendix_label "Anexar al mensaje"
+#define qtn_str_setting_appendix_item0 "CARRIAGE RETURN"
+#define qtn_str_setting_appendix_item1 "LINE FEED"
+#define qtn_str_setting_appendix_item2 "CR+LF"
+#define qtn_str_setting_appendix_item3 "Ninguno"
+
+#define qtn_str_setting_historysize_label "Tamaño del historial de mensajes"
+
+#define qtn_str_setting_echo_label "Mensaje enviado (repetir)"
+#define qtn_str_setting_no_label "No"
+#define qtn_str_setting_yes_label "Sí"
+
+
+#define qtn_str_settings_output_label "Salida"
+
+#define qtn_str_setting_fontsize_label "Tamaño de la fuente"
+
+#define qtn_str_setting_tabsize_label "Tamaño de la pestaña"
+
+#define qtn_str_setting_font_antialiasing_label "Suavizado de la fuente"
+
+#define qtn_str_setting_wrap_text_label "Ajustar texto"
+
+#define qtn_str_setting_mapping_label "Control de mapeo de caracteres"
+#define qtn_str_setting_mapping_item0 "CR -> LF"
+#define qtn_str_setting_mapping_item1 "CR -> CR+LF"
+#define qtn_str_setting_mapping_item2 "LF -> CR"
+#define qtn_str_setting_mapping_item3 "LF -> CR+LF"
+#define qtn_str_setting_mapping_item4 "Ninguno"
+
+#define qtn_str_setting_codepage_label "Codificación"
+#define qtn_str_setting_codepage_item0 "ISO 8859-1 (Latin-1)"
+#define qtn_str_setting_codepage_item1 "ISO 8859-2 (Latin-2)"
+#define qtn_str_setting_codepage_item2 "ISO 8859-3 (Latin-3)"
+#define qtn_str_setting_codepage_item3 "ISO 8859-4 (Latin-4)"
+#define qtn_str_setting_codepage_item4 "ISO 8859-5 (Latin/Cyrillic)"
+#define qtn_str_setting_codepage_item5 "CP 1251 (Cyrillic)"
+#define qtn_str_setting_codepage_item6 "CP 1252 (Latin-1)"
+#define qtn_str_setting_codepage_item7 "KOI-8"
+
+#define qtn_str_setting_save_notifies_label "Guardar notificaciones"
+
+
+#define qtn_str_settings_colors_label "Colores"
+
+#define qtn_str_setting_color_bg_label "Fondo de pantalla"
+#define qtn_str_setting_color_font_label "Texto"
+#define qtn_str_setting_color_cursor_label "Cursor"
+#define qtn_str_setting_color_sb_label "Barra de desplazamiento"
+
+// RS-232 Signals
+#define qtn_str_signal_input "entrada"
+#define qtn_str_signal_output "salida"
+
+// Messages
+#define qtn_str_disconnected "Desconectado"
+#define qtn_str_disconnect_complete "Desconexión completa"
+#define qtn_str_connected "Conectado"
+#define qtn_str_found_service "Servicio encontrado"
+#define qtn_str_client_busy "Cliente ocupado"
+#define qtn_str_releasing_conn "Realizando conexión"
+#define qtn_str_connecting "Conectando al servicio..."
+#define qtn_str_waiting_conn "Esperando conexión"
+#define qtn_str_port_number "Canal %N"
+#define qtn_str_bell "RFterm: AVISO"
+#define qtn_str_output_is_saved "Registro guardado."
+#define qtn_str_file_is_sent "Archivo enviado."
+//#define qtn_str_
+
+#define qtn_err_no_bt "Bluetooth no disponible."
+#define qtn_err_no_device_selected "Dispositivo no seleccionado"
+#define qtn_err_cant_get_device_list "No hay lista de dispositivos"
+#define qtn_err_connection_error "Error de conexión"
+#define qtn_err_lost_connection "Conexión perdida"
+#define qtn_err_message_failed "Error al enviar mensaje"
+#define qtn_err_file_sending_failed "Error al enviar archivo"
+#define qtn_err_failed_to_disconnect "Error al desconectar"
+#define qtn_err_no_conn "¡Sin conexión!"
+#define qtn_err_nrrc_error "Error NRRC %N"
+#define qtn_err_nrrc_no_records "No hay registros NRRC"
+#define qtn_err_cant_get_attribute "No puede ser atributo %N"
+#define qtn_err_attr_req_com "AttrReqCom"
+#define qtn_err_registry "Dispositivo desconocido"
+#define qtn_err_file_opening "Error al abrir archivo"
+//#define qtn_err_
+
+// End of File
