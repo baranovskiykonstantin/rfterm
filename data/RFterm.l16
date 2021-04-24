@@ -11,9 +11,6 @@ CHARACTER_SET UTF8
 
 //  LOCALISATION STRINGS
 
-// Other resources
-#define qtn_loc_resource_file "\\resource\\apps\\RFterm_0xae7f53fa"
-
 // Caption string for app.
 #define qtn_caption_string "RFterm"
 

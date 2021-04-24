@@ -3,16 +3,13 @@
  Name        : RFterm.l83
  Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
- Description : This is a localisation file for RFterm (ES).
+ Description : This is a localisation file for RFterm (SP).
 ============================================================================
 */
 
 CHARACTER_SET UTF8
 
 //  LOCALISATION STRINGS
-
-// Other resources
-#define qtn_loc_resource_file "\\resource\\apps\\RFterm_0xae7f53fa"
 
 // Caption string for app.
 #define qtn_caption_string "RFterm"
