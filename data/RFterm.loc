@@ -9,8 +9,13 @@
 #ifndef __RFTERM_LOC__
 #define __RFTERM_LOC__
 
+// Other resources
+#define qtn_loc_resource_file "\\resource\\apps\\RFterm_0xae7f53fa"
+
 #ifdef LANGUAGE_01
 #include "RFterm.l01"
+#elif LANGUAGE_04
+#include "RFterm.l04"
 #elif LANGUAGE_16
 #include "RFterm.l16"
 #elif LANGUAGE_93

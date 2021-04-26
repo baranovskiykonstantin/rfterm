@@ -89,7 +89,7 @@ LIBRARY			aknskins.lib
 LIBRARY			aknskinsrv.lib
 LIBRARY			aknswallpaperutils.lib
 
-LANG 01 16 93
+LANG 01 04 16 93
 
 VENDORID		0
 SECUREID		0xae7f53fa

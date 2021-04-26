@@ -30,5 +30,6 @@
   * DELETE
 * Localizations:
   * English
+  * Spanish
   * Russian
   * Ukrainian
