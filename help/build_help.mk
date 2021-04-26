@@ -18,11 +18,13 @@ do_nothing :
 
 MAKMAKE :
 	cshlpcmp.bat RFterm_01.cshlp
+	cshlpcmp.bat RFterm_04.cshlp
 	cshlpcmp.bat RFterm_16.cshlp
 	cshlpcmp.bat RFterm_93.cshlp
 ifeq (WINSCW,$(findstring WINSCW, $(PLATFORM)))
 	md $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
 	copy out\RFterm_0xae7f53fa.h01 $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
+	copy out\RFterm_0xae7f53fa.h04 $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
 	copy out\RFterm_0xae7f53fa.h16 $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help & \
 	copy out\RFterm_0xae7f53fa.h93 $(EPOCROOT)epoc32\$(PLATFORM)\c\resource\help
 endif
@@ -32,6 +34,8 @@ BLD : do_nothing
 CLEAN :
 	del out\RFterm_0xae7f53fa.h01
 	del out\RFterm_0xae7f53fa.h01.hrh
+	del out\RFterm_0xae7f53fa.h04
+	del out\RFterm_0xae7f53fa.h04.hrh
 	del out\RFterm_0xae7f53fa.h16
 	del out\RFterm_0xae7f53fa.h16.hrh
 	del out\RFterm_0xae7f53fa.h93
@@ -49,6 +53,7 @@ SAVESPACE : do_nothing
 
 RELEASABLES :
 	@echo RFterm_0xae7f53fa.h01
+	@echo RFterm_0xae7f53fa.h04
 	@echo RFterm_0xae7f53fa.h16
 	@echo RFterm_0xae7f53fa.h93
 

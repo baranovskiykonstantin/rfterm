@@ -35,6 +35,7 @@
 "$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\RFterm_0xae7f53fa_reg.r93"				-"c:\private\10003a3f\import\apps\RFterm_0xae7f53fa_reg.r93"
 "$(EPOCROOT)epoc32\data\z\resource\apps\RFterm_0xae7f53fa.mif"							-"c:\resource\apps\RFterm_0xae7f53fa.mif"
 "..\help\out\RFterm_0xae7f53fa.h01"														-"c:\resource\help\RFterm_0xae7f53fa.h01"
+"..\help\out\RFterm_0xae7f53fa.h04"														-"c:\resource\help\RFterm_0xae7f53fa.h04"
 "..\help\out\RFterm_0xae7f53fa.h16"														-"c:\resource\help\RFterm_0xae7f53fa.h16"
 "..\help\out\RFterm_0xae7f53fa.h93"														-"c:\resource\help\RFterm_0xae7f53fa.h93"
 "$(EPOCROOT)epoc32\winscw\c\resource\apps\RFterm_0xae7f53fa_font.ttf"					-"c:\resource\apps\RFterm_0xae7f53fa_font.ttf"

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE cshproj SYSTEM "/epoc32/tools/cshlpcmp/dtd/cshproj.dtd">
+<?xml:stylesheet href="/epoc32/tools/cshlpcmp/xsl/CSHproj.xsl" title="CS-Help project" type="text/xsl"?>
+<cshproj>
+<helpfileUID>0xae7f53fa</helpfileUID>
+<directories>
+	<input>src\</input>
+	<output>out\</output>
+	<graphics></graphics>
+	<working>temp\</working>
+</directories>
+<files>
+	<source>
+	<file>RFterm_04.rtf</file>
+	</source>
+	<destination>RFterm_0xae7f53fa.h04</destination>
+	<customization>Custom.xml</customization>
+	</files>
+</cshproj>
