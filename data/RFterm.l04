@@ -1,6 +1,6 @@
 /*
 ============================================================================
- Name        : RFterm.l83
+ Name        : RFterm.l04
  Author      : Konstantin Baranovskiy
  Copyright   : GPLv3
  Description : This is a localisation file for RFterm (SP).
@@ -48,11 +48,11 @@ CHARACTER_SET UTF8
 // Dialogs
 #define qtn_str_text_query_label "Enviar:"
 #define qtn_str_ignoresym_confirmation "Estos símbolos no son compatibles con la página de código y se ignorarán:\n%S\n¿Desea continuar?"
-#define qtn_str_history_query_label "Historial de Mensajes"
-#define qtn_str_ctrlchar_query_label "Caracteres de Control"
+#define qtn_str_history_query_label "Historial de mensajes:"
+#define qtn_str_ctrlchar_query_label "Caracteres de control:"
 #define qtn_str_ctrlchar_custom "Agregar..."
 #define qtn_str_int_query_label "Byte (0-255)"
-#define qtn_str_signal_query_label "Señales RS-232"
+#define qtn_str_signal_query_label "Señales RS-232:"
 
 // Settings
 #define qtn_str_settings_input_label "Entrada"
@@ -119,9 +119,9 @@ CHARACTER_SET UTF8
 #define qtn_str_client_busy "Cliente ocupado"
 #define qtn_str_releasing_conn "Realizando conexión"
 #define qtn_str_connecting "Conectando al servicio..."
-#define qtn_str_waiting_conn "Esperando conexión"
+#define qtn_str_waiting_conn "Desvinculando"
 #define qtn_str_port_number "Canal %N"
-#define qtn_str_bell "RFterm: AVISO"
+#define qtn_str_bell "RFterm: Alerta"
 #define qtn_str_output_is_saved "Registro guardado."
 #define qtn_str_file_is_sent "Archivo enviado."
 //#define qtn_str_
@@ -137,7 +137,7 @@ CHARACTER_SET UTF8
 #define qtn_err_no_conn "¡Sin conexión!"
 #define qtn_err_nrrc_error "Error NRRC %N"
 #define qtn_err_nrrc_no_records "No hay registros NRRC"
-#define qtn_err_cant_get_attribute "No puede ser atributo %N"
+#define qtn_err_cant_get_attribute "No se puede obtener atributo %N"
 #define qtn_err_attr_req_com "AttrReqCom"
 #define qtn_err_registry "Dispositivo desconocido"
 #define qtn_err_file_opening "Error al abrir archivo"
